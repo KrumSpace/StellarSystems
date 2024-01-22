@@ -40,6 +40,15 @@ public abstract class BaryObject implements UpdatableValueInterface.BufferedValu
     }
 
     //
+    public abstract double getMass();
+
+    //TODO: needs rework, formula too crude
+    public double getInfluenceRadius() {
+        double mass = getMass(), coefficient = 2;
+        return mass * coefficient;
+    }
+
+    //
     @Override
     public void precalculate(double time) {
         coordinates.precalculate(time);

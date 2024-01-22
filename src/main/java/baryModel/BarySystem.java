@@ -21,6 +21,16 @@ public class BarySystem extends BaryObject {
         this.color = color;
     }
 
+    //TODO: improve this
+    @Override
+    public final double getMass() {
+        double mass = 0;
+        for (BaryObject object : objects) {
+            mass += object.getMass();
+        }
+        return mass;
+    }
+
     //
     @Override
     public void precalculate(double time) {

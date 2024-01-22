@@ -17,6 +17,12 @@ public class BarySimpleObject extends BaryObject {
         this.simpleBody = simpleBody;
     }
 
+    //
+    @Override
+    public final double getMass() {
+        return simpleBody.getMass();
+    }
+
     //for graphical purposes
     @Override
     public final @NotNull Color getColor() {

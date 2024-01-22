@@ -13,37 +13,37 @@ import baryModel.BaryModel;
 
 //
 class BaryPainter {
-    private static final int [] DEFAULT_DRAW_OFFSET = new int [] {400, 300};
+    private static final int @NotNull [] DEFAULT_DRAW_OFFSET = new int [] {400, 300};
     private static final double SCALE = 2.0;
-    private final BaryModel model;
-    private int [] drawOffset;
+    private final @NotNull BaryModel model;
+    private int @NotNull [] drawOffset;
 
     //
-    protected BaryPainter(BaryModel model, int [] drawOffset) {
+    protected BaryPainter(@NotNull BaryModel model, int @NotNull [] drawOffset) {
         this.model = model;
         this.drawOffset = drawOffset;
     }
 
     //
-    protected BaryPainter(BaryModel model) {
+    protected BaryPainter(@NotNull BaryModel model) {
         this(model, DEFAULT_DRAW_OFFSET);
     }
 
     //
-    public void setDrawOffset(int[] offset) {
+    public void setDrawOffset(int @NotNull [] offset) {
         this.drawOffset = offset;
     }
 
     //
-    protected void paint(Graphics g) {
-        double [] universeParentLocation = new double [2];
+    protected void paint(@NotNull Graphics g) {
+        double @NotNull [] universeParentLocation = new double [2];
         paintBaryObject(g, model.getUniverse(), universeParentLocation);
     }
 
-    private void paintBaryObject(Graphics g,
-                                 BaryObject object,
-                                 double [] parentLocation) {
-        double []
+    private void paintBaryObject(@NotNull Graphics g,
+                                 @NotNull BaryObject object,
+                                 double @NotNull [] parentLocation) {
+        double @NotNull []
                 relativeLocation = object.getCoordinates().getLocation().getCartesian(),
                 absoluteLocation = new double [] {
                         parentLocation[0] + relativeLocation[0],
@@ -55,65 +55,94 @@ class BaryPainter {
         } else {
             throw new RuntimeException("BaryObject not of a recognized type!");
         }
+        paintInfluenceRadius(g, object, absoluteLocation);
     }
 
-    private void paintSimpleBaryObject(Graphics g,
-                                       BarySimpleObject simpleObject,
-                                       double [] absoluteLocation) {
-        double [] scaledLocation = new double [] {
-                absoluteLocation[0] / SCALE,
-                absoluteLocation[1] / SCALE};
+    private void paintSimpleBaryObject(@NotNull Graphics g,
+                                       @NotNull BarySimpleObject simpleObject,
+                                       double @NotNull [] absoluteLocation) {
+        double @NotNull []
+                scaledLocation = scaleLocation(absoluteLocation),
+                drawCenter = getDrawableFromScaled(scaledLocation);
         @NotNull SimpleBody simpleBody = simpleObject.getSimpleBody();
         double
                 actualSize = simpleBody.getRadius(),
-                scaledSize = actualSize / SCALE;
+                scaledSize = scaleValue(actualSize);
         g.setColor(simpleObject.getColor());
         g.fillOval(
-                (int) (scaledLocation[0] - scaledSize / 2 + drawOffset[0]),
-                (int) (scaledLocation[1] - scaledSize / 2 + drawOffset[1]),
+                (int) (drawCenter[0] - scaledSize / 2),
+                (int) (drawCenter[1] - scaledSize / 2),
                 (int) scaledSize, (int) scaledSize);
         @NotNull String name = simpleBody.getName();
         int @NotNull [] textOffset = new int [] {-20, 20};
         g.drawString(
                 name,
-                (int) (scaledLocation[0] + drawOffset[0] + textOffset[0]),
-                (int) (scaledLocation[1] + drawOffset[1] + scaledSize / 2 + textOffset[1]));
+                (int) (drawCenter[0] + textOffset[0]),
+                (int) (drawCenter[1] + scaledSize / 2 + textOffset[1]));
     }
 
-    private void paintBarySystem(Graphics g,
-                                 BarySystem system,
-                                 double [] absoluteLocation) {
+    private void paintBarySystem(@NotNull Graphics g,
+                                 @NotNull BarySystem system,
+                                 double @NotNull [] absoluteLocation) {
+        double @NotNull [] scaledLocation = scaleLocation(absoluteLocation);
+        paintSystemCenter(g, system, scaledLocation);
+        //TODO: paint some general system-wide data here
+
+        for (BaryObject object : system.getObjects()) {
+            paintOrbit(g, object, scaledLocation);
+            paintBaryObject(g, object, absoluteLocation);
+        }
+    }
+
+    private void paintOrbit(@NotNull Graphics g,
+                            @NotNull BaryObject object,
+                            double @NotNull [] scaledLocation) {
+        double @NotNull [] drawCenter = getDrawableFromScaled(scaledLocation);
+        double
+                distance = object.getCoordinates().getLocation().getRadial()[0],
+                scaledDistance = scaleValue(distance);
+        @NotNull Color orbitColor = object.getColor();
+        g.setColor(orbitColor);
+        g.drawOval(
+                (int) (drawCenter[0] - scaledDistance),
+                (int) (drawCenter[1] - scaledDistance),
+                (int) scaledDistance * 2, (int) scaledDistance * 2);
+    }
+
+    private void paintSystemCenter(@NotNull Graphics g,
+                                   @NotNull BarySystem system,
+                                   double @NotNull [] scaledLocation) {
         int centerMarkerSize = 10;
-        double [] scaledLocation = new double [] {
-                absoluteLocation[0] / SCALE,
-                absoluteLocation[1] / SCALE};
         g.setColor(system.getColor());
         g.fillOval(
                 (int) (scaledLocation[0] - centerMarkerSize / 2 + drawOffset[0]),
                 (int) (scaledLocation[1] - centerMarkerSize / 2 + drawOffset[1]),
                 centerMarkerSize, centerMarkerSize);
-        //TODO: paint some general system-wide data here
+    }
 
-        double furthestDistance = 0;
-        for (BaryObject object : system.getObjects()) {
-            double distance = object.getCoordinates().getLocation().getRadial()[0];
-            if (distance > furthestDistance) {
-                furthestDistance = distance;
-            }
-            Color orbitColor = object.getColor();
-            g.setColor(orbitColor);
-            double scaledDistance = distance / SCALE;
-            g.drawOval(
-                    (int) (scaledLocation[0] - scaledDistance + drawOffset[0]),
-                    (int) (scaledLocation[1] - scaledDistance + drawOffset[1]),
-                    (int) scaledDistance * 2, (int) scaledDistance * 2);
-            paintBaryObject(g, object, absoluteLocation);
-        }
-        g.setColor(system.getColor());
-        double scaledFurthestDistance = furthestDistance / SCALE;
+    private void paintInfluenceRadius(@NotNull Graphics g,
+                                      @NotNull BaryObject object,
+                                      double @NotNull [] absoluteLocation) {
+        double @NotNull[] drawableCenter = getDrawableFromScaled(scaleLocation(absoluteLocation));
+        double scaledInfluenceRadius = scaleValue(object.getInfluenceRadius());
+        g.setColor(object.getColor());
         g.drawOval(
-                (int) (scaledLocation[0] - scaledFurthestDistance + drawOffset[0]),
-                (int) (scaledLocation[1] - scaledFurthestDistance + drawOffset[1]),
-                (int) scaledFurthestDistance * 2, (int) scaledFurthestDistance * 2);
+                (int) (drawableCenter[0] - scaledInfluenceRadius / 2),
+                (int) (drawableCenter[1] - scaledInfluenceRadius / 2),
+                (int) scaledInfluenceRadius, (int) scaledInfluenceRadius);
+    }
+
+    private static double scaleValue(double value) {
+        return value / SCALE;
+    }
+
+    private static double @NotNull [] scaleLocation(double @NotNull [] actual) {
+        return new double [] {scaleValue(actual[0]), scaleValue(actual[1])};
+    }
+
+    private double @NotNull [] getDrawableFromScaled(double @NotNull [] scaledLocation) {
+        return new double [] {
+                scaledLocation[0] + drawOffset[0],
+                scaledLocation[1] + drawOffset[1]};
     }
 }
