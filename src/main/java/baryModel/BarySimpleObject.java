@@ -21,4 +21,9 @@ public class BarySimpleObject extends BaryObject {
     public final @NotNull Color getColor() {
         return simpleBody.getColor();
     }
+
+    //
+    public final @NotNull SimpleBody getSimpleBody() {
+        return simpleBody;
+    }
 }

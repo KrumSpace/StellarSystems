@@ -3,7 +3,10 @@ package testGraphics;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import org.jetbrains.annotations.NotNull;
+
 import baryModel.BaryObject;
+import baryModel.SimpleBody;
 import baryModel.BarySimpleObject;
 import baryModel.BarySystem;
 import baryModel.BaryModel;
@@ -60,26 +63,31 @@ class BaryPainter {
         double [] scaledLocation = new double [] {
                 absoluteLocation[0] / SCALE,
                 absoluteLocation[1] / SCALE};
+        @NotNull SimpleBody simpleBody = simpleObject.getSimpleBody();
         double
-                actualSize = 40,
+                actualSize = simpleBody.getRadius(),
                 scaledSize = actualSize / SCALE;
         g.setColor(simpleObject.getColor());
         g.fillOval(
                 (int) (scaledLocation[0] - scaledSize / 2 + drawOffset[0]),
                 (int) (scaledLocation[1] - scaledSize / 2 + drawOffset[1]),
                 (int) scaledSize, (int) scaledSize);
-        //TODO: paint an individual simple body here
+        @NotNull String name = simpleBody.getName();
+        int @NotNull [] textOffset = new int [] {-20, 20};
+        g.drawString(
+                name,
+                (int) (scaledLocation[0] + drawOffset[0] + textOffset[0]),
+                (int) (scaledLocation[1] + drawOffset[1] + scaledSize / 2 + textOffset[1]));
     }
 
     private void paintBarySystem(Graphics g,
                                  BarySystem system,
                                  double [] absoluteLocation) {
-
-        g.setColor(system.getColor());
         int centerMarkerSize = 10;
         double [] scaledLocation = new double [] {
                 absoluteLocation[0] / SCALE,
                 absoluteLocation[1] / SCALE};
+        g.setColor(system.getColor());
         g.fillOval(
                 (int) (scaledLocation[0] - centerMarkerSize / 2 + drawOffset[0]),
                 (int) (scaledLocation[1] - centerMarkerSize / 2 + drawOffset[1]),
