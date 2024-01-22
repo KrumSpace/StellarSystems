@@ -1,9 +1,10 @@
 package baryModel;
 
-import org.jetbrains.annotations.NotNull;
-import utils.coordinates.Coordinates;
-
 import java.awt.Color;
+
+import org.jetbrains.annotations.NotNull;
+
+import utils.coordinates.Coordinates;
 
 //
 public class BarySimpleObject extends BaryObject {
