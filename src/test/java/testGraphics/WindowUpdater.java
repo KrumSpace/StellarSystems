@@ -1,10 +1,13 @@
 package testGraphics;
 
-import ThreadAbstraction.AbstractUpdater;
-import delayCalculator.delayOptions.DelayOptions;
-import delayCalculator.delayOptions.DelayType;
 import org.jetbrains.annotations.NotNull;
 
+import delayCalculator.delayOptions.DelayOptions;
+import delayCalculator.delayOptions.DelayType;
+
+import ThreadAbstraction.AbstractUpdater;
+
+//
 public class WindowUpdater extends AbstractUpdater {
     private static final int DEFAULT_FRAME_RATE = 60;
     private final @NotNull TestWindow window;

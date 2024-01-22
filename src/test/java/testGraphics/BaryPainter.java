@@ -1,31 +1,37 @@
 package testGraphics;
 
-import baryModel.BaryModel;
+import java.awt.Color;
+import java.awt.Graphics;
+
 import baryModel.BaryObject;
 import baryModel.BarySimpleObject;
 import baryModel.BarySystem;
+import baryModel.BaryModel;
 
-import java.awt.*;
-
+//
 class BaryPainter {
     private static final int [] DEFAULT_DRAW_OFFSET = new int [] {400, 300};
     private static final double SCALE = 2.0;
     private final BaryModel model;
     private int [] drawOffset;
 
+    //
     protected BaryPainter(BaryModel model, int [] drawOffset) {
         this.model = model;
         this.drawOffset = drawOffset;
     }
 
+    //
     protected BaryPainter(BaryModel model) {
         this(model, DEFAULT_DRAW_OFFSET);
     }
 
+    //
     public void setDrawOffset(int[] offset) {
         this.drawOffset = offset;
     }
 
+    //
     protected void paint(Graphics g) {
         double [] universeParentLocation = new double [2];
         paintBaryObject(g, model.getUniverse(), universeParentLocation);
