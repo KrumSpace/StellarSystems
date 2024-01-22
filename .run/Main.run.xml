@@ -4,7 +4,7 @@
     <module name="StellarSystems" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="baryModel.*" />
+        <option name="PATTERN" value="utils.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>

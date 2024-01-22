@@ -41,7 +41,7 @@ class BaryPainter {
                                  BaryObject object,
                                  double [] parentLocation) {
         double []
-                relativeLocation = object.getLocation().getCartesian(),
+                relativeLocation = object.getCoordinates().getLocation().getCartesian(),
                 absoluteLocation = new double [] {
                         parentLocation[0] + relativeLocation[0],
                         parentLocation[1] + relativeLocation[1]};
@@ -88,7 +88,7 @@ class BaryPainter {
 
         double furthestDistance = 0;
         for (BaryObject object : system.getObjects()) {
-            double distance = object.getLocation().getDistance();
+            double distance = object.getCoordinates().getLocation().getRadial()[0];
             if (distance > furthestDistance) {
                 furthestDistance = distance;
             }

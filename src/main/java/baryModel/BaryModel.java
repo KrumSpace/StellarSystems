@@ -1,8 +1,12 @@
 package baryModel;
 
+import org.jetbrains.annotations.NotNull;
+
+import utils.UpdatableValueInterface;
+
 //
-public class BaryModel implements BufferedValueInterface {
-    private final BaryUniverse universe;
+public class BaryModel implements UpdatableValueInterface.BufferedValueInterface {
+    private final @NotNull BaryUniverse universe;
 
     //
     public BaryModel() {
@@ -10,17 +14,19 @@ public class BaryModel implements BufferedValueInterface {
     }
 
     //
-    public BaryUniverse getUniverse() {
+    public final @NotNull BaryUniverse getUniverse() {
         return universe;
     }
 
+    //
     @Override
-    public void precalculate(double time) {
+    public final void precalculate(double time) {
         universe.precalculate(time);
     }
 
+    //
     @Override
-    public void update() {
+    public final void update() {
         universe.update();
     }
 }

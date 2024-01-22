@@ -2,45 +2,55 @@ package baryModel;
 
 import java.awt.Color;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import utils.UpdatableValueInterface;
+import utils.coordinates.Coordinates;
+
 //
-public class BaryObject implements BufferedValueInterface {
-    private BarySystem parent;
-    private BaryLocation location;
-    private final Color color;
+public abstract class BaryObject implements UpdatableValueInterface.BufferedValueInterface {
+    private @Nullable BarySystem parent;
+    private @NotNull Coordinates coordinates;
 
-    public BaryObject(BarySystem parent, BaryLocation location, Color color) {
+    //
+    public BaryObject(@Nullable BarySystem parent, @NotNull Coordinates coordinates) {
         this.parent = parent;
-        this.location = location;
-        this.color = color;
+        this.coordinates = coordinates;
     }
 
-    public void setParent(BarySystem parent) {
+    //
+    public void setParent(@Nullable BarySystem parent) {
         this.parent = parent;
     }
 
-    public BarySystem getParent() {
+    //
+    public @Nullable BarySystem getParent() {
         return parent;
     }
 
-    public void setLocation(BaryLocation location) {
-        this.location = location;
+    //
+    public void setLocation(@NotNull Coordinates coordinates) {
+        this.coordinates = coordinates;
     }
 
-    public BaryLocation getLocation() {
-        return location;
+    //
+    public @NotNull Coordinates getCoordinates() {
+        return coordinates;
     }
 
+    //
     @Override
     public void precalculate(double time) {
-        location.precalculate(time);
+        coordinates.precalculate(time);
     }
 
+    //
     @Override
     public void update() {
-        location.update();
+        coordinates.update();
     }
 
-    public Color getColor() {
-        return color;
-    }
+    //for graphical purposes
+    public abstract @NotNull Color getColor();
 }
