@@ -127,9 +127,9 @@ class BaryPainter {
         double scaledInfluenceRadius = scaleValue(object.getInfluenceRadius());
         g.setColor(object.getColor());
         g.drawOval(
-                (int) (drawableCenter[0] - scaledInfluenceRadius / 2),
-                (int) (drawableCenter[1] - scaledInfluenceRadius / 2),
-                (int) scaledInfluenceRadius, (int) scaledInfluenceRadius);
+                (int) (drawableCenter[0] - scaledInfluenceRadius),
+                (int) (drawableCenter[1] - scaledInfluenceRadius),
+                (int) scaledInfluenceRadius * 2, (int) scaledInfluenceRadius * 2);
     }
 
     private static double scaleValue(double value) {

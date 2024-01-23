@@ -18,7 +18,8 @@ public class Main {
     }
 
     private static @NotNull BaryModel getNewBaryModel() {
-        return new TestModel();
+        //return new TestModel();
+        return new TestModel2();
     }
 
     private static void startGraphics(@NotNull BaryModel model) {
