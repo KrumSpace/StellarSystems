@@ -1,18 +1,21 @@
-package baryModel;
+package baryModel.simpleObjects;
 
 import java.awt.Color;
 
+import baryModel.BaryObject;
+import baryModel.BaryObjectContainerInterface;
 import org.jetbrains.annotations.NotNull;
 
 import utils.coordinates.Coordinates;
 
 //
 public class BarySimpleObject extends BaryObject {
-    private final @NotNull SimpleBody simpleBody;
+    private final @NotNull PhysicalBody simpleBody;
 
     //
-    public BarySimpleObject(@NotNull BarySystem parent, @NotNull Coordinates coordinates,
-                            @NotNull SimpleBody simpleBody) {
+    public BarySimpleObject(@NotNull BaryObjectContainerInterface parent,
+                            @NotNull Coordinates coordinates,
+                            @NotNull PhysicalBody simpleBody) {
         super(parent, coordinates);
         this.simpleBody = simpleBody;
     }
@@ -30,7 +33,7 @@ public class BarySimpleObject extends BaryObject {
     }
 
     //
-    public final @NotNull SimpleBody getSimpleBody() {
+    public final @NotNull PhysicalBody getSimpleBody() {
         return simpleBody;
     }
 }

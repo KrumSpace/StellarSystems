@@ -1,11 +1,11 @@
-package baryModel;
+package baryModel.simpleObjects;
 
 import java.awt.Color;
 
 import org.jetbrains.annotations.NotNull;
 
 //
-public class SimpleBody {
+public class PhysicalBody {
     private final @NotNull String name;
     @SuppressWarnings("FieldMayBeFinal")
     private double
@@ -14,7 +14,9 @@ public class SimpleBody {
     private final @NotNull Color color;
 
     //
-    public SimpleBody(@NotNull String name, double mass, double radius, @NotNull Color color) {
+    public PhysicalBody(@NotNull String name,
+                        double mass, double radius,
+                        @NotNull Color color) {
         this.name = name;
         this.mass = mass;
         this.radius = radius;

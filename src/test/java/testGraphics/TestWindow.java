@@ -5,20 +5,22 @@ import java.awt.Point;
 import javax.swing.WindowConstants;
 import javax.swing.JFrame;
 
-import baryModel.BaryModel;
+import org.jetbrains.annotations.NotNull;
+
+import baryModel.BaryUniverse;
 
 //A graphical window for testing purposes.
 public class TestWindow extends JFrame {
-    private static final Dimension WINDOW_SIZE = new Dimension(900, 700);
-    private static final Point WINDOW_LOCATION = new Point(150, 100);
-    private static final String WINDOW_TITLE = "Bary window!";
-    private final BaryModel model;
+    private static final @NotNull Dimension WINDOW_SIZE = new Dimension(900, 700);
+    private static final @NotNull Point WINDOW_LOCATION = new Point(150, 100);
+    private static final @NotNull String WINDOW_TITLE = "Bary window!";
+    private final @NotNull BaryUniverse universe;
 
     //Creates a new window.
-    public TestWindow(BaryModel model) {
+    public TestWindow(@NotNull BaryUniverse universe) {
         super();
         setWindowConfig();
-        this.model = model;
+        this.universe = universe;
         addPanels();
         setVisible(true);
     }
@@ -31,7 +33,7 @@ public class TestWindow extends JFrame {
     }
 
     private void addPanels() {
-        add(new TestPanel(model));
+        add(new TestPanel(universe));
         //add more panels here
     }
 }
