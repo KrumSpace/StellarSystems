@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import utils.UpdatableValueInterface;
 
 //
-public class Coordinates implements UpdatableValueInterface.BufferedValueInterface {
+public final class Coordinates implements UpdatableValueInterface.BufferedValueInterface {
     private @NotNull Location location;
     private @NotNull Velocity velocity;
 
@@ -16,28 +16,28 @@ public class Coordinates implements UpdatableValueInterface.BufferedValueInterfa
     }
 
     //
-    public final @NotNull Location getLocation() {
+    public @NotNull Location getLocation() {
         return location;
     }
 
     //
-    public final @NotNull Velocity getVelocity() {
+    public @NotNull Velocity getVelocity() {
         return velocity;
     }
 
     //
-    public final void setLocation(@NotNull Location location) {
+    public void setLocation(@NotNull Location location) {
         this.location = location;
     }
 
     //
-    public final void setVelocity(@NotNull Velocity velocity) {
+    public void setVelocity(@NotNull Velocity velocity) {
         this.velocity = velocity;
     }
 
     //
     @Override
-    public final void precalculate(double time) {
+    public void precalculate(double time) {
         location.precalculate(time, velocity);
         //TODO: add acceleration here
         //velocity.precalculate(time, acceleration);
@@ -45,7 +45,7 @@ public class Coordinates implements UpdatableValueInterface.BufferedValueInterfa
 
     //
     @Override
-    public final void update() {
+    public void update() {
         location.update();
         velocity.update();
     }

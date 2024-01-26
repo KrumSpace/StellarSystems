@@ -1,7 +1,8 @@
 package utils;
 
-import utils.coordinates.Velocity;
 import org.jetbrains.annotations.NotNull;
+
+import utils.coordinates.Velocity;
 
 //for calculating values bufferedly
 public interface UpdatableValueInterface {

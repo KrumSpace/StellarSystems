@@ -7,14 +7,14 @@ import ThreadAbstraction.AbstractUpdater;
 import utils.TimeUtils;
 
 //
-public final class ModelUpdater extends AbstractUpdater {
+public final class UniverseUpdater extends AbstractUpdater {
     private static final long DELAY = 30;
-    private final @NotNull BaryModel model;
+    private final @NotNull BaryUniverse universe;
 
     //
-    public ModelUpdater(@NotNull BaryModel model) {
+    public UniverseUpdater(@NotNull BaryUniverse universe) {
         super(DELAY);
-        this.model = model;
+        this.universe = universe;
         this.start();
     }
 
@@ -23,9 +23,6 @@ public final class ModelUpdater extends AbstractUpdater {
     public void update() {
         long timeInMillis = delayCalculator.getOptions().getPreferredMS();
         double timeInSeconds = TimeUtils.convertMillisToSeconds(timeInMillis);
-
-        model.precalculate(timeInSeconds);
-        //needs to get normalized here
-        model.update();
+        universe.completeCycle(timeInSeconds);
     }
 }

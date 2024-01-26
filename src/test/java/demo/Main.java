@@ -1,9 +1,9 @@
 package demo;
 
+import baryModel.BaryUniverse;
 import org.jetbrains.annotations.NotNull;
 
-import baryModel.BaryModel;
-import baryModel.ModelUpdater;
+import baryModel.UniverseUpdater;
 
 import testGraphics.TestWindow;
 import testGraphics.WindowUpdater;
@@ -12,17 +12,17 @@ import testGraphics.WindowUpdater;
 public class Main {
     //
     public static void main(String[] args) {
-        @NotNull BaryModel model = getNewBaryModel();
-        new ModelUpdater(model);
-        startGraphics(model);
+        @NotNull BaryUniverse universe = getNewUniverse();
+        new UniverseUpdater(universe);
+        startGraphics(universe);
     }
 
-    private static @NotNull BaryModel getNewBaryModel() {
+    private static @NotNull BaryUniverse getNewUniverse() {
         //return new TestModel();
-        return new TestModel2();
+        return new TestUniverse2();
     }
 
-    private static void startGraphics(@NotNull BaryModel model) {
-        new WindowUpdater(new TestWindow(model));
+    private static void startGraphics(@NotNull BaryUniverse universe) {
+        new WindowUpdater(new TestWindow(universe));
     }
 }

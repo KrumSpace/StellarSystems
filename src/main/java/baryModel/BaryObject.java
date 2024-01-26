@@ -3,88 +3,113 @@ package baryModel;
 import java.awt.Color;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import static consoleUtils.SimplePrinting.printLine;
 
 import utils.MathUtils;
-import utils.UpdatableValueInterface;
 import utils.coordinates.Location;
 import utils.coordinates.Velocity;
 import utils.coordinates.Coordinates;
+import utils.coordinates.CoordinateContainerInterface;
+import utils.UpdatableValueInterface;
 
 //
-public abstract class BaryObject implements UpdatableValueInterface.BufferedValueInterface {
+public abstract class BaryObject implements
+        CoordinateContainerInterface,
+        UpdatableValueInterface.BufferedValueInterface,
+        BaryChildInterface {
     private static final double MASS_INFLUENCE_RADIUS_COEFFICIENT = 1.5;
-    private @Nullable BarySystem parent;
+    private @NotNull BaryObjectContainerInterface parent;
     private @NotNull Coordinates coordinates;
 
     //
-    public BaryObject(@Nullable BarySystem parent, @NotNull Coordinates coordinates) {
+    public BaryObject(@NotNull BaryObjectContainerInterface parent,
+                      @NotNull Coordinates coordinates) {
         this.parent = parent;
         this.coordinates = coordinates;
     }
 
     //
-    public void setParent(@Nullable BarySystem parent) {
+    @Override
+    public final @NotNull Coordinates getCoordinates() {
+        return coordinates;
+    }
+
+    //
+    @Override
+    public final void setCoordinates(@NotNull Coordinates coordinates) {
+        this.coordinates = coordinates;
+    }
+
+    //
+    @Override
+    public final void setCoordinates(@NotNull Location location, @NotNull Velocity velocity) {
+        coordinates.setLocation(location);
+        coordinates.setVelocity(velocity);
+    }
+
+    //
+    @Override
+    public final @NotNull BaryObjectContainerInterface getParent() {
+        return parent;
+    }
+
+    //
+    @Override
+    public final void setParent(@NotNull BaryObjectContainerInterface parent) {
         this.parent = parent;
     }
 
     //
-    public @Nullable BarySystem getParent() {
-        return parent;
-    }
-
-    public void moveLevelUp() throws NullParentException {
-        if (parent == null || parent instanceof BaryUniverse) {
-            throw new NullParentException();
+    @Override
+    public void moveLevelUp() throws RootParentException {
+        if (parent instanceof BaryUniverse) {
+            throw new RootParentException();
         } else {
-            parent.removeObject(this);
-            double @NotNull []
-                    oldCoordinates = getCoordinates().getLocation().getCartesian(),
-                    oldVelocity = getCoordinates().getVelocity().getCartesian(),
-                    oldVelocityProjections = new double [] {
-                            oldVelocity[0] * Math.cos(oldVelocity[1]),
-                            oldVelocity[0] * Math.sin(oldVelocity[1])},
-                    oldSystemCoordinates = parent.getCoordinates().getLocation().getCartesian(),
-                    oldSystemVelocity = parent.getCoordinates().getVelocity().getCartesian(),
-                    oldSystemVelocityProjections = new double [] {
-                            oldSystemVelocity[0] * Math.cos(oldSystemVelocity[1]),
-                            oldSystemVelocity[1] * Math.sin(oldSystemVelocity[1])},
-                    newVelocity = new double [] {
-                            oldVelocityProjections[0] + oldSystemVelocityProjections[0],
-                            oldVelocityProjections[1] + oldSystemVelocityProjections[1]};
-            setCoordinates(new Coordinates(
-                    new Location.LocationCartesian(
-                            oldCoordinates[0] + oldSystemCoordinates[0],
-                            oldCoordinates[1] + oldSystemCoordinates[1]),
-                    new Velocity.VelocityCartesian(
-                            Math.hypot(newVelocity[0], newVelocity[1]),
-                            MathUtils.getAngle(newVelocity[0], newVelocity[1]))));
-            @Nullable BarySystem grandparent = parent.getParent();
-            setParent(grandparent);
-            if (grandparent == null) {
-                printLine("New root object created, no parent to add this to.");
+            //find new parent
+            if (!(parent instanceof BaryChildInterface)) {
+                throw new RuntimeException("Parent is not a child, therefore does not not have a parent. Unable to move an object up!");
             } else {
+                @NotNull BaryObjectContainerInterface grandparent = ((BaryChildInterface) parent).getParent();
+
+                //remove from old list
+                parent.removeObject(this);
+
+                //calculate and set new coordinates
+                if (!(parent instanceof BarySystem)) {
+                    throw new RuntimeException("Parent is not a system, unable to get coordinates!");
+                } else {
+                    setNewCoordinatesWhenMovingUp((BarySystem) parent);
+                }
+
+                //set new parent
+                setParent(grandparent);
+
+                //add to new list
                 grandparent.addObject(this);
             }
         }
     }
 
-    public static class NullParentException extends Exception {
-        public NullParentException() {
-            super("Null parent exception!");
-        }
-    }
+    private void setNewCoordinatesWhenMovingUp(@NotNull BarySystem parentSystem) {
+        double @NotNull []
+                oldCoordinates = getCoordinates().getLocation().getCartesian(),
+                oldSystemCoordinates = parentSystem.getCoordinates().getLocation().getCartesian();
+        @NotNull Location newLocation = new Location.LocationCartesian(
+                oldCoordinates[0] + oldSystemCoordinates[0],
+                oldCoordinates[1] + oldSystemCoordinates[1]);
 
-    //
-    public @NotNull Coordinates getCoordinates() {
-        return coordinates;
-    }
+        double @NotNull []
+                oldVelocity = getCoordinates().getVelocity().getCartesian(),
+                oldVelocityProjections = MathUtils.getProjectionsFromMagnitudeAndAngle(oldVelocity[0], oldVelocity[1]),
+                oldSystemVelocity = parentSystem.getCoordinates().getVelocity().getCartesian(),
+                oldSystemVelocityProjections = MathUtils.getProjectionsFromMagnitudeAndAngle(oldSystemVelocity[0], oldSystemVelocity[1]),
+                newVelocityProjections = new double [] {
+                        oldVelocityProjections[0] + oldSystemVelocityProjections[0],
+                        oldVelocityProjections[1] + oldSystemVelocityProjections[1]};
+        @NotNull Velocity newVelocity = new Velocity.VelocityCartesian(
+                Math.hypot(newVelocityProjections[0], newVelocityProjections[1]),
+                MathUtils.getAngle(newVelocityProjections[0], newVelocityProjections[1]));
 
-    //
-    public void setCoordinates(@NotNull Coordinates coordinates) {
-        this.coordinates = coordinates;
+        setCoordinates(new Coordinates(newLocation, newVelocity));
     }
 
     //
