@@ -16,15 +16,16 @@ public abstract class BaryObject implements
         CoordinateContainerInterface,
         UpdatableValueInterface.BufferedValueInterface,
         BaryChildInterface {
-    private static final double MASS_INFLUENCE_RADIUS_COEFFICIENT = 1.5;
     private @NotNull BaryObjectContainerInterface parent;
     private @NotNull Coordinates coordinates;
+    private final @NotNull InfluenceRadiusCalculator influenceRadiusCalculator;
 
     //
     public BaryObject(@NotNull BaryObjectContainerInterface parent,
                       @NotNull Coordinates coordinates) {
         this.parent = parent;
         this.coordinates = coordinates;
+        influenceRadiusCalculator = new InfluenceRadiusCalculator(this);
     }
 
     //
@@ -117,8 +118,7 @@ public abstract class BaryObject implements
 
     //TODO: needs rework, formula too crude
     public double getInfluenceRadius() {
-        double mass = getMass();
-        return mass * MASS_INFLUENCE_RADIUS_COEFFICIENT;
+        return influenceRadiusCalculator.getInfluenceRadius();
     }
 
     //

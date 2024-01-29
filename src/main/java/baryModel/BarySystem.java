@@ -67,7 +67,7 @@ public class BarySystem extends BaryObject implements BaryObjectContainerInterfa
                     try {
                         object.moveLevelUp();
                         i--;
-                    } catch (NullParentException ignored) {}
+                    } catch (RootParentException ignored) {}
                 }
             }
         }
