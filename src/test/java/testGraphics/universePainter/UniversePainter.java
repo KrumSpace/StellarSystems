@@ -1,8 +1,8 @@
 package testGraphics.universePainter;
 
+import java.util.Collections;
 import java.awt.Color;
 import java.awt.Graphics;
-import java.util.Collections;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,13 +33,8 @@ public class UniversePainter extends ScaledOffsetPainter {
     //
     public void paint(@NotNull Graphics g) {
         double @NotNull [] universeLocation = new double [2];
-        paintUniverseCenterMarker(g, universeLocation);
-        paintMembers(g, universe, universeLocation, false);
-    }
-
-    private void paintUniverseCenterMarker(@NotNull Graphics g,
-                                           double @NotNull [] universeLocation) {
         paintCenterMarker(g, universeLocation, UNIVERSE_CENTER_MARKER_COLOR);
+        paintMembers(g, universe, universeLocation, false);
     }
 
     private void paintCenterMarker(@NotNull Graphics g,
@@ -70,7 +65,7 @@ public class UniversePainter extends ScaledOffsetPainter {
                     paintOrbit(g, object, scaleLocation(absoluteLocation));
                 }
                 paintBaryObject(g, object, absoluteLocation);
-            } catch (UnrecognizedBaryObjectException e) {
+            } catch (UnrecognizedBaryObjectTypeException e) {
                 throw new RuntimeException(e); //TODO: needs better solution, such as not painting the object and logging to console
             }
         }
@@ -78,14 +73,14 @@ public class UniversePainter extends ScaledOffsetPainter {
 
     private void paintBaryObject(@NotNull Graphics g,
                                  @NotNull BaryObject object,
-                                 double @NotNull [] parentLocation) throws UnrecognizedBaryObjectException {
+                                 double @NotNull [] parentLocation) throws UnrecognizedBaryObjectTypeException {
         double @NotNull [] absoluteLocation = getAbsoluteLocation(object, parentLocation);
         if (object instanceof BarySimpleObject) {
             paintSimpleBaryObject(g, (BarySimpleObject) object, absoluteLocation);
         } else if (object instanceof BarySystem) {
             paintBarySystem(g, (BarySystem) object, absoluteLocation);
         } else {
-            throw new UnrecognizedBaryObjectException();
+            throw new UnrecognizedBaryObjectTypeException();
         }
         paintInfluenceRadius(g, object, absoluteLocation);
     }
@@ -96,12 +91,6 @@ public class UniversePainter extends ScaledOffsetPainter {
         return new double [] {
                 parentLocation[0] + relativeLocation[0],
                 parentLocation[1] + relativeLocation[1]};
-    }
-
-    private static class UnrecognizedBaryObjectException extends Exception {
-        UnrecognizedBaryObjectException() {
-            super("Unrecognized BaryObject type!");
-        }
     }
 
     private void paintSimpleBaryObject(@NotNull Graphics g,

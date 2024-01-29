@@ -143,7 +143,7 @@ public abstract class BaryObject implements
                 location[1] - neighborLocation[1]);
     }
 
-    //check if parent is either the universe or its child count is greater than 2
+    //checks if parent is either the universe or its child count is greater than 2
     public final boolean neighborMergeabiltyCheck() {
         @NotNull BaryObjectContainerInterface parent = getParent();
         return parent instanceof BaryUniverse || parent.getObjects().size() > 2;
