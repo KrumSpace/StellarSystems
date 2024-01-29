@@ -4,6 +4,8 @@
 
 A collection of various calculations relating to stellar systems.
 
+Currently, simulates barycentric systems and object collisions in cartesian and polar coordinates.
+
 by [Krumuvecis](https://github.com/Krumuvecis)
 
 _Work is under progress..._
