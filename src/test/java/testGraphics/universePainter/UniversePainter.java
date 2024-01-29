@@ -11,10 +11,10 @@ import baryModel.*;
 import baryModel.simpleObjects.BarySimpleObject;
 import baryModel.simpleObjects.PhysicalBody;
 
-import testGraphics.ScaledOffsetPainter;
+import testGraphics.AdvancedScaleScaledOffsetPainter;
 
 //
-public class UniversePainter extends ScaledOffsetPainter {
+public class UniversePainter extends AdvancedScaleScaledOffsetPainter {
     private static final double DEFAULT_SCALE = 20;
     private static final @NotNull Color UNIVERSE_CENTER_MARKER_COLOR = Color.white;
     private final @NotNull BaryUniverse universe;
