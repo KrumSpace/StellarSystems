@@ -75,10 +75,10 @@ public abstract class BaryObject implements
                 parent.removeObject(this);
 
                 //calculate and set new coordinates
-                if (!(parent instanceof BarySystem)) {
-                    throw new RuntimeException("Parent is not a system, unable to get coordinates!");
-                } else {
+                if (parent instanceof BarySystem) {
                     setNewCoordinatesWhenMovingUp((BarySystem) parent);
+                } else {
+                    throw new RuntimeException("Parent is not a system, unable to get coordinates!");
                 }
 
                 //set new parent

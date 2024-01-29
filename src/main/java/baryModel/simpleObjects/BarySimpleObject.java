@@ -7,6 +7,8 @@ import org.jetbrains.annotations.NotNull;
 import utils.coordinates.Coordinates;
 import baryModel.*;
 
+import static consoleUtils.SimplePrinting.printLine;
+
 //
 public class BarySimpleObject extends BaryObject {
     private final @NotNull PhysicalBody simpleBody;
@@ -43,23 +45,25 @@ public class BarySimpleObject extends BaryObject {
         double distance = getDistanceToNeighbor(neighbor);
         if (neighbor instanceof BarySimpleObject) {
             //simpleObject - simpleObject case
-            /**
-             * TODO:
-             *  collisionDistance = A.radius + B.radius
-             *  if (distance < collisionDistance)
-             *      do collision depending on relative sizes
-             *  if (distance < MAX(A.influence, B.influence) AND neighborMergeabiltyCheck())
-             *      form a system of A and B
-             */
+            @NotNull PhysicalBody neighborBody = ((BarySimpleObject) neighbor).getSimpleBody();
+            double collisionDistance = getSimpleBody().getRadius() + neighborBody.getRadius();
+            if (distance < collisionDistance) {
+                //TODO: do collision depending on relative sizes
+                printLine("Collision between " + getSimpleBody().getName() + " and " + neighborBody.getName());
+            }
+            if (distance < Math.max(getInfluenceRadius(), neighbor.getInfluenceRadius()) && neighborMergeabiltyCheck()) {
+                //TODO: form a new system of this and neighbor
+                printLine("A new system should be formed between " + getSimpleBody().getName() + " and " + neighborBody.getName());
+            }
         } else if (neighbor instanceof BarySystem) {
             //simpleObject - system case
-            /**
-             * TODO:
-             *  if (distance < B.influence)
-             *      A enters B system, regardless of mass
-             *  else if (distance < A.influence AND neighborMergeabiltyCheck())
-             *      form a system of A and B
-             */
+            if (distance < neighbor.getInfluenceRadius()) {
+                //TODO: this enters neighbor system
+                printLine("Object " + getSimpleBody().getName() + " should enter system " + neighbor);
+            } else if (distance < getInfluenceRadius() && neighborMergeabiltyCheck()) {
+                //TODO: form a system of A and B
+                printLine("A new system should be formed between " + getSimpleBody().getName() + " and " + neighbor);
+            }
         } else {
             throw new UnrecognizedBaryObjectTypeException();
         }

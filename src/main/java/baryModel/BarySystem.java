@@ -3,6 +3,7 @@ package baryModel;
 import java.util.List;
 import java.awt.Color;
 
+import baryModel.simpleObjects.PhysicalBody;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,8 +13,11 @@ import utils.coordinates.Location;
 import utils.coordinates.Velocity;
 import baryModel.simpleObjects.BarySimpleObject;
 
+import static consoleUtils.SimplePrinting.printLine;
+
 //
 public class BarySystem extends BaryObject implements BaryObjectContainerInterface {
+    private static final boolean MERGE_ON_TOUCH = false;
     private final @NotNull Color color;
 
     //
@@ -54,33 +58,26 @@ public class BarySystem extends BaryObject implements BaryObjectContainerInterfa
 
     //
     public void checkMeaninglessSystems() {
-        boolean rootSystem = getParent() == null;
         double influenceRadius = getInfluenceRadius();
-        for (int i = 0; i < objects.size(); i++) {
+        for (int i = 0; i < objects.size(); i++) { //checks all members
             BaryObject object = objects.get(i);
             if (object instanceof BarySystem) { //check one level deeper, if it's a system
                 ((BarySystem) object).checkMeaninglessSystems();
             }
-            if (!rootSystem) {
-                //if body exceeds parent's influence radius, move to upper level
-                double distance = object.getCoordinates().getLocation().getRadial()[0];
-                if (distance > influenceRadius) {
-                    try {
-                        object.moveLevelUp();
-                        i--;
-                    } catch (RootParentException ignored) {}
-                }
+
+            //if body exceeds parent's influence radius, move to upper level
+            double distance = object.getCoordinates().getLocation().getRadial()[0];
+            if (distance > influenceRadius) {
+                try {
+                    object.moveLevelUp();
+                    i--;
+                } catch (RootParentException ignored) {}
             }
         }
-        if (!rootSystem) { //checks that the universe doesn't get dissolved
-            //if system has 1 or less members
-            if (objects.size() <= 1) {
-                moveAllMembersUp(); //move all members to upper level
-                //dissolve system
-                getParent().removeObject(this);
-            }
+        if (objects.size() < 2) { //if system has less than 2 members
+            moveAllMembersUp(); //move all members to upper level
+            getParent().removeObject(this); //dissolve system
         }
-        //TODO: new coordinates for object should be: old system coordinates + old relative coordinates
     }
 
     private void moveAllMembersUp() {
@@ -184,39 +181,50 @@ public class BarySystem extends BaryObject implements BaryObjectContainerInterfa
         double distance = getDistanceToNeighbor(neighbor);
         if (neighbor instanceof BarySimpleObject) {
             //system - simpleObject case
-            /**
-             * TODO:
-             *  if (distance < A.influence)
-             *      B enters A system, regardless of mass
-             *  else if (distance < B.influence AND neighborMergeabiltyCheck())
-             *      form a system of B and A
-             */
+            @NotNull PhysicalBody neighborBody = ((BarySimpleObject) neighbor).getSimpleBody();
+            if (distance < getInfluenceRadius()) {
+                //TODO: neighbor joins this system
+                printLine("Object " + neighborBody.getName() + " should enter system " + this);
+            } else if (distance < neighbor.getInfluenceRadius() && neighborMergeabiltyCheck()) {
+                //TODO: form a new system of this and neighbor
+                printLine("A new system should be formed between " + this + " and " + neighborBody.getName());
+            }
         } else if (neighbor instanceof BarySystem) {
             //system - system case
-            /**
-             * TODO:
-             *  boolean mergeOnTouch
-             *  if (distance < A.influence + B.influence)
-             *      // two systems touch
-             *      if (mergeOnTouch)
-             *          merge A and B into one
-             *      else
-             *          check if children of both intersect
-             *              goes deeper into cycle, ugh
-             *  if (!mergeOnTouch AND neighborMergeabiltyCheck())
-             *      boolean
-             *          withinA distance < A.influence
-             *          withinB distance < B.influence
-             *      if (withinA AND withinB)
-             *          //both are in each other's influence
-             *          merge A and B into one
-             *      else
-             *          //only one system is within the other's influence
-             *          if (withinA)
-             *              B system joins A system
-             *          if (withinB)
-             *              A system joins B system
-             */
+            boolean mergeOnTouch = MERGE_ON_TOUCH;
+            double
+                    influence = getInfluenceRadius(),
+                    neighborInfluence = neighbor.getInfluenceRadius();
+            if (distance < influence + neighborInfluence) {
+                //two systems touch
+                if (mergeOnTouch) {
+                    //TODO: merge this and neighbor into a new system
+                    printLine("Systems " + this + " and " + neighbor + " should be merged");
+                } else {
+                    //TODO: check if children of both intersect; goes deeper into cycle, ugh
+                    printLine("Systems " + this + " and " + neighbor + " overlap, members might intersect");
+                }
+            }
+            if (!mergeOnTouch && neighborMergeabiltyCheck()) {
+                boolean
+                        withinThis = distance < influence,
+                        withinNeighbor = distance < neighborInfluence;
+                if (withinThis && withinNeighbor) {
+                    //both are in each other's influence
+                    //TODO: merge this and neighbor into a new system
+                    printLine("Systems " + this + " and " + neighbor + " should be merged");
+                } else {
+                    //only one system is within the other's influence
+                    if (withinThis) {
+                        //TODO: neighbor system joins this system
+                        printLine("System " + neighbor + " should enter system " + this);
+                    }
+                    if (withinNeighbor) {
+                        //TODO: this system joins neighbor system
+                        printLine("System " + this + " should enter system " + neighbor);
+                    }
+                }
+            }
         } else {
             throw new UnrecognizedBaryObjectTypeException();
         }
