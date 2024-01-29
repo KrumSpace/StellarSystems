@@ -7,7 +7,7 @@ import java.util.Objects;
 
 //
 public class OffsetPainter {
-    private static final int @NotNull [] DEFAULT_DRAW_OFFSET = new int [] {400, 300};
+    private static final int @NotNull [] DEFAULT_DRAW_OFFSET = new int [] {300, 300};
     private int @NotNull [] drawOffset;
 
     //

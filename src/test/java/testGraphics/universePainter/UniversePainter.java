@@ -14,7 +14,7 @@ import testGraphics.ScaledOffsetPainter;
 
 //
 public class UniversePainter extends ScaledOffsetPainter {
-    private static final double DEFAULT_SCALE = 2.0;
+    private static final double DEFAULT_SCALE = 2.5;
     private static final @NotNull Color UNIVERSE_CENTER_MARKER_COLOR = Color.white;
     private final @NotNull BaryUniverse universe;
 

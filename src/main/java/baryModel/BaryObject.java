@@ -133,6 +133,22 @@ public abstract class BaryObject implements
         coordinates.update();
     }
 
+    //
+    public final double getDistanceToNeighbor(@NotNull BaryObject neighbor) {
+        double @NotNull []
+                location = this.getCoordinates().getLocation().getCartesian(),
+                neighborLocation = neighbor.getCoordinates().getLocation().getCartesian();
+        return Math.hypot(
+                location[0] - neighborLocation[0],
+                location[1] - neighborLocation[1]);
+    }
+
+    //check if parent is either the universe or its child count is greater than 2
+    public final boolean neighborMergeabiltyCheck() {
+        @NotNull BaryObjectContainerInterface parent = getParent();
+        return parent instanceof BaryUniverse || parent.getObjects().size() > 2;
+    }
+
     //for graphical purposes
     public abstract @NotNull Color getColor();
 }

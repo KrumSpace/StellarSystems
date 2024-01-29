@@ -4,7 +4,10 @@ import org.jetbrains.annotations.NotNull;
 
 //
 final class InfluenceRadiusCalculator {
-    private static final double MAX_INFLUENCE_RADIUS = 400;
+    private static final double
+            MAX_INFLUENCE_RADIUS = 400,
+            MASS_RATIO_POWER = 0.4, // = 2 / 5
+            INFLUENCE_RADIUS_MASS_COEFFICIENT_FOR_ROOT = 1.5;
     private final @NotNull BaryObject object;
 
     //
@@ -14,37 +17,31 @@ final class InfluenceRadiusCalculator {
 
     //R_influence = R * (m / M) ^ (2 / 5)
     double getInfluenceRadius() {
-        double
-                distanceToParent = object.getCoordinates().getLocation().getRadial()[0],
-                mass = object.getMass();
+        double mass = object.getMass();
         @NotNull BaryObjectContainerInterface parent = object.getParent();
-        if (parent instanceof BarySystem) {
-            //parent is a system
-            double parentMass = ((BarySystem) parent).getMass();
-            return calculateInfluenceRadius(distanceToParent, mass, parentMass);
-        } else if (parent instanceof BaryUniverse) {
-            //parent is the universe
-            return calculateInfluenceRadiusForRoot();
-        } else {
-            //unrecognized parent type
-            throw new RuntimeException(new UnrecognizedBaryObjectTypeException());
+        try {
+            if (parent instanceof BarySystem) {
+                double
+                        distanceToParent = object.getCoordinates().getLocation().getRadial()[0],
+                        parentMass = ((BarySystem) parent).getMass();
+                return calculateInfluenceRadius(distanceToParent, mass, parentMass);
+            } else {
+                if (!(parent instanceof BaryUniverse)) {
+                    //parent is not the universe nor a system - unrecognized parent type
+                    throw new UnrecognizedBaryObjectTypeException();
+                }
+                return calculateInfluenceRadiusForRoot(mass);
+            }
+        } catch (UnrecognizedBaryObjectTypeException e) {
+            throw new RuntimeException(e);
         }
     }
 
     private static double calculateInfluenceRadius(double distance, double mass, double parentMass) {
-        double
-                massRatio = mass / parentMass,
-                massRatioPower = 2.0 / 5;
-        return Math.min(MAX_INFLUENCE_RADIUS, distance * Math.pow(massRatio, massRatioPower));
+        return Math.min(MAX_INFLUENCE_RADIUS, distance * Math.pow(mass / parentMass, MASS_RATIO_POWER));
     }
 
-    private static double calculateInfluenceRadiusForRoot() {
-        return MAX_INFLUENCE_RADIUS;
-    }
-
-    private static final class UnrecognizedBaryObjectTypeException extends Exception {
-        UnrecognizedBaryObjectTypeException() {
-            super("Unrecognized BaryObject type!");
-        }
+    private static double calculateInfluenceRadiusForRoot(double mass) {
+        return Math.min(MAX_INFLUENCE_RADIUS, mass * INFLUENCE_RADIUS_MASS_COEFFICIENT_FOR_ROOT);
     }
 }
