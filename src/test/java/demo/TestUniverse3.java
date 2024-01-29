@@ -16,15 +16,15 @@ class TestUniverse3 extends BaryUniverse {
     //
     TestUniverse3() {
         super();
-        addCommonObjects(3, 400, new double [2]);
+        addCommonObjects(2, 3500, new double [2]);
         addNewSimpleObject(
-                1000, -300,
-                60, Math.PI,
-                new PhysicalBody("object-1", 250, 50, Color.CYAN));
+                5000, -1700,
+                300, Math.PI,
+                new PhysicalBody("object-1", 300, 100, Color.CYAN));
         addNewSimpleObject(
-                1000, 300,
-                20, Math.PI,
-                new PhysicalBody("object-2", 150, 50, Color.MAGENTA));
+                5000, 1800,
+                100, Math.PI,
+                new PhysicalBody("object-2", 200, 100, Color.MAGENTA));
     }
 
     private void addNewSimpleObject(double x, double y, double speed, double direction, @NotNull PhysicalBody body) {
@@ -56,6 +56,6 @@ class TestUniverse3 extends BaryUniverse {
         addNewSimpleObject(
                 x, y,
                 0, 0,
-                new PhysicalBody(name, 100, 50, Color.green));
+                new PhysicalBody(name, 100, 100, Color.green));
     }
 }

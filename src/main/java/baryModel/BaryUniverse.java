@@ -1,6 +1,7 @@
 package baryModel;
 
-import java.awt.Color;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -8,12 +9,27 @@ import utils.UpdatableValueInterface;
 
 //
 public class BaryUniverse implements BaryObjectContainerInterface, UpdatableValueInterface.BufferedValueInterface {
-    private static final @NotNull Color DEFAULT_COLOR = Color.white;
-    private final @NotNull Color color; //for center marker and text
+    private final @NotNull List<@NotNull BaryObject> objects = new ArrayList<>();
 
     //
-    public BaryUniverse() {
-        color = DEFAULT_COLOR;
+    public BaryUniverse() {}
+
+    //
+    @Override
+    public final @NotNull List<@NotNull BaryObject> getObjects() {
+        return objects;
+    }
+
+    //
+    @Override
+    public final void addObject(@NotNull BaryObject object) {
+        objects.add(object);
+    }
+
+    //
+    @Override
+    public final void removeObject(@NotNull BaryObject object) {
+        objects.remove(object);
     }
 
     //does a complete cycle
@@ -27,7 +43,7 @@ public class BaryUniverse implements BaryObjectContainerInterface, UpdatableValu
     //
     @Override
     public final void precalculate(double time) {
-        for (BaryObject object : objects) {
+        for (@NotNull BaryObject object : getObjects()) {
             object.precalculate(time);
         }
     }
@@ -35,7 +51,7 @@ public class BaryUniverse implements BaryObjectContainerInterface, UpdatableValu
     //
     @Override
     public final void update() {
-        for (BaryObject object : objects) {
+        for (@NotNull BaryObject object : getObjects()) {
             object.update();
         }
     }
@@ -43,9 +59,15 @@ public class BaryUniverse implements BaryObjectContainerInterface, UpdatableValu
     //
     @Override
     public final void checkMeaninglessSystems() {
-        for (BaryObject object : objects) {
+        @NotNull List<@NotNull BaryObject> objects = getObjects();
+        for (int i = 0; i < objects.size(); i++) {
+            @NotNull BaryObject object = objects.get(i);
             if (object instanceof BaryObjectContainerInterface container) {
-                container.checkMeaninglessSystems();
+                try {
+                    container.checkMeaninglessSystems();
+                } catch (ObjectRemovedException ignored) {
+                    i--;
+                }
             }
         }
     }

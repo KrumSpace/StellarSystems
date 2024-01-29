@@ -4,10 +4,10 @@ import java.awt.Color;
 
 import org.jetbrains.annotations.NotNull;
 
+import static consoleUtils.SimplePrinting.printLine;
+
 import utils.coordinates.Coordinates;
 import baryModel.*;
-
-import static consoleUtils.SimplePrinting.printLine;
 
 //
 public class BarySimpleObject extends BaryObject {
@@ -46,14 +46,15 @@ public class BarySimpleObject extends BaryObject {
         if (neighbor instanceof BarySimpleObject) {
             //simpleObject - simpleObject case
             @NotNull PhysicalBody neighborBody = ((BarySimpleObject) neighbor).getSimpleBody();
-            double collisionDistance = getSimpleBody().getRadius() + neighborBody.getRadius();
+            double collisionDistance = (getSimpleBody().getRadius() + neighborBody.getRadius()) / 2;
             if (distance < collisionDistance) {
                 //TODO: do collision depending on relative sizes
                 printLine("Collision between " + getSimpleBody().getName() + " and " + neighborBody.getName());
             }
             if (distance < Math.max(getInfluenceRadius(), neighbor.getInfluenceRadius()) && neighborMergeabiltyCheck()) {
                 //TODO: form a new system of this and neighbor
-                printLine("A new system should be formed between " + getSimpleBody().getName() + " and " + neighborBody.getName());
+                //printLine("A new system should be formed between " + getSimpleBody().getName() + " and " + neighborBody.getName());
+                formNewSystem(neighbor);
             }
         } else if (neighbor instanceof BarySystem) {
             //simpleObject - system case
@@ -62,10 +63,22 @@ public class BarySimpleObject extends BaryObject {
                 printLine("Object " + getSimpleBody().getName() + " should enter system " + neighbor);
             } else if (distance < getInfluenceRadius() && neighborMergeabiltyCheck()) {
                 //TODO: form a system of A and B
-                printLine("A new system should be formed between " + getSimpleBody().getName() + " and " + neighbor);
+                //printLine("A new system should be formed between " + getSimpleBody().getName() + " and " + neighbor);
+                formNewSystem(neighbor);
             }
         } else {
             throw new UnrecognizedBaryObjectTypeException();
         }
+    }
+
+    //forms a new system from this and a neighbor
+    private void formNewSystem(@NotNull BaryObject neighbor) throws ObjectRemovedException {
+        @NotNull Color color = Color.yellow; //TODO: improve the color
+        try {
+            BarySystem.formNewSystem(this, neighbor, color);
+            @NotNull ObjectRemovedException exception = new ObjectRemovedException();
+            exception.addSuppressed(new NeighborRemovedException());
+            throw exception;
+        } catch (BarySystem.DifferentParentException ignored) {}
     }
 }

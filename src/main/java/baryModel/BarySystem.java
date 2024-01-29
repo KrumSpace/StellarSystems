@@ -1,23 +1,25 @@
 package baryModel;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.awt.Color;
 
-import baryModel.simpleObjects.PhysicalBody;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static consoleUtils.SimplePrinting.printLine;
 
 import utils.MathUtils;
 import utils.coordinates.Coordinates;
 import utils.coordinates.Location;
 import utils.coordinates.Velocity;
+import baryModel.simpleObjects.PhysicalBody;
 import baryModel.simpleObjects.BarySimpleObject;
-
-import static consoleUtils.SimplePrinting.printLine;
 
 //
 public class BarySystem extends BaryObject implements BaryObjectContainerInterface {
     private static final boolean MERGE_ON_TOUCH = false;
+    private final @NotNull List<@NotNull BaryObject> objects = new ArrayList<>();
     private final @NotNull Color color;
 
     //
@@ -26,6 +28,24 @@ public class BarySystem extends BaryObject implements BaryObjectContainerInterfa
                       @NotNull Color color) {
         super(parent, coordinates);
         this.color = color;
+    }
+
+    //
+    @Override
+    public final @NotNull List<@NotNull BaryObject> getObjects() {
+        return objects;
+    }
+
+    //
+    @Override
+    public final void addObject(@NotNull BaryObject object) {
+        objects.add(object);
+    }
+
+    //
+    @Override
+    public final void removeObject(@NotNull BaryObject object) {
+        objects.remove(object);
     }
 
     //TODO: improve this
@@ -40,9 +60,15 @@ public class BarySystem extends BaryObject implements BaryObjectContainerInterfa
 
     //
     @Override
+    public final @NotNull Color getColor() {
+        return color;
+    }
+
+    //
+    @Override
     public void precalculate(double time) {
         super.precalculate(time);
-        for (BaryObject object : objects) {
+        for (@NotNull BaryObject object : objects) {
             object.precalculate(time);
         }
     }
@@ -51,13 +77,14 @@ public class BarySystem extends BaryObject implements BaryObjectContainerInterfa
     @Override
     public void update() {
         super.update();
-        for (BaryObject object : objects) {
+        for (@NotNull BaryObject object : objects) {
             object.update();
         }
     }
 
     //
-    public void checkMeaninglessSystems() {
+    @Override
+    public void checkMeaninglessSystems() throws ObjectRemovedException {
         double influenceRadius = getInfluenceRadius();
         for (int i = 0; i < objects.size(); i++) { //checks all members
             BaryObject object = objects.get(i);
@@ -77,6 +104,7 @@ public class BarySystem extends BaryObject implements BaryObjectContainerInterfa
         if (objects.size() < 2) { //if system has less than 2 members
             moveAllMembersUp(); //move all members to upper level
             getParent().removeObject(this); //dissolve system
+            throw new ObjectRemovedException();
         }
     }
 
@@ -87,90 +115,6 @@ public class BarySystem extends BaryObject implements BaryObjectContainerInterfa
                 object.moveLevelUp();
                 i--;
             } catch (RootParentException ignored) {}
-        }
-    }
-
-    //
-    public void createNewSystems() {
-        List<BaryObject> objects = getObjects();
-        //make new systems
-        for (int i = 0; objects.size() > 2 && i < objects.size(); i++) {
-            BaryObject object1 = objects.get(i);
-            double [] cartesian1 = object1.getCoordinates().getLocation().getCartesian();
-            double influenceRadius1 = object1.getInfluenceRadius();
-            //check all neighbors
-            for (int j = 0; j < objects.size(); j++) {
-                if (j != i) {
-                    BaryObject object2 = objects.get(j);
-                    double []
-                            cartesian2 = object2.getCoordinates().getLocation().getCartesian(),
-                            cartesianDelta = new double[] {
-                                    cartesian1[0] - cartesian2[0],
-                                    cartesian1[1] - cartesian2[1]};
-                    double distance = Math.hypot(cartesianDelta[0], cartesianDelta[1]);
-                    double influenceRadius2 = object2.getInfluenceRadius();
-                    //check influence radiuses
-                    if (distance < Math.max(influenceRadius1, influenceRadius2)) {
-                        double
-                                mass1 = object1.getMass(),
-                                mass2 = object2.getMass(),
-                                massRatio = mass1 / mass2;
-                        double []
-                                weightedCartesianDelta = new double [] {
-                                cartesianDelta[0] / (1 + massRatio),
-                                cartesianDelta[1] / (1 + massRatio)},
-                                initialVelocity1 = object1.getCoordinates().getVelocity().getCartesian(),
-                                vxy1 = new double [] {
-                                        initialVelocity1[0] * Math.cos(initialVelocity1[1]),
-                                        initialVelocity1[0] * Math.sin(initialVelocity1[1])},
-                                initialVelocity2 = object2.getCoordinates().getVelocity().getCartesian(),
-                                vxy2 = new double [] {
-                                        initialVelocity2[0] * Math.cos(initialVelocity2[1]),
-                                        initialVelocity2[0] * Math.sin(initialVelocity2[1])},
-                                systemVelocity = new double [] {
-                                        (vxy1[0] * mass1 + vxy2[0] * mass2) / (mass1 + mass2),
-                                        (vxy1[1] * mass1 + vxy2[1] * mass2) / (mass1 + mass2)};
-                        Coordinates systemCoordinates = new Coordinates(
-                                new Location.LocationCartesian(
-                                        cartesian1[0] - weightedCartesianDelta[0],
-                                        cartesian1[1] - weightedCartesianDelta[1]),
-                                new Velocity.VelocityCartesian(
-                                        Math.hypot(systemVelocity[0], systemVelocity[1]),
-                                        MathUtils.getAngle(systemVelocity[0], systemVelocity[1])));
-                        Color systemColor = Color.red;
-                        BarySystem system = new BarySystem(this, systemCoordinates, systemColor);
-                        this.addObject(system);
-                        double [] newVelocityProjections1 = new double [] {
-                                vxy1[0] - systemVelocity[0],
-                                vxy1[1] - systemVelocity[1]};
-                        object1.setCoordinates(new Coordinates(
-                                new Location.LocationCartesian(
-                                        cartesian1[0] - systemCoordinates.getLocation().getCartesian()[0],
-                                        cartesian1[1] - systemCoordinates.getLocation().getCartesian()[1]),
-                                new Velocity.VelocityCartesian(
-                                        Math.hypot(newVelocityProjections1[0], newVelocityProjections1[1]),
-                                        MathUtils.getAngle(newVelocityProjections1[0], newVelocityProjections1[1]))));
-                        system.addObject(object1);
-                        object1.setParent(system);
-                        removeObject(object1);
-                        i--;
-                        double [] newVelocityProjections2 = new double [] {
-                                vxy2[0] - systemVelocity[0],
-                                vxy2[1] - systemVelocity[1]};
-                        object2.setCoordinates(new Coordinates(
-                                new Location.LocationCartesian(
-                                        cartesian2[0] - systemCoordinates.getLocation().getCartesian()[0],
-                                        cartesian2[1] - systemCoordinates.getLocation().getCartesian()[1]),
-                                new Velocity.VelocityCartesian(
-                                        Math.hypot(newVelocityProjections2[0], newVelocityProjections2[1]),
-                                        MathUtils.getAngle(newVelocityProjections2[0], newVelocityProjections2[1]))));
-                        system.addObject(object2);
-                        object2.setParent(system);
-                        removeObject(object2);
-                        break;
-                    }
-                }
-            }
         }
     }
 
@@ -187,7 +131,13 @@ public class BarySystem extends BaryObject implements BaryObjectContainerInterfa
                 printLine("Object " + neighborBody.getName() + " should enter system " + this);
             } else if (distance < neighbor.getInfluenceRadius() && neighborMergeabiltyCheck()) {
                 //TODO: form a new system of this and neighbor
-                printLine("A new system should be formed between " + this + " and " + neighborBody.getName());
+                //printLine("A new system should be formed between " + this + " and " + neighborBody.getName());
+                try {
+                    formNewSystem(this, neighbor, Color.yellow); //TODO: improve the color
+                    @NotNull ObjectRemovedException exception = new ObjectRemovedException();
+                    exception.addSuppressed(new NeighborRemovedException());
+                    throw exception;
+                } catch (DifferentParentException ignored) {}
             }
         } else if (neighbor instanceof BarySystem) {
             //system - system case
@@ -230,9 +180,87 @@ public class BarySystem extends BaryObject implements BaryObjectContainerInterfa
         }
     }
 
+    //forms a new system from two objects, object1 and object2 must be children of the same parent!
+    public static void formNewSystem(@NotNull BaryObject object1,
+                                     @NotNull BaryObject object2,
+                                     @NotNull Color color) throws DifferentParentException {
+        @NotNull BaryObjectContainerInterface parent = object1.getParent();
+        if (object2.getParent() != parent) {
+            throw new DifferentParentException();
+        } else {
+            //calculate locations
+            double @NotNull []
+                    initialLocation1 = object1.getCoordinates().getLocation().getCartesian(),
+                    initialLocation2 = object2.getCoordinates().getLocation().getCartesian();
+            double
+                    dxTotal = initialLocation2[0] - initialLocation1[0],
+                    dyTotal = initialLocation2[1] - initialLocation1[1],
+                    mass1 = object1.getMass(),
+                    mass2 = object2.getMass(),
+                    totalMass = mass1 + mass2,
+                    massRatio1 = mass1 / totalMass,
+                    dx1 = dxTotal * (1 - massRatio1),
+                    dy1 = dyTotal * (1 - massRatio1),
+                    dx2 = dxTotal - dx1,
+                    dy2 = dyTotal - dy1;
+
+            //calculate velocities
+            double @NotNull []
+                    initialVelocity1 = object1.getCoordinates().getVelocity().getCartesian(),
+                    initialVelocity2 = object2.getCoordinates().getVelocity().getCartesian(),
+                    initialVelocityProjections1 = MathUtils.getProjectionsFromMagnitudeAndAngle(initialVelocity1[0], initialVelocity1[1]),
+                    initialVelocityProjections2 = MathUtils.getProjectionsFromMagnitudeAndAngle(initialVelocity2[0], initialVelocity2[1]);
+            double
+                    px = initialVelocityProjections1[0] * mass1 + initialVelocityProjections2[0] * mass2,
+                    py = initialVelocityProjections1[1] * mass1 + initialVelocityProjections2[1] * mass2,
+                    vxSystemFinal = px / totalMass,
+                    vySystemFinal = py / totalMass,
+                    vx1final = initialVelocityProjections1[0] - vxSystemFinal,
+                    vy1final = initialVelocityProjections1[1] - vySystemFinal,
+                    vx2final = initialVelocityProjections2[0] - vxSystemFinal,
+                    vy2final = initialVelocityProjections2[1] - vySystemFinal;
+
+            //prepare final coordinates
+            @NotNull Coordinates
+                    systemCoordinates = getFinalCoordinates(
+                            initialLocation1[0] + dx1, initialLocation1[1] + dy1,
+                            vxSystemFinal, vySystemFinal),
+                    finalCoordinates1 = getFinalCoordinates(-dx1, -dy1, vx1final, vy1final),
+                    finalCoordinates2 = getFinalCoordinates(dx2, dy2, vx2final, vy2final);
+
+            //actually make the system and transfer members
+            @NotNull BarySystem newSystem = new BarySystem(parent, systemCoordinates, color);
+            transferObjectPrecalculated(object1, parent, newSystem, finalCoordinates1);
+            transferObjectPrecalculated(object2, parent, newSystem, finalCoordinates2);
+            parent.addObject(newSystem);
+        }
+    }
+
     //
-    @Override
-    public final @NotNull Color getColor() {
-        return color;
+    public static final class DifferentParentException extends Exception {
+        //
+        DifferentParentException() {
+            super("Different parent exception!");
+        }
+    }
+
+    private static @NotNull Coordinates getFinalCoordinates(double x, double y, double vx, double vy) {
+        return new Coordinates(new Location.LocationCartesian(x, y), getNewVelocityFromProjections(vx, vy));
+    }
+
+    private static @NotNull Velocity getNewVelocityFromProjections(double vx, double vy) {
+        return new Velocity.VelocityCartesian(
+                Math.hypot(vx, vy),
+                MathUtils.getAngle(vx, vy));
+    }
+
+    private static void transferObjectPrecalculated(@NotNull BaryObject object,
+                                   @NotNull BaryObjectContainerInterface oldParent,
+                                   @NotNull BaryObjectContainerInterface newParent,
+                                   @NotNull Coordinates newCoordinates) {
+        oldParent.removeObject(object);
+        object.setParent(newParent);
+        object.setCoordinates(newCoordinates);
+        newParent.addObject(object);
     }
 }

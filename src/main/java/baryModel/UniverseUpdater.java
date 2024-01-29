@@ -8,7 +8,7 @@ import utils.TimeUtils;
 
 //
 public final class UniverseUpdater extends AbstractUpdater {
-    private static final long DELAY = 30;
+    private static final long DELAY = 100;
     private final @NotNull BaryUniverse universe;
 
     //

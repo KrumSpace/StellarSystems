@@ -1,34 +1,26 @@
 package baryModel;
 
 import java.util.List;
-import java.util.ArrayList;
 
 import org.jetbrains.annotations.NotNull;
 
 //
 public interface BaryObjectContainerInterface {
-    @NotNull List<@NotNull BaryObject> objects = new ArrayList<>();
+    //
+    @NotNull List<@NotNull BaryObject> getObjects();
 
     //
-    default @NotNull List<@NotNull BaryObject> getObjects() {
-        return objects;
-    }
+    void addObject(@NotNull BaryObject object);
 
     //
-    default void addObject(@NotNull BaryObject object) {
-        objects.add(object);
-    }
-
-    //
-    default void removeObject(@NotNull BaryObject object) {
-        objects.remove(object);
-    }
+    void removeObject(@NotNull BaryObject object);
 
     //consolidates systems
-    void checkMeaninglessSystems();
+    void checkMeaninglessSystems() throws ObjectRemovedException;
 
     //checks all child relations
     default void checkChildNeighbors() {
+        @NotNull List<@NotNull BaryObject> objects = getObjects();
         for (int i = 0; i < objects.size(); i++) {
             @NotNull BaryObject object = objects.get(i);
             if (object instanceof BaryObjectContainerInterface) { //goes deeper if there are more children
@@ -36,8 +28,8 @@ public interface BaryObjectContainerInterface {
             }
             try {
                 object.checkNeighbors();
-            } catch (ObjectRemovedException ignored) {
-                i--;
+            } catch (ObjectRemovedException exception) {
+                break; //crude solution; TODO: improve
             }
         }
     }

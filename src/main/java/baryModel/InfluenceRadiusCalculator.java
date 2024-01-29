@@ -5,9 +5,9 @@ import org.jetbrains.annotations.NotNull;
 //
 final class InfluenceRadiusCalculator {
     private static final double
-            MAX_INFLUENCE_RADIUS = 400,
+            MAX_INFLUENCE_RADIUS = 2000,
             MASS_RATIO_POWER = 0.4, // = 2 / 5
-            INFLUENCE_RADIUS_MASS_COEFFICIENT_FOR_ROOT = 1.5;
+            INFLUENCE_RADIUS_MASS_COEFFICIENT_FOR_ROOT = 5;
     private final @NotNull BaryObject object;
 
     //

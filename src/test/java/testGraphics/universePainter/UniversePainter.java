@@ -2,6 +2,7 @@ package testGraphics.universePainter;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.Collections;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,7 +15,7 @@ import testGraphics.ScaledOffsetPainter;
 
 //
 public class UniversePainter extends ScaledOffsetPainter {
-    private static final double DEFAULT_SCALE = 2.5;
+    private static final double DEFAULT_SCALE = 20;
     private static final @NotNull Color UNIVERSE_CENTER_MARKER_COLOR = Color.white;
     private final @NotNull BaryUniverse universe;
 
@@ -45,7 +46,7 @@ public class UniversePainter extends ScaledOffsetPainter {
                                    double @NotNull [] scaledLocation,
                                    @NotNull Color color) {
         int @NotNull [] drawOffset = getDrawOffset();
-        int centerMarkerSize = 10;
+        int centerMarkerSize = 20;
         g.setColor(color);
         g.drawLine( //horizontal line
                 (int) (scaledLocation[0] + drawOffset[0] - centerMarkerSize / 2),
@@ -63,7 +64,7 @@ public class UniversePainter extends ScaledOffsetPainter {
                               @NotNull BaryObjectContainerInterface container,
                               double @NotNull [] absoluteLocation,
                               boolean paintOrbits) {
-        for (@NotNull BaryObject object : container.getObjects()) {
+        for (@NotNull BaryObject object : Collections.unmodifiableList(container.getObjects())) {
             try {
                 if (paintOrbits) {
                     paintOrbit(g, object, scaleLocation(absoluteLocation));
