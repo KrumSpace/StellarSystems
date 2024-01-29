@@ -1,8 +1,8 @@
 package demo;
 
-import baryModel.BaryUniverse;
 import org.jetbrains.annotations.NotNull;
 
+import baryModel.BaryUniverse;
 import baryModel.UniverseUpdater;
 
 import testGraphics.TestWindow;
@@ -18,8 +18,9 @@ public class Main {
     }
 
     private static @NotNull BaryUniverse getNewUniverse() {
-        //return new TestModel();
-        return new TestUniverse2();
+        //return new TestUniverse1();
+        //return new TestUniverse2();
+        return new TestUniverse3();
     }
 
     private static void startGraphics(@NotNull BaryUniverse universe) {

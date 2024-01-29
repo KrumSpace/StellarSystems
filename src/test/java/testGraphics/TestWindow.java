@@ -11,7 +11,7 @@ import baryModel.BaryUniverse;
 
 //A graphical window for testing purposes.
 public class TestWindow extends JFrame {
-    private static final @NotNull Dimension WINDOW_SIZE = new Dimension(900, 700);
+    private static final @NotNull Dimension WINDOW_SIZE = new Dimension(1100, 700);
     private static final @NotNull Point WINDOW_LOCATION = new Point(150, 100);
     private static final @NotNull String WINDOW_TITLE = "Bary window!";
     private final @NotNull BaryUniverse universe;

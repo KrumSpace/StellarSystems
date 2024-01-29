@@ -10,6 +10,7 @@ import utils.MathUtils;
 import utils.coordinates.Coordinates;
 import utils.coordinates.Location;
 import utils.coordinates.Velocity;
+import baryModel.simpleObjects.BarySimpleObject;
 
 //
 public class BarySystem extends BaryObject implements BaryObjectContainerInterface {
@@ -173,6 +174,51 @@ public class BarySystem extends BaryObject implements BaryObjectContainerInterfa
                     }
                 }
             }
+        }
+    }
+
+    //
+    @Override
+    public void checkNeighbor(@NotNull BaryObject neighbor) throws
+            UnrecognizedBaryObjectTypeException, ObjectRemovedException, NeighborRemovedException {
+        double distance = getDistanceToNeighbor(neighbor);
+        if (neighbor instanceof BarySimpleObject) {
+            //system - simpleObject case
+            /**
+             * TODO:
+             *  if (distance < A.influence)
+             *      B enters A system, regardless of mass
+             *  else if (distance < B.influence AND neighborMergeabiltyCheck())
+             *      form a system of B and A
+             */
+        } else if (neighbor instanceof BarySystem) {
+            //system - system case
+            /**
+             * TODO:
+             *  boolean mergeOnTouch
+             *  if (distance < A.influence + B.influence)
+             *      // two systems touch
+             *      if (mergeOnTouch)
+             *          merge A and B into one
+             *      else
+             *          check if children of both intersect
+             *              goes deeper into cycle, ugh
+             *  if (!mergeOnTouch AND neighborMergeabiltyCheck())
+             *      boolean
+             *          withinA distance < A.influence
+             *          withinB distance < B.influence
+             *      if (withinA AND withinB)
+             *          //both are in each other's influence
+             *          merge A and B into one
+             *      else
+             *          //only one system is within the other's influence
+             *          if (withinA)
+             *              B system joins A system
+             *          if (withinB)
+             *              A system joins B system
+             */
+        } else {
+            throw new UnrecognizedBaryObjectTypeException();
         }
     }
 

@@ -2,41 +2,40 @@ package demo;
 
 import java.awt.Color;
 
-import baryModel.simpleObjects.BarySimpleObject;
-import baryModel.simpleObjects.PhysicalBody;
 import org.jetbrains.annotations.NotNull;
 
-import utils.coordinates.Coordinates;
 import utils.coordinates.Location;
 import utils.coordinates.Velocity;
-import baryModel.*;
+import utils.coordinates.Coordinates;
+import baryModel.simpleObjects.PhysicalBody;
+import baryModel.simpleObjects.BarySimpleObject;
+import baryModel.BaryUniverse;
 
 //
 class TestUniverse2 extends BaryUniverse {
     //
     TestUniverse2() {
         super();
-        @NotNull BaryObject
-                independentObject1 = new BarySimpleObject(
-                        this,
-                        new Coordinates(
-                                new Location.LocationCartesian(500, -200),
-                                new Velocity.VelocityCartesian(60, Math.PI)),
-                        new PhysicalBody("object-1", 200, 50, Color.CYAN)),
-                independentObject2 = new BarySimpleObject(
-                        this,
-                        new Coordinates(
-                                new Location.LocationCartesian(50, -100),
-                                new Velocity.VelocityCartesian(20, 0)),
-                        new PhysicalBody("object-2", 100, 50, Color.MAGENTA)),
-                independentObject3 = new BarySimpleObject(
-                        this,
-                        new Coordinates(
-                                new Location.LocationCartesian(-300, 50),
-                                new Velocity.VelocityCartesian(40, 0)),
-                        new PhysicalBody("object-3", 150, 50, Color.YELLOW));
-        addObject(independentObject1);
-        addObject(independentObject2);
-        addObject(independentObject3);
+        addNewSimpleObject(
+                500, -200,
+                60, Math.PI,
+                new PhysicalBody("object-1", 200, 50, Color.CYAN));
+        addNewSimpleObject(
+                50, -100,
+                20, 0,
+                new PhysicalBody("object-2", 100, 50, Color.MAGENTA));
+        addNewSimpleObject(
+                -300, 50,
+                40, 0,
+                new PhysicalBody("object-3", 150, 50, Color.YELLOW));
+    }
+
+    private void addNewSimpleObject(double x, double y, double speed, double direction, @NotNull PhysicalBody body) {
+        addObject(new BarySimpleObject(
+                this,
+                new Coordinates(
+                        new Location.LocationCartesian(x, y),
+                        new Velocity.VelocityCartesian(speed, direction)),
+                body));
     }
 }

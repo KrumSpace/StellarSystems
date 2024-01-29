@@ -21,10 +21,7 @@ public class BaryUniverse implements BaryObjectContainerInterface, UpdatableValu
         precalculate(time);
         update();
         checkMeaninglessSystems();
-        createNewSystems();
-
-        //check collisions?
-        //check all neighbors, if some radiuses overlap (only applies to simple objects)
+        checkChildNeighbors();
     }
 
     //
@@ -51,11 +48,5 @@ public class BaryUniverse implements BaryObjectContainerInterface, UpdatableValu
                 container.checkMeaninglessSystems();
             }
         }
-    }
-
-    //
-    @Override
-    public void createNewSystems() {
-        //TODO: finish this
     }
 }
