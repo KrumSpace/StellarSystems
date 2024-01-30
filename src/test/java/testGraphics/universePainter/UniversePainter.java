@@ -1,6 +1,9 @@
 package testGraphics.universePainter;
 
+import java.util.Objects;
 import java.util.Collections;
+import java.util.List;
+import java.util.ArrayList;
 import java.awt.Color;
 import java.awt.Graphics;
 
@@ -9,7 +12,6 @@ import org.jetbrains.annotations.Nullable;
 
 import baryModel.*;
 import baryModel.simpleObjects.BarySimpleObject;
-import baryModel.simpleObjects.PhysicalBody;
 
 import testGraphics.AdvancedScaleScaledOffsetPainter;
 
@@ -136,14 +138,17 @@ public class UniversePainter extends AdvancedScaleScaledOffsetPainter {
     private void paintCommonAfter(@NotNull Graphics g,
                                   @NotNull BaryObject object,
                                   double @NotNull [] absoluteLocation) {
-        paintInfluenceRadius(g, object, absoluteLocation);
-        //paint name, size/mass, center
+        double @NotNull []
+                scaledLocation = scaleLocation(absoluteLocation),
+                drawableCenter = getDrawableFromScaled(scaledLocation);
+        paintInfluenceRadius(g, object, drawableCenter);
+        paintCenterMarker(g, scaledLocation, object.getColor());
+        paintObjectInfo(g, object, drawableCenter);
     }
 
     private void paintInfluenceRadius(@NotNull Graphics g,
                                       @NotNull BaryObject object,
-                                      double @NotNull [] absoluteLocation) {
-        double @NotNull[] drawableCenter = getDrawableFromScaled(scaleLocation(absoluteLocation));
+                                      double @NotNull [] drawableCenter) {
         double scaledInfluenceRadius = scaleValue(object.getInfluenceRadius());
         g.setColor(object.getColor());
         g.drawOval(
@@ -152,27 +157,38 @@ public class UniversePainter extends AdvancedScaleScaledOffsetPainter {
                 (int) scaledInfluenceRadius * 2, (int) scaledInfluenceRadius * 2);
     }
 
+    private void paintObjectInfo(@NotNull Graphics g, @NotNull BaryObject object, double @NotNull [] drawCenter) {
+        int @NotNull [] textOffset = new int [] {-20, 30};
+        int lineHeight = 15;
+        paintObjectInfoLines(g, drawCenter, textOffset, lineHeight, new ArrayList<>() {{
+            add(object.getName());
+            add("M: " + ((int) (object.getMass() * 10)) / 10.0);
+            add("SOI: " + ((int) (object.getInfluenceRadius() * 10)) / 10.0);
+        }});
+    }
+
+    private void paintObjectInfoLines(@NotNull Graphics g,
+                                      double @NotNull [] drawCenter,
+                                      int @NotNull [] textOffset, int lineHeight,
+                                      @NotNull List<@Nullable String> lines) {
+        for (int i = 0; i < lines.size(); i++) {
+            g.drawString(
+                    Objects.requireNonNullElse(lines.get(i), ""),
+                    (int) (drawCenter[0] + textOffset[0]),
+                    (int) (drawCenter[1] + textOffset[1] + lineHeight * i));
+        }
+    }
+
     private void paintSimpleBaryObject(@NotNull Graphics g,
                                        @NotNull BarySimpleObject simpleObject,
                                        double @NotNull [] absoluteLocation) {
-        double @NotNull []
-                scaledLocation = scaleLocation(absoluteLocation),
-                drawCenter = getDrawableFromScaled(scaledLocation);
-        @NotNull PhysicalBody simpleBody = simpleObject.getSimpleBody();
-        double
-                actualSize = simpleBody.getRadius(),
-                scaledSize = scaleValue(actualSize);
+        double @NotNull [] drawCenter = getDrawableFromScaled(scaleLocation(absoluteLocation));
+        double scaledSize = scaleValue(simpleObject.getSimpleBody().getRadius());
         g.setColor(simpleObject.getColor());
         g.fillOval(
                 (int) (drawCenter[0] - scaledSize / 2),
                 (int) (drawCenter[1] - scaledSize / 2),
                 (int) scaledSize, (int) scaledSize);
-        @NotNull String name = simpleBody.getName();
-        int @NotNull [] textOffset = new int [] {-20, 20};
-        g.drawString(
-                name,
-                (int) (drawCenter[0] + textOffset[0]),
-                (int) (drawCenter[1] + scaledSize / 2 + textOffset[1]));
     }
 
     private void paintBarySystem(@NotNull Graphics g,
@@ -198,4 +214,8 @@ public class UniversePainter extends AdvancedScaleScaledOffsetPainter {
                 scaledLocation[0] + drawOffset[0],
                 scaledLocation[1] + drawOffset[1]};
     }
+}
+
+class MyClass {
+    //
 }

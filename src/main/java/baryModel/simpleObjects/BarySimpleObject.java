@@ -27,6 +27,12 @@ public class BarySimpleObject extends BaryObject {
         return simpleBody.getMass();
     }
 
+    //
+    @Override
+    public final @NotNull String getName() {
+        return simpleBody.getName();
+    }
+
     //for graphical purposes
     @Override
     public final @NotNull Color getColor() {
@@ -49,21 +55,21 @@ public class BarySimpleObject extends BaryObject {
             double collisionDistance = (getSimpleBody().getRadius() + neighborBody.getRadius()) / 2;
             if (distance < collisionDistance) {
                 //TODO: do collision depending on relative sizes
-                printLine("Collision between " + getSimpleBody().getName() + " and " + neighborBody.getName());
+                printLine("Collision between " + getName() + " and " + neighbor.getName());
             }
             if (distance < Math.max(getInfluenceRadius(), neighbor.getInfluenceRadius()) && neighborMergeabiltyCheck()) {
                 //TODO: form a new system of this and neighbor
-                //printLine("A new system should be formed between " + getSimpleBody().getName() + " and " + neighborBody.getName());
+                //printLine("A new system should be formed between " + getName() + " and " + neighbor.getName());
                 formNewSystem(neighbor);
             }
         } else if (neighbor instanceof BarySystem) {
             //simpleObject - system case
             if (distance < neighbor.getInfluenceRadius()) {
                 //TODO: this enters neighbor system
-                printLine("Object " + getSimpleBody().getName() + " should enter system " + neighbor);
+                printLine("Object " + getName() + " should enter system " + neighbor.getName());
             } else if (distance < getInfluenceRadius() && neighborMergeabiltyCheck()) {
                 //TODO: form a system of A and B
-                //printLine("A new system should be formed between " + getSimpleBody().getName() + " and " + neighbor);
+                //printLine("A new system should be formed between " + getName() + " and " + neighbor.getName());
                 formNewSystem(neighbor);
             }
         } else {

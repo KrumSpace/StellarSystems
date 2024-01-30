@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.awt.Color;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import static consoleUtils.SimplePrinting.printLine;
 
@@ -13,21 +12,24 @@ import utils.MathUtils;
 import utils.coordinates.Coordinates;
 import utils.coordinates.Location;
 import utils.coordinates.Velocity;
-import baryModel.simpleObjects.PhysicalBody;
 import baryModel.simpleObjects.BarySimpleObject;
 
 //
 public class BarySystem extends BaryObject implements BaryObjectContainerInterface {
     private static final boolean MERGE_ON_TOUCH = false;
+    private static final @NotNull String SYSTEM_NAME_PREFIX = "System-";
+    private static int system_name_counter = 0;
     private final @NotNull List<@NotNull BaryObject> objects = new ArrayList<>();
+    private final @NotNull String name;
     private final @NotNull Color color;
 
     //
-    public BarySystem(@Nullable BaryObjectContainerInterface parent,
+    public BarySystem(@NotNull BaryObjectContainerInterface parent,
                       @NotNull Coordinates coordinates,
                       @NotNull Color color) {
         super(parent, coordinates);
         this.color = color;
+        name = getNewSystemName();
     }
 
     //
@@ -56,6 +58,18 @@ public class BarySystem extends BaryObject implements BaryObjectContainerInterfa
             mass += object.getMass();
         }
         return mass;
+    }
+
+    //
+    @Override
+    public final @NotNull String getName() {
+        return name;
+    }
+
+    //TODO: think of a better solution
+    private static @NotNull String getNewSystemName() {
+        system_name_counter++;
+        return SYSTEM_NAME_PREFIX + system_name_counter;
     }
 
     //
@@ -125,13 +139,12 @@ public class BarySystem extends BaryObject implements BaryObjectContainerInterfa
         double distance = getDistanceToNeighbor(neighbor);
         if (neighbor instanceof BarySimpleObject) {
             //system - simpleObject case
-            @NotNull PhysicalBody neighborBody = ((BarySimpleObject) neighbor).getSimpleBody();
             if (distance < getInfluenceRadius()) {
                 //TODO: neighbor joins this system
-                printLine("Object " + neighborBody.getName() + " should enter system " + this);
+                printLine("Object " + neighbor.getName() + " should enter system " + getName());
             } else if (distance < neighbor.getInfluenceRadius() && neighborMergeabiltyCheck()) {
                 //TODO: form a new system of this and neighbor
-                //printLine("A new system should be formed between " + this + " and " + neighborBody.getName());
+                //printLine("A new system should be formed between " + getName() + " and " + neighbor.getName());
                 try {
                     formNewSystem(this, neighbor, Color.yellow); //TODO: improve the color
                     @NotNull ObjectRemovedException exception = new ObjectRemovedException();
@@ -149,10 +162,10 @@ public class BarySystem extends BaryObject implements BaryObjectContainerInterfa
                 //two systems touch
                 if (mergeOnTouch) {
                     //TODO: merge this and neighbor into a new system
-                    printLine("Systems " + this + " and " + neighbor + " should be merged");
+                    printLine("Systems " + getName() + " and " + neighbor.getName() + " should be merged");
                 } else {
                     //TODO: check if children of both intersect; goes deeper into cycle, ugh
-                    printLine("Systems " + this + " and " + neighbor + " overlap, members might intersect");
+                    printLine("Systems " + getName() + " and " + neighbor.getName() + " overlap, members might intersect");
                 }
             }
             if (!mergeOnTouch && neighborMergeabiltyCheck()) {
@@ -162,16 +175,16 @@ public class BarySystem extends BaryObject implements BaryObjectContainerInterfa
                 if (withinThis && withinNeighbor) {
                     //both are in each other's influence
                     //TODO: merge this and neighbor into a new system
-                    printLine("Systems " + this + " and " + neighbor + " should be merged");
+                    printLine("Systems " + getName() + " and " + neighbor.getName() + " should be merged");
                 } else {
                     //only one system is within the other's influence
                     if (withinThis) {
                         //TODO: neighbor system joins this system
-                        printLine("System " + neighbor + " should enter system " + this);
+                        printLine("System " + neighbor.getName() + " should enter system " + getName());
                     }
                     if (withinNeighbor) {
                         //TODO: this system joins neighbor system
-                        printLine("System " + this + " should enter system " + neighbor);
+                        printLine("System " + getName() + " should enter system " + neighbor.getName());
                     }
                 }
             }

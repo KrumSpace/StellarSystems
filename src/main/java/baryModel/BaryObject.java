@@ -149,6 +149,9 @@ public abstract class BaryObject implements
         return parent instanceof BaryUniverse || parent.getObjects().size() > 2;
     }
 
+    //
+    public abstract @NotNull String getName();
+
     //for graphical purposes
     public abstract @NotNull Color getColor();
 }
