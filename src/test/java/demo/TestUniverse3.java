@@ -18,7 +18,7 @@ class TestUniverse3 extends BaryUniverse {
         super();
         addCommonObjects(2, 3500, new double [2]);
         addNewSimpleObject(
-                5000, -1700,
+                5000, -2000,
                 300, Math.PI,
                 new PhysicalBody("object-1", 300, 100, Color.CYAN));
         addNewSimpleObject(
@@ -36,6 +36,7 @@ class TestUniverse3 extends BaryUniverse {
                 body));
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void addCommonObjects(int membersPerSide, double separation, double @NotNull [] clusterLocation) {
         double sideLength = (membersPerSide - 1) * separation;
         double @NotNull [] startingLocation = new double [] {
