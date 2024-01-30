@@ -17,6 +17,7 @@ import testGraphics.AdvancedScaleScaledOffsetPainter;
 public class UniversePainter extends AdvancedScaleScaledOffsetPainter {
     private static final double DEFAULT_SCALE = 20;
     private static final @NotNull Color UNIVERSE_CENTER_MARKER_COLOR = Color.white;
+    private static final boolean PAINT_SYSTEM_CONNECTIONS = true;
     private final @NotNull BaryUniverse universe;
 
     //
@@ -34,7 +35,7 @@ public class UniversePainter extends AdvancedScaleScaledOffsetPainter {
     public void paint(@NotNull Graphics g) {
         double @NotNull [] universeLocation = new double [2];
         paintCenterMarker(g, universeLocation, UNIVERSE_CENTER_MARKER_COLOR);
-        paintMembers(g, universe, universeLocation, false);
+        paintMembers(g, universe, universeLocation);
     }
 
     private void paintCenterMarker(@NotNull Graphics g,
@@ -57,13 +58,9 @@ public class UniversePainter extends AdvancedScaleScaledOffsetPainter {
 
     private void paintMembers(@NotNull Graphics g,
                               @NotNull BaryObjectContainerInterface container,
-                              double @NotNull [] absoluteLocation,
-                              boolean paintOrbits) {
+                              double @NotNull [] absoluteLocation) {
         for (@NotNull BaryObject object : Collections.unmodifiableList(container.getObjects())) {
             try {
-                if (paintOrbits) {
-                    paintOrbit(g, object, scaleLocation(absoluteLocation));
-                }
                 paintBaryObject(g, object, absoluteLocation);
             } catch (UnrecognizedBaryObjectTypeException e) {
                 throw new RuntimeException(e); //TODO: needs better solution, such as not painting the object and logging to console
@@ -75,6 +72,7 @@ public class UniversePainter extends AdvancedScaleScaledOffsetPainter {
                                  @NotNull BaryObject object,
                                  double @NotNull [] parentLocation) throws UnrecognizedBaryObjectTypeException {
         double @NotNull [] absoluteLocation = getAbsoluteLocation(object, parentLocation);
+        paintCommonBefore(g, object, absoluteLocation, parentLocation);
         if (object instanceof BarySimpleObject) {
             paintSimpleBaryObject(g, (BarySimpleObject) object, absoluteLocation);
         } else if (object instanceof BarySystem) {
@@ -82,7 +80,7 @@ public class UniversePainter extends AdvancedScaleScaledOffsetPainter {
         } else {
             throw new UnrecognizedBaryObjectTypeException();
         }
-        paintInfluenceRadius(g, object, absoluteLocation);
+        paintCommonAfter(g, object, absoluteLocation);
     }
 
     private double @NotNull [] getAbsoluteLocation(@NotNull BaryObject object,
@@ -91,6 +89,67 @@ public class UniversePainter extends AdvancedScaleScaledOffsetPainter {
         return new double [] {
                 parentLocation[0] + relativeLocation[0],
                 parentLocation[1] + relativeLocation[1]};
+    }
+
+    private void paintCommonBefore(@NotNull Graphics g,
+                                   @NotNull BaryObject object,
+                                   double @NotNull [] absoluteLocation,
+                                   double @NotNull [] parentAbsoluteLocation) {
+        if (PAINT_SYSTEM_CONNECTIONS && !(object.getParent() instanceof BaryUniverse)) {
+            @NotNull Color color = object.getColor();
+            double @NotNull []
+                    scaledLocation = scaleLocation(absoluteLocation),
+                    scaledParentLocation = scaleLocation(parentAbsoluteLocation);
+            paintConnection(g, color, scaledLocation, scaledParentLocation);
+            paintOrbit(g, object, scaledParentLocation);
+        }
+    }
+
+    private void paintConnection(@NotNull Graphics g,
+                                 @NotNull Color color,
+                                 double @NotNull [] scaledLocation,
+                                 double @NotNull [] scaledParentLocation) {
+        double @NotNull []
+                drawLocation = getDrawableFromScaled(scaledLocation),
+                parentDrawLocation = getDrawableFromScaled(scaledParentLocation);
+        g.setColor(color);
+        g.drawLine(
+                (int) drawLocation[0], (int) drawLocation[1],
+                (int) parentDrawLocation[0], (int) parentDrawLocation[1]);
+    }
+
+    private void paintOrbit(@NotNull Graphics g,
+                            @NotNull BaryObject object,
+                            double @NotNull [] scaledParentLocation) {
+        double @NotNull [] drawCenter = getDrawableFromScaled(scaledParentLocation);
+        double
+                distance = object.getCoordinates().getLocation().getRadial()[0],
+                scaledDistance = scaleValue(distance);
+        @NotNull Color orbitColor = object.getColor();
+        g.setColor(orbitColor);
+        g.drawOval(
+                (int) (drawCenter[0] - scaledDistance),
+                (int) (drawCenter[1] - scaledDistance),
+                (int) scaledDistance * 2, (int) scaledDistance * 2);
+    }
+
+    private void paintCommonAfter(@NotNull Graphics g,
+                                  @NotNull BaryObject object,
+                                  double @NotNull [] absoluteLocation) {
+        paintInfluenceRadius(g, object, absoluteLocation);
+        //paint name, size/mass, center
+    }
+
+    private void paintInfluenceRadius(@NotNull Graphics g,
+                                      @NotNull BaryObject object,
+                                      double @NotNull [] absoluteLocation) {
+        double @NotNull[] drawableCenter = getDrawableFromScaled(scaleLocation(absoluteLocation));
+        double scaledInfluenceRadius = scaleValue(object.getInfluenceRadius());
+        g.setColor(object.getColor());
+        g.drawOval(
+                (int) (drawableCenter[0] - scaledInfluenceRadius),
+                (int) (drawableCenter[1] - scaledInfluenceRadius),
+                (int) scaledInfluenceRadius * 2, (int) scaledInfluenceRadius * 2);
     }
 
     private void paintSimpleBaryObject(@NotNull Graphics g,
@@ -120,42 +179,9 @@ public class UniversePainter extends AdvancedScaleScaledOffsetPainter {
                                  @NotNull BarySystem system,
                                  double @NotNull [] absoluteLocation) {
         double @NotNull [] scaledLocation = scaleLocation(absoluteLocation);
-        paintSystemCenter(g, system, scaledLocation);
-        //TODO: paint some general system-wide data here
-        paintMembers(g, system, absoluteLocation, true);
-    }
-
-    private void paintOrbit(@NotNull Graphics g,
-                            @NotNull BaryObject object,
-                            double @NotNull [] scaledLocation) {
-        double @NotNull [] drawCenter = getDrawableFromScaled(scaledLocation);
-        double
-                distance = object.getCoordinates().getLocation().getRadial()[0],
-                scaledDistance = scaleValue(distance);
-        @NotNull Color orbitColor = object.getColor();
-        g.setColor(orbitColor);
-        g.drawOval(
-                (int) (drawCenter[0] - scaledDistance),
-                (int) (drawCenter[1] - scaledDistance),
-                (int) scaledDistance * 2, (int) scaledDistance * 2);
-    }
-
-    private void paintSystemCenter(@NotNull Graphics g,
-                                   @NotNull BarySystem system,
-                                   double @NotNull [] scaledLocation) {
         paintCenterMarker(g, scaledLocation, system.getColor());
-    }
-
-    private void paintInfluenceRadius(@NotNull Graphics g,
-                                      @NotNull BaryObject object,
-                                      double @NotNull [] absoluteLocation) {
-        double @NotNull[] drawableCenter = getDrawableFromScaled(scaleLocation(absoluteLocation));
-        double scaledInfluenceRadius = scaleValue(object.getInfluenceRadius());
-        g.setColor(object.getColor());
-        g.drawOval(
-                (int) (drawableCenter[0] - scaledInfluenceRadius),
-                (int) (drawableCenter[1] - scaledInfluenceRadius),
-                (int) scaledInfluenceRadius * 2, (int) scaledInfluenceRadius * 2);
+        //TODO: paint some general system-wide data here
+        paintMembers(g, system, absoluteLocation);
     }
 
     private double scaleValue(double value) {
