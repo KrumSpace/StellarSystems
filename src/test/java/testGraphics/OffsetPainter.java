@@ -1,9 +1,9 @@
 package testGraphics;
 
+import java.util.Objects;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Objects;
 
 //
 public class OffsetPainter {
