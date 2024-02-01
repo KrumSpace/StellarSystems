@@ -4,24 +4,24 @@ import org.jetbrains.annotations.NotNull;
 
 import utils.coordinates.Velocity;
 
-//for calculating values bufferedly
-public interface UpdatableValueInterface {
+//for precalculating values and then updating them
+public interface PrecalculableInterface {
     //
     void update();
 
     //old, general-purpose interface
-    interface BufferedValueInterface extends UpdatableValueInterface {
+    interface BufferedValueInterface extends PrecalculableInterface {
         void precalculate(double time);
     }
 
     //
-    interface BufferedLocationInterface extends UpdatableValueInterface {
+    interface BufferedLocationInterface extends PrecalculableInterface {
         //
         void precalculate(double time, @NotNull Velocity velocity);
     }
 
     //
-    interface BufferedVelocityInterface extends UpdatableValueInterface {
+    interface BufferedVelocityInterface extends PrecalculableInterface {
         //TODO: add acceleration here
         //void precalculate(double time, @NotNull Acceleration acceleration);
     }

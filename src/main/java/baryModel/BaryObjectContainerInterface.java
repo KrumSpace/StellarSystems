@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 
+import baryModel.exceptions.ObjectRemovedException;
+
 //
 public interface BaryObjectContainerInterface {
     //

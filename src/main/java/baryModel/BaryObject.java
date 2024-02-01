@@ -9,12 +9,15 @@ import utils.coordinates.Location;
 import utils.coordinates.Velocity;
 import utils.coordinates.Coordinates;
 import utils.coordinates.CoordinateContainerInterface;
-import utils.UpdatableValueInterface;
+import utils.PrecalculableInterface;
+import baryModel.exceptions.TopLevelObjectException;
+import baryModel.systems.AbstractBarySystem;
+import baryModel.systems.TopBoundObject;
 
 //
 public abstract class BaryObject implements
         CoordinateContainerInterface,
-        UpdatableValueInterface.BufferedValueInterface,
+        PrecalculableInterface.BufferedValueInterface,
         BaryChildInterface {
     private @NotNull BaryObjectContainerInterface parent;
     private @NotNull Coordinates coordinates;
@@ -61,9 +64,9 @@ public abstract class BaryObject implements
 
     //
     @Override
-    public void moveLevelUp() throws RootParentException {
-        if (parent instanceof BaryUniverse) {
-            throw new RootParentException();
+    public void moveLevelUp() throws TopLevelObjectException {
+        if (parent instanceof TopBoundObject || parent instanceof BaryUniverse) {
+            throw new TopLevelObjectException();
         } else {
             //find new parent
             if (!(parent instanceof BaryChildInterface)) {
@@ -75,8 +78,8 @@ public abstract class BaryObject implements
                 parent.removeObject(this);
 
                 //calculate and set new coordinates
-                if (parent instanceof BarySystem) {
-                    setNewCoordinatesWhenMovingUp((BarySystem) parent);
+                if (parent instanceof AbstractBarySystem) {
+                    setNewCoordinatesWhenMovingUp((AbstractBarySystem) parent);
                 } else {
                     throw new RuntimeException("Parent is not a system, unable to get coordinates!");
                 }
@@ -90,7 +93,7 @@ public abstract class BaryObject implements
         }
     }
 
-    private void setNewCoordinatesWhenMovingUp(@NotNull BarySystem parentSystem) {
+    private void setNewCoordinatesWhenMovingUp(@NotNull AbstractBarySystem parentSystem) {
         double @NotNull []
                 oldCoordinates = getCoordinates().getLocation().getCartesian(),
                 oldSystemCoordinates = parentSystem.getCoordinates().getLocation().getCartesian();

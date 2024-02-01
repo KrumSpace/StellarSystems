@@ -2,10 +2,10 @@ package utils.coordinates;
 
 import org.jetbrains.annotations.NotNull;
 
-import utils.UpdatableValueInterface;
+import utils.PrecalculableInterface;
 
 //
-public final class Coordinates implements UpdatableValueInterface.BufferedValueInterface {
+public final class Coordinates implements PrecalculableInterface.BufferedValueInterface {
     private @NotNull Location location;
     private @NotNull Velocity velocity;
 

@@ -1,7 +1,6 @@
-package baryModel;
+package baryModel.systems;
 
 import java.util.List;
-import java.util.ArrayList;
 import java.awt.Color;
 
 import org.jetbrains.annotations.NotNull;
@@ -12,98 +11,32 @@ import utils.MathUtils;
 import utils.coordinates.Coordinates;
 import utils.coordinates.Location;
 import utils.coordinates.Velocity;
+import baryModel.exceptions.NeighborRemovedException;
+import baryModel.exceptions.ObjectRemovedException;
+import baryModel.exceptions.UnrecognizedBaryObjectTypeException;
+import baryModel.exceptions.TopLevelObjectException;
+import baryModel.BaryObject;
+import baryModel.BaryObjectContainerInterface;
 import baryModel.simpleObjects.BarySimpleObject;
 
 //
-public class BarySystem extends BaryObject implements BaryObjectContainerInterface {
-    private static final boolean MERGE_ON_TOUCH = false;
-    private static final @NotNull String SYSTEM_NAME_PREFIX = "System-";
-    private static int system_name_counter = 0;
-    private final @NotNull List<@NotNull BaryObject> objects = new ArrayList<>();
-    private final @NotNull String name;
-    private final @NotNull Color color;
-
+public class BarySystem extends AbstractBarySystem {
     //
     public BarySystem(@NotNull BaryObjectContainerInterface parent,
                       @NotNull Coordinates coordinates,
                       @NotNull Color color) {
-        super(parent, coordinates);
-        this.color = color;
-        name = getNewSystemName();
-    }
-
-    //
-    @Override
-    public final @NotNull List<@NotNull BaryObject> getObjects() {
-        return objects;
-    }
-
-    //
-    @Override
-    public final void addObject(@NotNull BaryObject object) {
-        objects.add(object);
-    }
-
-    //
-    @Override
-    public final void removeObject(@NotNull BaryObject object) {
-        objects.remove(object);
-    }
-
-    //TODO: improve this
-    @Override
-    public final double getMass() {
-        double mass = 0;
-        for (BaryObject object : objects) {
-            mass += object.getMass();
-        }
-        return mass;
-    }
-
-    //
-    @Override
-    public final @NotNull String getName() {
-        return name;
-    }
-
-    //TODO: think of a better solution
-    private static @NotNull String getNewSystemName() {
-        system_name_counter++;
-        return SYSTEM_NAME_PREFIX + system_name_counter;
-    }
-
-    //
-    @Override
-    public final @NotNull Color getColor() {
-        return color;
-    }
-
-    //
-    @Override
-    public void precalculate(double time) {
-        super.precalculate(time);
-        for (@NotNull BaryObject object : objects) {
-            object.precalculate(time);
-        }
-    }
-
-    //
-    @Override
-    public void update() {
-        super.update();
-        for (@NotNull BaryObject object : objects) {
-            object.update();
-        }
+        super(parent, coordinates, color);
     }
 
     //
     @Override
     public void checkMeaninglessSystems() throws ObjectRemovedException {
         double influenceRadius = getInfluenceRadius();
+        @NotNull List<@NotNull BaryObject> objects = getObjects();
         for (int i = 0; i < objects.size(); i++) { //checks all members
             BaryObject object = objects.get(i);
-            if (object instanceof BarySystem) { //check one level deeper, if it's a system
-                ((BarySystem) object).checkMeaninglessSystems();
+            if (object instanceof AbstractBarySystem) { //check one level deeper, if it's a system
+                ((AbstractBarySystem) object).checkMeaninglessSystems();
             }
 
             //if body exceeds parent's influence radius, move to upper level
@@ -112,7 +45,7 @@ public class BarySystem extends BaryObject implements BaryObjectContainerInterfa
                 try {
                     object.moveLevelUp();
                     i--;
-                } catch (RootParentException ignored) {}
+                } catch (TopLevelObjectException ignored) {}
             }
         }
         if (objects.size() < 2) { //if system has less than 2 members
@@ -123,12 +56,13 @@ public class BarySystem extends BaryObject implements BaryObjectContainerInterfa
     }
 
     private void moveAllMembersUp() {
+        @NotNull List<@NotNull BaryObject> objects = getObjects();
         for (int i = 0; i < objects.size(); i++) {
             BaryObject object = objects.get(i);
             try {
                 object.moveLevelUp();
                 i--;
-            } catch (RootParentException ignored) {}
+            } catch (TopLevelObjectException ignored) {}
         }
     }
 
@@ -152,7 +86,7 @@ public class BarySystem extends BaryObject implements BaryObjectContainerInterfa
                     throw exception;
                 } catch (DifferentParentException ignored) {}
             }
-        } else if (neighbor instanceof BarySystem) {
+        } else if (neighbor instanceof AbstractBarySystem) {
             //system - system case
             boolean mergeOnTouch = MERGE_ON_TOUCH;
             double
@@ -236,13 +170,13 @@ public class BarySystem extends BaryObject implements BaryObjectContainerInterfa
             //prepare final coordinates
             @NotNull Coordinates
                     systemCoordinates = getFinalCoordinates(
-                            initialLocation1[0] + dx1, initialLocation1[1] + dy1,
-                            vxSystemFinal, vySystemFinal),
+                    initialLocation1[0] + dx1, initialLocation1[1] + dy1,
+                    vxSystemFinal, vySystemFinal),
                     finalCoordinates1 = getFinalCoordinates(-dx1, -dy1, vx1final, vy1final),
                     finalCoordinates2 = getFinalCoordinates(dx2, dy2, vx2final, vy2final);
 
             //actually make the system and transfer members
-            @NotNull BarySystem newSystem = new BarySystem(parent, systemCoordinates, color);
+            @NotNull AbstractBarySystem newSystem = new BarySystem(parent, systemCoordinates, color);
             transferObjectPrecalculated(object1, parent, newSystem, finalCoordinates1);
             transferObjectPrecalculated(object2, parent, newSystem, finalCoordinates2);
             parent.addObject(newSystem);
@@ -268,9 +202,9 @@ public class BarySystem extends BaryObject implements BaryObjectContainerInterfa
     }
 
     private static void transferObjectPrecalculated(@NotNull BaryObject object,
-                                   @NotNull BaryObjectContainerInterface oldParent,
-                                   @NotNull BaryObjectContainerInterface newParent,
-                                   @NotNull Coordinates newCoordinates) {
+                                                    @NotNull BaryObjectContainerInterface oldParent,
+                                                    @NotNull BaryObjectContainerInterface newParent,
+                                                    @NotNull Coordinates newCoordinates) {
         oldParent.removeObject(object);
         object.setParent(newParent);
         object.setCoordinates(newCoordinates);

@@ -23,6 +23,6 @@ public final class UniverseUpdater extends AbstractUpdater {
     public void update() {
         long timeInMillis = delayCalculator.getOptions().getPreferredMS();
         double timeInSeconds = TimeUtils.convertMillisToSeconds(timeInMillis);
-        universe.completeCycle(timeInSeconds);
+        universe.iterateDynamicsAndStructure(timeInSeconds);
     }
 }

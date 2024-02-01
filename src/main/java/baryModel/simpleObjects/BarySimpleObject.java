@@ -8,6 +8,11 @@ import static consoleUtils.SimplePrinting.printLine;
 
 import utils.coordinates.Coordinates;
 import baryModel.*;
+import baryModel.exceptions.NeighborRemovedException;
+import baryModel.exceptions.ObjectRemovedException;
+import baryModel.exceptions.UnrecognizedBaryObjectTypeException;
+import baryModel.systems.AbstractBarySystem;
+import baryModel.systems.BarySystem;
 
 //
 public class BarySimpleObject extends BaryObject {
@@ -62,7 +67,7 @@ public class BarySimpleObject extends BaryObject {
                 //printLine("A new system should be formed between " + getName() + " and " + neighbor.getName());
                 formNewSystem(neighbor);
             }
-        } else if (neighbor instanceof BarySystem) {
+        } else if (neighbor instanceof AbstractBarySystem) {
             //simpleObject - system case
             if (distance < neighbor.getInfluenceRadius()) {
                 //TODO: this enters neighbor system

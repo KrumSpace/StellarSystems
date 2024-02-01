@@ -4,6 +4,11 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 
+import baryModel.exceptions.NeighborRemovedException;
+import baryModel.exceptions.ObjectRemovedException;
+import baryModel.exceptions.TopLevelObjectException;
+import baryModel.exceptions.UnrecognizedBaryObjectTypeException;
+
 //
 public interface BaryChildInterface {
     //
@@ -13,7 +18,7 @@ public interface BaryChildInterface {
     void setParent(@NotNull BaryObjectContainerInterface parent);
 
     //
-    void moveLevelUp() throws RootParentException;
+    void moveLevelUp() throws TopLevelObjectException;
 
     //
     default void checkNeighbors() throws ObjectRemovedException {
@@ -35,11 +40,4 @@ public interface BaryChildInterface {
     //
     void checkNeighbor(@NotNull BaryObject neighbor) throws
             UnrecognizedBaryObjectTypeException, ObjectRemovedException, NeighborRemovedException;
-
-    //
-    class RootParentException extends Exception {
-        public RootParentException() {
-            super("Parent is a root member, unable to move up!");
-        }
-    }
 }

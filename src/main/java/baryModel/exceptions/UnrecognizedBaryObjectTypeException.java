@@ -1,4 +1,4 @@
-package baryModel;
+package baryModel.exceptions;
 
 //
 public final class UnrecognizedBaryObjectTypeException extends Exception {

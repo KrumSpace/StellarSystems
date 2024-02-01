@@ -7,11 +7,11 @@ import org.jetbrains.annotations.NotNull;
 import utils.coordinates.Location;
 import utils.coordinates.Velocity;
 import utils.coordinates.Coordinates;
-
 import baryModel.BaryObject;
 import baryModel.simpleObjects.PhysicalBody;
 import baryModel.simpleObjects.BarySimpleObject;
-import baryModel.BarySystem;
+import baryModel.systems.AbstractBarySystem;
+import baryModel.systems.BarySystem;
 import baryModel.BaryUniverse;
 
 //
@@ -27,7 +27,7 @@ class TestUniverse1 extends BaryUniverse {
                 new PhysicalBody("object-1", 100, 50, Color.CYAN));
         addObject(independentObject);
 
-        @NotNull BarySystem system = new BarySystem(
+        @NotNull AbstractBarySystem system = new BarySystem(
                 this,
                 new Coordinates(
                         new Location.LocationPolar(220, 0),

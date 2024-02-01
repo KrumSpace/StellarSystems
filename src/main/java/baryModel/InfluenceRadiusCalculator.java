@@ -2,6 +2,9 @@ package baryModel;
 
 import org.jetbrains.annotations.NotNull;
 
+import baryModel.exceptions.UnrecognizedBaryObjectTypeException;
+import baryModel.systems.AbstractBarySystem;
+
 //
 final class InfluenceRadiusCalculator {
     private static final double
@@ -20,10 +23,10 @@ final class InfluenceRadiusCalculator {
         double mass = object.getMass();
         @NotNull BaryObjectContainerInterface parent = object.getParent();
         try {
-            if (parent instanceof BarySystem) {
+            if (parent instanceof AbstractBarySystem) {
                 double
                         distanceToParent = object.getCoordinates().getLocation().getRadial()[0],
-                        parentMass = ((BarySystem) parent).getMass();
+                        parentMass = ((AbstractBarySystem) parent).getMass();
                 return calculateInfluenceRadius(distanceToParent, mass, parentMass);
             } else {
                 if (!(parent instanceof BaryUniverse)) {

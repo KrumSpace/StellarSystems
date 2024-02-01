@@ -2,10 +2,10 @@ package utils.coordinates;
 
 import org.jetbrains.annotations.NotNull;
 
-import utils.UpdatableValueInterface;
+import utils.PrecalculableInterface;
 
 //
-public abstract class Velocity implements ConvertibleCoordinateSystemInterface, UpdatableValueInterface.BufferedVelocityInterface {
+public abstract class Velocity implements ConvertibleCoordinateSystemInterface, PrecalculableInterface.BufferedVelocityInterface {
     //
     protected Velocity() {}
 

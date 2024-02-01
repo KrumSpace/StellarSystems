@@ -3,10 +3,10 @@ package utils.coordinates;
 import org.jetbrains.annotations.NotNull;
 
 import utils.MathUtils;
-import utils.UpdatableValueInterface;
+import utils.PrecalculableInterface;
 
 //
-public abstract class Location implements ConvertibleCoordinateSystemInterface, UpdatableValueInterface.BufferedLocationInterface {
+public abstract class Location implements ConvertibleCoordinateSystemInterface, PrecalculableInterface.BufferedLocationInterface {
     //
     protected Location() {}
 
