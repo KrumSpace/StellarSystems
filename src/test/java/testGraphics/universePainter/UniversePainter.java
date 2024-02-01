@@ -13,8 +13,8 @@ import org.jetbrains.annotations.Nullable;
 import baryModel.*;
 import baryModel.simpleObjects.BarySimpleObject;
 
-import testGraphics.ScaledOffsetPainter;
-import testGraphics.AdvancedScaleScaledOffsetPainter;
+import testGraphics.generalPainters.ScaledOffsetPainter;
+import testGraphics.generalPainters.AdvancedScaleScaledOffsetPainter;
 
 //
 public class UniversePainter extends AdvancedScaleScaledOffsetPainter {

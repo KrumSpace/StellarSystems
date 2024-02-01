@@ -1,4 +1,4 @@
-package testGraphics;
+package testGraphics.generalPainters;
 
 import java.util.Objects;
 

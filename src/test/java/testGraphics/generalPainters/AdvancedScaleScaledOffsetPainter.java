@@ -1,8 +1,8 @@
-package testGraphics;
+package testGraphics.generalPainters;
 
 import org.jetbrains.annotations.Nullable;
 
-//
+//currently unused functionality, intended for zoom reset-ability
 public class AdvancedScaleScaledOffsetPainter extends ScaledOffsetPainter {
     private double defaultScale;
 
