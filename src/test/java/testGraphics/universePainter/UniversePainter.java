@@ -1,9 +1,6 @@
 package testGraphics.universePainter;
 
-import java.util.Objects;
 import java.util.Collections;
-import java.util.List;
-import java.util.ArrayList;
 import java.awt.Color;
 import java.awt.Graphics;
 
@@ -11,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import baryModel.*;
-import baryModel.simpleObjects.BarySimpleObject;
+import baryModel.simpleObjects.*;
 
 import testGraphics.generalPainters.ScaledOffsetPainter;
 import testGraphics.generalPainters.AdvancedScaleScaledOffsetPainter;
@@ -20,13 +17,19 @@ import testGraphics.generalPainters.AdvancedScaleScaledOffsetPainter;
 public class UniversePainter extends AdvancedScaleScaledOffsetPainter {
     private static final double DEFAULT_SCALE = 20;
     private static final @NotNull Color UNIVERSE_CENTER_MARKER_COLOR = Color.white;
-    private static final boolean PAINT_SYSTEM_CONNECTIONS = true;
     private final @NotNull BaryUniverse universe;
+    private final @NotNull GenericObjectPainter genericObjectPainter;
+    private final @NotNull ObjectContainerPainter containerPainter;
+    private final @NotNull SimpleObjectPainter simpleObjectPainter;
 
     //
     public UniversePainter(@NotNull BaryUniverse universe, int @Nullable [] drawOffset, double defaultScale) {
         super(drawOffset, defaultScale);
         this.universe = universe;
+        double scale = getScale();
+        genericObjectPainter = new GenericObjectPainter(drawOffset, scale, this);
+        containerPainter = new ObjectContainerPainter(drawOffset, scale, this);
+        simpleObjectPainter = new SimpleObjectPainter(drawOffset, scale);
     }
 
     //
@@ -36,32 +39,60 @@ public class UniversePainter extends AdvancedScaleScaledOffsetPainter {
 
     //
     public void paint(@NotNull Graphics g) {
-        double @NotNull [] universeLocation = new double [2];
-        CommonPainting.paintCenterMarker(g, this, universeLocation, UNIVERSE_CENTER_MARKER_COLOR);
-        paintMembers(g, universe, universeLocation);
+        double @NotNull []
+                universeLocation = new double [2],
+                centerDrawCenter = getDrawableFromScaled(scaleLocation(universeLocation));
+        CommonPainting.paintCenterMarker(g, centerDrawCenter, UNIVERSE_CENTER_MARKER_COLOR);
+        containerPainter.paintMembers(g, universe, universeLocation);
     }
 
-    private void paintMembers(@NotNull Graphics g,
-                              @NotNull BaryObjectContainerInterface container,
-                              double @NotNull [] absoluteLocation) {
-        for (@NotNull BaryObject object : Collections.unmodifiableList(container.getObjects())) {
-            try {
-                paintBaryObject(g, object, absoluteLocation);
-            } catch (UnrecognizedBaryObjectTypeException e) {
-                throw new RuntimeException(e); //TODO: needs better solution, such as not painting the object and logging to console
-            }
-        }
+    //
+    final @NotNull GenericObjectPainter getGenericObjectPainter() {
+        return genericObjectPainter;
     }
 
-    private void paintBaryObject(@NotNull Graphics g,
-                                 @NotNull BaryObject object,
-                                 double @NotNull [] parentLocation) throws UnrecognizedBaryObjectTypeException {
+    //
+    final @NotNull ObjectContainerPainter getContainerPainter() {
+        return containerPainter;
+    }
+
+    //
+    final @NotNull SimpleObjectPainter getSimpleObjectPainter() {
+        return simpleObjectPainter;
+    }
+
+    //
+    @Override
+    public void setScale(double scale) {
+        super.setScale(scale);
+        getGenericObjectPainter().setScale(scale);
+        getContainerPainter().setScale(scale);
+        getSimpleObjectPainter().setScale(scale);
+    }
+}
+
+//
+class GenericObjectPainter extends ScaledOffsetPainter {
+    private static final boolean PAINT_SYSTEM_CONNECTIONS = true;
+    private final @NotNull UniversePainter universePainter;
+
+    //
+    public GenericObjectPainter(int @Nullable [] drawOffset, double scale,
+                                @NotNull UniversePainter universePainter) {
+        super(drawOffset, scale);
+        this.universePainter = universePainter;
+    }
+
+    //
+    public void paintBaryObject(@NotNull Graphics g,
+                                @NotNull BaryObject object,
+                                double @NotNull [] parentLocation) throws UnrecognizedBaryObjectTypeException {
         double @NotNull [] absoluteLocation = CommonPainting.getAbsoluteLocationFromRelative(object, parentLocation);
         paintCommonBefore(g, object, absoluteLocation, parentLocation);
         if (object instanceof BarySimpleObject) {
-            paintSimpleBaryObject(g, (BarySimpleObject) object, absoluteLocation);
+            universePainter.getSimpleObjectPainter().paintSimpleBaryObject(g, (BarySimpleObject) object, absoluteLocation);
         } else if (object instanceof BarySystem) {
-            paintBarySystem(g, (BarySystem) object, absoluteLocation);
+            universePainter.getContainerPainter().paintBarySystem(g, (BarySystem) object, absoluteLocation);
         } else {
             throw new UnrecognizedBaryObjectTypeException();
         }
@@ -77,8 +108,8 @@ public class UniversePainter extends AdvancedScaleScaledOffsetPainter {
             double @NotNull []
                     scaledLocation = scaleLocation(absoluteLocation),
                     scaledParentLocation = scaleLocation(parentAbsoluteLocation);
-            CommonPainting.paintConnection(g, this, color, scaledLocation, scaledParentLocation);
-            CommonPainting.paintOrbit(g, this, object, scaledParentLocation);
+            CommonPainting.paintConnection(g, universePainter, color, scaledLocation, scaledParentLocation);
+            CommonPainting.paintOrbit(g, universePainter, object, scaledParentLocation);
         }
     }
 
@@ -88,125 +119,65 @@ public class UniversePainter extends AdvancedScaleScaledOffsetPainter {
         double @NotNull []
                 scaledLocation = scaleLocation(absoluteLocation),
                 drawableCenter = getDrawableFromScaled(scaledLocation);
-        CommonPainting.paintInfluenceRadius(g, this, object, drawableCenter);
-        CommonPainting.paintCenterMarker(g, this, scaledLocation, object.getColor());
+        CommonPainting.paintInfluenceRadius(g, universePainter, object, drawableCenter);
+        CommonPainting.paintCenterMarker(g, drawableCenter, object.getColor());
         CommonPainting.paintObjectInfo(g, object, drawableCenter);
     }
+}
 
-    private void paintSimpleBaryObject(@NotNull Graphics g,
-                                       @NotNull BarySimpleObject simpleObject,
-                                       double @NotNull [] absoluteLocation) {
-        double @NotNull [] drawCenter = getDrawableFromScaled(scaleLocation(absoluteLocation));
-        double scaledSize = scaleValue(simpleObject.getSimpleBody().getRadius());
-        g.setColor(simpleObject.getColor());
-        g.fillOval(
-                (int) (drawCenter[0] - scaledSize / 2),
-                (int) (drawCenter[1] - scaledSize / 2),
-                (int) scaledSize, (int) scaledSize);
+//
+class ObjectContainerPainter extends ScaledOffsetPainter {
+    private final @NotNull UniversePainter universePainter;
+
+    //
+    public ObjectContainerPainter(int @Nullable [] drawOffset, double scale,
+                                  @NotNull UniversePainter universePainter) {
+        super(drawOffset, scale);
+        this.universePainter = universePainter;
     }
 
-    private void paintBarySystem(@NotNull Graphics g,
-                                 @NotNull BarySystem system,
-                                 double @NotNull [] absoluteLocation) {
+    //
+    public final void paintMembers(@NotNull Graphics g,
+                                   @NotNull BaryObjectContainerInterface container,
+                                   double @NotNull [] absoluteLocation) {
+        for (@NotNull BaryObject object : Collections.unmodifiableList(container.getObjects())) {
+            try {
+                universePainter.getGenericObjectPainter().paintBaryObject(g, object, absoluteLocation);
+            } catch (UnrecognizedBaryObjectTypeException e) {
+                throw new RuntimeException(e); //TODO: needs better solution, such as not painting the object and logging to console
+            }
+        }
+    }
+
+    public void paintBarySystem(@NotNull Graphics g,
+                                @NotNull BarySystem system,
+                                double @NotNull [] absoluteLocation) {
         double @NotNull [] scaledLocation = scaleLocation(absoluteLocation);
-        CommonPainting.paintCenterMarker(g, this, scaledLocation, system.getColor());
+        CommonPainting.paintCenterMarker(g, getDrawableFromScaled(scaledLocation), system.getColor());
         //TODO: paint some general system-wide data here
         paintMembers(g, system, absoluteLocation);
     }
 }
 
-//common method extraction ongoing
-class CommonPainting {
+//
+class SimpleObjectPainter extends ScaledOffsetPainter {
     //
-    static double @NotNull [] getAbsoluteLocationFromRelative(@NotNull BaryObject object,
-                                                              double @NotNull [] parentLocation) {
-        double @NotNull [] relativeLocation = object.getCoordinates().getLocation().getCartesian();
-        return new double [] {
-                parentLocation[0] + relativeLocation[0],
-                parentLocation[1] + relativeLocation[1]};
+    public SimpleObjectPainter(int @Nullable [] drawOffset, double scale) {
+        super(drawOffset, scale);
     }
 
     //
-    static void paintCenterMarker(@NotNull Graphics g, @NotNull ScaledOffsetPainter painter,
-                                  double @NotNull [] scaledLocation,
-                                  @NotNull Color color) {
-        int @NotNull [] drawOffset = painter.getDrawOffset();
-        int centerMarkerSize = 20;
-        g.setColor(color);
-        g.drawLine( //horizontal line
-                (int) (scaledLocation[0] + drawOffset[0] - centerMarkerSize / 2),
-                (int) (scaledLocation[1] + drawOffset[1]),
-                (int) (scaledLocation[0] + drawOffset[0] + centerMarkerSize / 2),
-                (int) (scaledLocation[1] + drawOffset[1]));
-        g.drawLine( //vertical line
-                (int) (scaledLocation[0] + drawOffset[0]),
-                (int) (scaledLocation[1] + drawOffset[1] - centerMarkerSize / 2),
-                (int) (scaledLocation[0] + drawOffset[0]),
-                (int) (scaledLocation[1] + drawOffset[1] + centerMarkerSize / 2));
+    public void paintSimpleBaryObject(@NotNull Graphics g,
+                                      @NotNull BarySimpleObject simpleObject,
+                                      double @NotNull [] absoluteLocation) {
+        double @NotNull [] drawCenter = getDrawableFromScaled(scaleLocation(absoluteLocation));
+        paintPhysicalBody(g, simpleObject.getSimpleBody(), drawCenter);
     }
 
-    //
-    static void paintConnection(@NotNull Graphics g, @NotNull ScaledOffsetPainter painter,
-                                @NotNull Color color,
-                                double @NotNull [] scaledLocation,
-                                double @NotNull [] scaledParentLocation) {
-        double @NotNull []
-                drawLocation = painter.getDrawableFromScaled(scaledLocation),
-                parentDrawLocation = painter.getDrawableFromScaled(scaledParentLocation);
-        g.setColor(color);
-        g.drawLine(
-                (int) drawLocation[0], (int) drawLocation[1],
-                (int) parentDrawLocation[0], (int) parentDrawLocation[1]);
-    }
-
-    //
-    static void paintOrbit(@NotNull Graphics g, @NotNull ScaledOffsetPainter painter,
-                           @NotNull BaryObject object,
-                           double @NotNull [] scaledParentLocation) {
-        double @NotNull [] drawCenter = painter.getDrawableFromScaled(scaledParentLocation);
-        double
-                distance = object.getCoordinates().getLocation().getRadial()[0],
-                scaledDistance = painter.scaleValue(distance);
-        @NotNull Color orbitColor = object.getColor();
-        g.setColor(orbitColor);
-        g.drawOval(
-                (int) (drawCenter[0] - scaledDistance),
-                (int) (drawCenter[1] - scaledDistance),
-                (int) scaledDistance * 2, (int) scaledDistance * 2);
-    }
-
-    //
-    static void paintInfluenceRadius(@NotNull Graphics g, @NotNull ScaledOffsetPainter painter,
-                                     @NotNull BaryObject object,
-                                     double @NotNull [] drawableCenter) {
-        double scaledInfluenceRadius = painter.scaleValue(object.getInfluenceRadius());
-        g.setColor(object.getColor());
-        g.drawOval(
-                (int) (drawableCenter[0] - scaledInfluenceRadius),
-                (int) (drawableCenter[1] - scaledInfluenceRadius),
-                (int) scaledInfluenceRadius * 2, (int) scaledInfluenceRadius * 2);
-    }
-
-    //
-    static void paintObjectInfo(@NotNull Graphics g, @NotNull BaryObject object, double @NotNull [] drawCenter) {
-        int @NotNull [] textOffset = new int [] {-20, 30};
-        int lineHeight = 15;
-        paintObjectInfoLines(g, drawCenter, textOffset, lineHeight, new ArrayList<>() {{
-            add(object.getName());
-            add("M: " + ((int) (object.getMass() * 10)) / 10.0);
-            add("SOI: " + ((int) (object.getInfluenceRadius() * 10)) / 10.0);
-        }});
-    }
-
-    private static void paintObjectInfoLines(@NotNull Graphics g,
-                                             double @NotNull [] drawCenter,
-                                             int @NotNull [] textOffset, int lineHeight,
-                                             @NotNull List<@Nullable String> lines) {
-        for (int i = 0; i < lines.size(); i++) {
-            g.drawString(
-                    Objects.requireNonNullElse(lines.get(i), ""),
-                    (int) (drawCenter[0] + textOffset[0]),
-                    (int) (drawCenter[1] + textOffset[1] + lineHeight * i));
-        }
+    private void paintPhysicalBody(@NotNull Graphics g,
+                                   @NotNull PhysicalBody body,
+                                   double @NotNull [] drawCenter) {
+        CommonPainting.drawCircleAtCenter(g, drawCenter, scaleValue(body.getRadius()), body.getColor(), true);
+        //TODO: improve this eventually for more detail
     }
 }
