@@ -10,7 +10,6 @@ import org.jetbrains.annotations.Nullable;
 
 import baryModel.exceptions.UnrecognizedBaryObjectTypeException;
 import baryModel.BaryObject;
-import baryModel.BaryUniverse;
 import baryModel.systems.AbstractBarySystem;
 import baryModel.simpleObjects.BarySimpleObject;
 
@@ -89,7 +88,7 @@ final class GenericObjectPainter extends ScaledOffsetPainter implements BaryObje
                                    @NotNull BaryObject object,
                                    double @NotNull [] absoluteLocation,
                                    double @NotNull [] parentAbsoluteLocation) {
-        if (PAINT_SYSTEM_CONNECTIONS && !(object.getParent() instanceof BaryUniverse)) {
+        if (PAINT_SYSTEM_CONNECTIONS) {
             @NotNull Color color = object.getColor();
             double @NotNull []
                     scaledLocation = scaleLocation(absoluteLocation),

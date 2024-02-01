@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import baryModel.systems.TopBoundObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -98,12 +99,14 @@ class CommonPainting {
 
     //
     static void paintObjectInfo(@NotNull Graphics g, @NotNull BaryObject object, double @NotNull [] drawCenter) {
-        int @NotNull [] textOffset = new int[]{-20, 30};
+        int @NotNull [] textOffset = new int [] {-20, 30};
         int lineHeight = 15;
         paintObjectInfoLines(g, drawCenter, textOffset, lineHeight, new ArrayList<>() {{
             add(object.getName());
             add("M: " + ((int) (object.getMass() * 10)) / 10.0);
-            add("SOI: " + ((int) (object.getInfluenceRadius() * 10)) / 10.0);
+            if (!(object instanceof TopBoundObject)) {
+                add("SOI: " + ((int) (object.getInfluenceRadius() * 10)) / 10.0);
+            }
         }});
     }
 
