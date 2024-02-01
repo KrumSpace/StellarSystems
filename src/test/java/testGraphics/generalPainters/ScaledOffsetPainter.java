@@ -14,7 +14,7 @@ public class ScaledOffsetPainter extends OffsetPainter {
     }
 
     //
-    public double getScale() {
+    public final double getScale() {
         return scale;
     }
 
