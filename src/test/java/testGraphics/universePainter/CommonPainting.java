@@ -29,13 +29,19 @@ class CommonPainting {
                                   double @NotNull [] drawCenter,
                                   @NotNull Color color) {
         int centerMarkerSize = 20;
+        drawCross(g, drawCenter, centerMarkerSize, color);
+    }
+
+    private static void drawCross(@NotNull Graphics g,
+                                  double @NotNull [] drawCenter, int size,
+                                  @NotNull Color color) {
         g.setColor(color);
         g.drawLine( //horizontal line
-                (int) (drawCenter[0] - centerMarkerSize / 2), (int) (drawCenter[1]),
-                (int) (drawCenter[0] + centerMarkerSize / 2), (int) (drawCenter[1]));
+                (int) (drawCenter[0] - size / 2), (int) (drawCenter[1]),
+                (int) (drawCenter[0] + size / 2), (int) (drawCenter[1]));
         g.drawLine( //vertical line
-                (int) (drawCenter[0]), (int) (drawCenter[1] - centerMarkerSize / 2),
-                (int) (drawCenter[0]), (int) (drawCenter[1] + centerMarkerSize / 2));
+                (int) (drawCenter[0]), (int) (drawCenter[1] - size / 2),
+                (int) (drawCenter[0]), (int) (drawCenter[1] + size / 2));
     }
 
     //
