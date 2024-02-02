@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import baryModel.exceptions.UnrecognizedBaryObjectTypeException;
+import baryModel.exceptions.TopLevelObjectException;
 import baryModel.BaryObject;
 import baryModel.systems.AbstractBarySystem;
 import baryModel.simpleObjects.BarySimpleObject;
@@ -17,8 +18,11 @@ import testGraphics.generalPainters.ScaledOffsetPainter;
 
 //
 final class GenericObjectPainter extends ScaledOffsetPainter implements BaryObjectPainterInterface<BaryObject> {
-    private static final boolean PAINT_SYSTEM_CONNECTIONS = true;
-    private static final @NotNull Map<@NotNull Class<? extends @NotNull BaryObject>, @NotNull FunctionalPainterInterface> PAINTER_MAP = new HashMap<>();
+    private static final boolean
+            PAINT_SYSTEM_CONNECTIONS = true,
+            PAINT_ORBITS = false;
+    private static final @NotNull Map<@NotNull Class<? extends @NotNull BaryObject>, @NotNull FunctionalPainterInterface>
+            PAINTER_MAP = new HashMap<>();
     static {
         PAINTER_MAP.put(BarySimpleObject.class, (g, obj, loc, painter) ->
                 painter.getSimpleObjectPainter().paint(g, (BarySimpleObject) obj, loc));
@@ -61,19 +65,10 @@ final class GenericObjectPainter extends ScaledOffsetPainter implements BaryObje
         } else {
             painter.accept(g, object, absoluteLocation, universePainter);
         }
-        // old type-check:
-        // if (object instanceof BarySimpleObject) {
-        //     universePainter.getSimpleObjectPainter().paint(g, (BarySimpleObject) object, absoluteLocation);
-        // } else if (object instanceof AbstractBarySystem) {
-        //     universePainter.getSystemPainter().paint(g, (AbstractBarySystem) object, absoluteLocation);
-        // } else {
-        //     throw new UnrecognizedBaryObjectTypeException();
-        // }
     }
 
     @SuppressWarnings("unchecked")
     private @Nullable FunctionalPainterInterface getPainterForClass(@NotNull Class<? extends @NotNull BaryObject> type) {
-        // Traverse the class hierarchy to find a matching painter
         while (type != null) {
             @Nullable FunctionalPainterInterface painter = PAINTER_MAP.get(type);
             if (painter != null) {
@@ -88,13 +83,15 @@ final class GenericObjectPainter extends ScaledOffsetPainter implements BaryObje
                                    @NotNull BaryObject object,
                                    double @NotNull [] absoluteLocation,
                                    double @NotNull [] parentAbsoluteLocation) {
+        @NotNull Color color = object.getColor();
+        double @NotNull []
+                scaledLocation = scaleLocation(absoluteLocation),
+                scaledParentLocation = scaleLocation(parentAbsoluteLocation);
         if (PAINT_SYSTEM_CONNECTIONS) {
-            @NotNull Color color = object.getColor();
-            double @NotNull []
-                    scaledLocation = scaleLocation(absoluteLocation),
-                    scaledParentLocation = scaleLocation(parentAbsoluteLocation);
             CommonPainting.paintConnection(g, universePainter, color, scaledLocation, scaledParentLocation);
-            //CommonPainting.paintOrbit(g, universePainter, object, scaledParentLocation);
+        }
+        if (PAINT_ORBITS) {
+            CommonPainting.paintOrbit(g, universePainter, object, scaledParentLocation);
         }
     }
 
@@ -104,7 +101,9 @@ final class GenericObjectPainter extends ScaledOffsetPainter implements BaryObje
         double @NotNull []
                 scaledLocation = scaleLocation(absoluteLocation),
                 drawableCenter = getDrawableFromScaled(scaledLocation);
-        CommonPainting.paintInfluenceRadius(g, universePainter, object, drawableCenter);
+        try {
+            CommonPainting.paintInfluenceRadius(g, universePainter, object, drawableCenter);
+        } catch (@NotNull TopLevelObjectException ignored) {}
         CommonPainting.paintCenterMarker(g, drawableCenter, object.getColor());
         CommonPainting.paintObjectInfo(g, object, drawableCenter);
     }

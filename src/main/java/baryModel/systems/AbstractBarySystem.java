@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.awt.Color;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import utils.coordinates.Coordinates;
 import baryModel.BaryObject;
@@ -18,7 +19,7 @@ public abstract class AbstractBarySystem extends BaryObject implements BaryObjec
     private final @NotNull Color color;
 
     //
-    public AbstractBarySystem(@NotNull BaryObjectContainerInterface parent,
+    public AbstractBarySystem(@Nullable BaryObjectContainerInterface parent,
                               @NotNull Coordinates coordinates,
                               @NotNull Color color) {
         super(parent, coordinates);
@@ -44,7 +45,27 @@ public abstract class AbstractBarySystem extends BaryObject implements BaryObjec
         objects.remove(object);
     }
 
-    //TODO: improve this
+    //
+    public final void precalculateMembers(double time) {
+        for (@NotNull BaryObject object : objects) {
+            object.precalculate(time);
+        }
+    }
+
+    //
+    @Override
+    public final void update() {
+        super.update();
+        updateMembers();
+    }
+
+    private void updateMembers() {
+        for (@NotNull BaryObject object : objects) {
+            object.update();
+        }
+    }
+
+    //TODO: improve this, maybe precalculate masses on update?
     @Override
     public final double getMass() {
         double mass = 0;
@@ -64,32 +85,5 @@ public abstract class AbstractBarySystem extends BaryObject implements BaryObjec
     @Override
     public final @NotNull Color getColor() {
         return color;
-    }
-
-    //
-    @Override
-    public void precalculate(double time) {
-        super.precalculate(time);
-        precalculateMembers(time);
-    }
-
-    //
-    final void precalculateMembers(double time) {
-        for (@NotNull BaryObject object : objects) {
-            object.precalculate(time);
-        }
-    }
-
-    //
-    @Override
-    public final void update() {
-        super.update();
-        updateMembers();
-    }
-
-    private void updateMembers() {
-        for (@NotNull BaryObject object : objects) {
-            object.update();
-        }
     }
 }

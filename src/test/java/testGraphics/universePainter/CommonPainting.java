@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.awt.Color;
 import java.awt.Graphics;
 
-import baryModel.systems.TopBoundObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import baryModel.exceptions.TopLevelObjectException;
 import baryModel.BaryObject;
 
 import testGraphics.generalPainters.ScaledOffsetPainter;
@@ -92,7 +92,7 @@ class CommonPainting {
     //
     static void paintInfluenceRadius(@NotNull Graphics g, @NotNull ScaledOffsetPainter painter,
                                      @NotNull BaryObject object,
-                                     double @NotNull [] drawableCenter) {
+                                     double @NotNull [] drawableCenter) throws TopLevelObjectException {
         double scaledInfluenceRadius = painter.scaleValue(object.getInfluenceRadius());
         drawCircleAtCenter(g, drawableCenter, scaledInfluenceRadius * 2, object.getColor(), false);
     }
@@ -104,9 +104,10 @@ class CommonPainting {
         paintObjectInfoLines(g, drawCenter, textOffset, lineHeight, new ArrayList<>() {{
             add(object.getName());
             add("M: " + ((int) (object.getMass() * 10)) / 10.0);
-            if (!(object instanceof TopBoundObject)) {
-                add("SOI: " + ((int) (object.getInfluenceRadius() * 10)) / 10.0);
-            }
+            try {
+                double influenceRadius = object.getInfluenceRadius();
+                add("SOI: " + ((int) (influenceRadius * 10)) / 10.0);
+            } catch (@NotNull TopLevelObjectException ignored) {}
         }});
     }
 

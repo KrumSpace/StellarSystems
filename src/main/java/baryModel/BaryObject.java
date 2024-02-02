@@ -3,6 +3,7 @@ package baryModel;
 import java.awt.Color;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import utils.MathUtils;
 import utils.coordinates.Location;
@@ -14,19 +15,18 @@ import baryModel.exceptions.TopLevelObjectException;
 import baryModel.exceptions.DifferentParentException;
 import baryModel.systems.AbstractBarySystem;
 import baryModel.systems.BarySystem;
-import baryModel.systems.TopBoundObject;
 
 //
 public abstract class BaryObject implements
         CoordinateContainerInterface,
         PrecalculableInterface.BufferedValueInterface,
         BaryChildInterface {
-    private @NotNull BaryObjectContainerInterface parent;
+    private @Nullable BaryObjectContainerInterface parent;
     private @NotNull Coordinates coordinates;
     private final @NotNull InfluenceRadiusCalculator influenceRadiusCalculator;
 
     //
-    public BaryObject(@NotNull BaryObjectContainerInterface parent,
+    public BaryObject(@Nullable BaryObjectContainerInterface parent,
                       @NotNull Coordinates coordinates) {
         this.parent = parent;
         this.coordinates = coordinates;
@@ -54,21 +54,26 @@ public abstract class BaryObject implements
 
     //
     @Override
-    public final @NotNull BaryObjectContainerInterface getParent() {
-        return parent;
+    public final @NotNull BaryObjectContainerInterface getParent() throws TopLevelObjectException {
+        if (parent == null) {
+            throw new TopLevelObjectException();
+        } else {
+            return parent;
+        }
     }
 
-    //
+    //setting parent to null is possible, but not recommended
     @Override
-    public final void setParent(@NotNull BaryObjectContainerInterface parent) {
+    public void setParent(@Nullable BaryObjectContainerInterface parent) throws TopLevelObjectException {
         this.parent = parent;
     }
 
     //
     public abstract double getMass();
 
-    //TODO: needs rework, formula too crude
-    public double getInfluenceRadius() {
+    //TODO: maybe needs a rework, formula seems too crude
+    //throws an exception, if called on the root object
+    public double getInfluenceRadius() throws TopLevelObjectException {
         return influenceRadiusCalculator.getInfluenceRadius();
     }
 
@@ -87,7 +92,7 @@ public abstract class BaryObject implements
     //
     @Override
     public void exitSystem() throws TopLevelObjectException {
-        if (parent instanceof TopBoundObject) {
+        if (parent instanceof BaryUniverse) {
             throw new TopLevelObjectException();
         } else {
             //find new parent
@@ -148,10 +153,14 @@ public abstract class BaryObject implements
     public final void transferPrecalculated(@NotNull BaryObjectContainerInterface oldParent,
                                             @NotNull BaryObjectContainerInterface newParent,
                                             @NotNull Coordinates newCoordinates) {
-        oldParent.removeObject(this);
-        this.setParent(newParent);
-        this.setCoordinates(newCoordinates);
-        newParent.addObject(this);
+        try {
+            oldParent.removeObject(this);
+            this.setParent(newParent);
+            this.setCoordinates(newCoordinates);
+            newParent.addObject(this);
+        } catch (@NotNull TopLevelObjectException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     //
@@ -166,8 +175,12 @@ public abstract class BaryObject implements
 
     //checks if parent is either the universe or its child count is greater than 2
     public final boolean neighborMergeabiltyCheck() {
-        @NotNull BaryObjectContainerInterface parent = getParent();
-        return parent instanceof BaryUniverse || parent.getObjects().size() > 2;
+        try {
+            @NotNull BaryObjectContainerInterface parent = getParent();
+            return parent instanceof BaryUniverse || parent.getObjects().size() > 2;
+        } catch (@NotNull TopLevelObjectException ignored) {
+            return false;
+        }
     }
 
     @Override

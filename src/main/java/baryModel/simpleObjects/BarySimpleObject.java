@@ -3,16 +3,13 @@ package baryModel.simpleObjects;
 import java.awt.Color;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static consoleUtils.SimplePrinting.printLine;
 
 import utils.coordinates.Coordinates;
+import baryModel.exceptions.*;
 import baryModel.*;
-import baryModel.exceptions.NeighborRemovedException;
-import baryModel.exceptions.ObjectRemovedException;
-import baryModel.exceptions.UnrecognizedBaryObjectTypeException;
-import baryModel.exceptions.DifferentParentException;
-import baryModel.systems.AbstractBarySystem;
 import baryModel.systems.BarySystem;
 
 //
@@ -29,8 +26,27 @@ public class BarySimpleObject extends BaryObject {
 
     //
     @Override
+    public final void setParent(@Nullable BaryObjectContainerInterface parent) {
+        try {
+            super.setParent(parent);
+        } catch (@NotNull TopLevelObjectException ignored) {}
+    }
+
+    //
+    @Override
     public final double getMass() {
         return simpleBody.getMass();
+    }
+
+    //
+    @Override
+    public final double getInfluenceRadius() {
+        try {
+            return super.getInfluenceRadius();
+        } catch (@NotNull TopLevelObjectException e) {
+            //probably won't ever happen, but good practice to check anyway
+            throw new RuntimeException(e);
+        }
     }
 
     //
@@ -55,28 +71,29 @@ public class BarySimpleObject extends BaryObject {
     public final void checkNeighbor(@NotNull BaryObject neighbor) throws
             UnrecognizedBaryObjectTypeException, ObjectRemovedException, NeighborRemovedException {
         double distance = getDistanceToNeighbor(neighbor);
-        if (neighbor instanceof BarySimpleObject) {
+        if (neighbor instanceof @NotNull BarySimpleObject neighborObject) {
             //simpleObject - simpleObject case
-            @NotNull PhysicalBody neighborBody = ((BarySimpleObject) neighbor).getSimpleBody();
+            @NotNull PhysicalBody neighborBody = neighborObject.getSimpleBody();
             double collisionDistance = (getSimpleBody().getRadius() + neighborBody.getRadius()) / 2;
             if (distance < collisionDistance) {
                 //TODO: do collision depending on relative sizes
-                printLine("Collision between " + getName() + " and " + neighbor.getName());
+                printLine("Collision between " + getName() + " and " + neighborObject.getName());
             }
-            if (distance < Math.max(getInfluenceRadius(), neighbor.getInfluenceRadius()) && neighborMergeabiltyCheck()) {
+            if (distance < Math.max(getInfluenceRadius(), neighborObject.getInfluenceRadius()) && neighborMergeabiltyCheck()) {
                 //TODO: form a new system of this and neighbor
                 //printLine("A new system should be formed between " + getName() + " and " + neighbor.getName());
-                formNewSystem(neighbor);
+                formNewSystem(neighborObject);
             }
-        } else if (neighbor instanceof AbstractBarySystem) {
+        } else if (neighbor instanceof @NotNull BarySystem neighborSystem) {
+
             //simpleObject - system case
-            if (distance < neighbor.getInfluenceRadius()) {
+            if (distance < neighborSystem.getInfluenceRadius()) {
                 //TODO: this enters neighbor system
-                printLine("Object " + getName() + " should enter system " + neighbor.getName());
+                printLine("Object " + getName() + " should enter system " + neighborSystem.getName());
             } else if (distance < getInfluenceRadius() && neighborMergeabiltyCheck()) {
                 //TODO: form a system of A and B
                 //printLine("A new system should be formed between " + getName() + " and " + neighbor.getName());
-                formNewSystem(neighbor);
+                formNewSystem(neighborSystem);
             }
         } else {
             throw new UnrecognizedBaryObjectTypeException();
@@ -91,6 +108,6 @@ public class BarySimpleObject extends BaryObject {
             @NotNull ObjectRemovedException exception = new ObjectRemovedException();
             exception.addSuppressed(new NeighborRemovedException());
             throw exception;
-        } catch (DifferentParentException ignored) {}
+        } catch (@NotNull DifferentParentException ignored) {} //TODO: yo, don't ignore this!
     }
 }

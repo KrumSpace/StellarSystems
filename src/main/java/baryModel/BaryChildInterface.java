@@ -10,16 +10,16 @@ import baryModel.systems.BarySystem;
 //
 public interface BaryChildInterface {
     //
-    @NotNull BaryObjectContainerInterface getParent();
+    @NotNull BaryObjectContainerInterface getParent() throws TopLevelObjectException;
 
     //
-    void setParent(@NotNull BaryObjectContainerInterface parent);
+    void setParent(@NotNull BaryObjectContainerInterface parent) throws TopLevelObjectException;
 
     //exits from this system into its parent
     void exitSystem() throws TopLevelObjectException;
 
     //
-    default void checkNeighbors() throws ObjectRemovedException {
+    default void checkNeighbors() throws TopLevelObjectException, ObjectRemovedException {
         @NotNull List<@NotNull BaryObject> neighbors = getParent().getObjects();
         for (int i = 0; i < neighbors.size(); i++) {
             @NotNull BaryObject neighbor = neighbors.get(i);
@@ -37,9 +37,10 @@ public interface BaryChildInterface {
 
     //
     void checkNeighbor(@NotNull BaryObject neighbor) throws
-            UnrecognizedBaryObjectTypeException, ObjectRemovedException, NeighborRemovedException;
+            TopLevelObjectException, UnrecognizedBaryObjectTypeException,
+            ObjectRemovedException, NeighborRemovedException;
 
     //enters neighboring system, has to be of the same parent!
     //TODO: finish this
-    void enterNeighboringSystem(@NotNull BarySystem neighbor) throws DifferentParentException, TopLevelObjectException;
+    void enterNeighboringSystem(@NotNull BarySystem neighbor) throws TopLevelObjectException, DifferentParentException;
 }

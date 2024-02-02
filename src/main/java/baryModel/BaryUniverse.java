@@ -1,41 +1,43 @@
 package baryModel;
 
+import java.awt.*;
 import java.util.List;
 
+import baryModel.exceptions.ObjectRemovedException;
+import baryModel.exceptions.TopLevelObjectException;
+import baryModel.systems.AbstractBarySystem;
+import baryModel.systems.BarySystem;
 import org.jetbrains.annotations.NotNull;
 
+import org.jetbrains.annotations.Nullable;
 import utils.PrecalculableInterface;
-import baryModel.systems.TopBoundObject;
+import utils.coordinates.Coordinates;
 
-//
-public class BaryUniverse implements BaryObjectContainerInterface, PrecalculableInterface.BufferedValueInterface {
-    private final @NotNull TopBoundObject topObject;
+/**
+ * Top-level bound object; a root system.
+ * Needed for proper SOI calculations, and SOI for this object needs to be infinite.
+ */
+public class BaryUniverse extends AbstractBarySystem implements BaryObjectContainerInterface, PrecalculableInterface.BufferedValueInterface {
+    private static final @NotNull Color TOP_OBJECT_COLOR = Color.white;
 
     //
     public BaryUniverse() {
-        topObject = new TopBoundObject(this);
+        super(null, new Coordinates(), TOP_OBJECT_COLOR);
     }
 
     //
     @Override
-    public final @NotNull List<@NotNull BaryObject> getObjects() {
-        return topObject.getObjects();
+    public final void setParent(@Nullable BaryObjectContainerInterface parent) throws TopLevelObjectException {
+        throw new TopLevelObjectException();
     }
 
     //
     @Override
-    public final void addObject(@NotNull BaryObject object) {
-        topObject.addObject(object);
-        object.setParent(topObject);
+    public final double getInfluenceRadius() throws TopLevelObjectException {
+        throw new TopLevelObjectException();
     }
 
-    //
-    @Override
-    public final void removeObject(@NotNull BaryObject object) {
-        topObject.removeObject(object);
-    }
-
-    //does a complete cycle
+    //does a complete cycle, use this for performing calculations
     public final void iterateDynamicsAndStructure(double time) {
         handleDynamics(time);
         handleStructure();
@@ -52,16 +54,10 @@ public class BaryUniverse implements BaryObjectContainerInterface, Precalculable
          */
     }
 
-    //
+    //doesn't precalculate itself, only members
     @Override
     public final void precalculate(double time) {
-        topObject.precalculate(time);
-    }
-
-    //
-    @Override
-    public final void update() {
-        topObject.update();
+        precalculateMembers(time);
     }
 
     private void handleStructure() {
@@ -80,15 +76,46 @@ public class BaryUniverse implements BaryObjectContainerInterface, Precalculable
          */
     }
 
-    //
+    //goes through members, but doesn't check itself
     @Override
     public final void checkMeaninglessSystems() {
-        topObject.checkMeaninglessSystems();
+        @NotNull List<@NotNull BaryObject> objects = getObjects();
+        for (int i = 0; i < objects.size(); i++) {
+            @NotNull BaryObject object = objects.get(i);
+            if (object instanceof BaryObjectContainerInterface container) {
+                try {
+                    container.checkMeaninglessSystems();
+                } catch (ObjectRemovedException ignored) {
+                    i--;
+                }
+            }
+        }
     }
 
-    //
+    //not possible to exit the top-level system
+    @Override
+    public final void exitSystem() throws TopLevelObjectException {
+        throw new TopLevelObjectException();
+    }
+
+    // Check child neighbors normally
     @Override
     public final void checkChildNeighbors() {
-        topObject.checkChildNeighbors();
+        super.checkChildNeighbors();
+    }
+
+    // No neighbors to check for a top-bound object.
+    @Override
+    public final void checkNeighbors() {}
+
+    // No neighbors to check for a top-bound object.
+    @Override
+    public final void checkNeighbor(@NotNull BaryObject neighbor) {}
+
+    // There shouldn't be any neighbors to enter. Throw an exception, if any is found.
+    // Furthermore, top-bound object should always remain at top.
+    @Override
+    public final void enterNeighboringSystem(@NotNull BarySystem neighbor) throws TopLevelObjectException {
+        throw new TopLevelObjectException();
     }
 }
