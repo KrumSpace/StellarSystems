@@ -9,47 +9,26 @@ import utils.MathUtils;
 import utils.coordinates.Location;
 import utils.coordinates.Velocity;
 import utils.coordinates.Coordinates;
-import utils.coordinates.CoordinateContainerInterface;
-import utils.PrecalculableInterface;
 import baryModel.exceptions.TopLevelObjectException;
 import baryModel.exceptions.DifferentParentException;
+import baryModel.exceptions.ObjectRemovedException;
+import baryModel.exceptions.NeighborRemovedException;
 import baryModel.systems.AbstractBarySystem;
 import baryModel.systems.BarySystem;
 
 //
-public abstract class BaryObject implements
-        CoordinateContainerInterface,
-        PrecalculableInterface.BufferedValueInterface,
-        BaryChildInterface {
+public abstract class BaryObject extends MassiveCoordinatedObject implements BaryChildInterface {
     private @Nullable BaryObjectContainerInterface parent;
-    private @NotNull Coordinates coordinates;
-    private final @NotNull InfluenceRadiusCalculator influenceRadiusCalculator;
 
     //
     public BaryObject(@Nullable BaryObjectContainerInterface parent,
                       @NotNull Coordinates coordinates) {
+        super(coordinates);
         this.parent = parent;
-        this.coordinates = coordinates;
-        influenceRadiusCalculator = new InfluenceRadiusCalculator(this);
     }
-
     //
-    @Override
-    public final @NotNull Coordinates getCoordinates() {
-        return coordinates;
-    }
-
-    //
-    @Override
-    public final void setCoordinates(@NotNull Coordinates coordinates) {
-        this.coordinates = coordinates;
-    }
-
-    //
-    @Override
-    public final void setCoordinates(@NotNull Location location, @NotNull Velocity velocity) {
-        coordinates.setLocation(location);
-        coordinates.setVelocity(velocity);
+    public double getInfluenceRadius() throws TopLevelObjectException {
+        return super.getInfluenceRadius((MassiveCoordinatedObject) getParent());
     }
 
     //
@@ -66,27 +45,6 @@ public abstract class BaryObject implements
     @Override
     public void setParent(@Nullable BaryObjectContainerInterface parent) throws TopLevelObjectException {
         this.parent = parent;
-    }
-
-    //
-    public abstract double getMass();
-
-    //TODO: maybe needs a rework, formula seems too crude
-    //throws an exception, if called on the root object
-    public double getInfluenceRadius() throws TopLevelObjectException {
-        return influenceRadiusCalculator.getInfluenceRadius();
-    }
-
-    //
-    @Override
-    public void precalculate(double time) {
-        coordinates.precalculate(time);
-    }
-
-    //
-    @Override
-    public void update() {
-        coordinates.update();
     }
 
     //
@@ -149,6 +107,12 @@ public abstract class BaryObject implements
         //add to new system
     }
 
+    //
+    @Override
+    public void enterNeighboringSystem(@NotNull BarySystem neighbor) throws DifferentParentException, TopLevelObjectException {
+        //TODO: finish this
+    }
+
     //transfer this object from one system to another with precalculated coordinates
     public final void transferPrecalculated(@NotNull BaryObjectContainerInterface oldParent,
                                             @NotNull BaryObjectContainerInterface newParent,
@@ -183,9 +147,15 @@ public abstract class BaryObject implements
         }
     }
 
-    @Override
-    public void enterNeighboringSystem(@NotNull BarySystem neighbor) throws DifferentParentException, TopLevelObjectException {
-        //TODO: finish this
+    //forms a new system from this and a neighbor
+    public void formNewSystemWithNeighbor(@NotNull BaryObject neighbor) throws ObjectRemovedException {
+        @NotNull Color color = Color.yellow; //TODO: improve the color
+        try {
+            BarySystem.formNewSystem(this, neighbor, color);
+            @NotNull ObjectRemovedException exception = new ObjectRemovedException();
+            exception.addSuppressed(new NeighborRemovedException());
+            throw exception;
+        } catch (@NotNull DifferentParentException ignored) {} //TODO: yo, don't ignore this!
     }
 
     //

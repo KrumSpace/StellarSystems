@@ -26,7 +26,7 @@ public class BarySystem extends AbstractBarySystem {
 
     //
     @Override
-    public double getInfluenceRadius() {
+    public final double getInfluenceRadius() {
         try {
             return super.getInfluenceRadius();
         } catch (@NotNull TopLevelObjectException e) {

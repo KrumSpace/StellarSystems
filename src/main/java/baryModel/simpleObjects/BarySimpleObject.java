@@ -82,7 +82,7 @@ public class BarySimpleObject extends BaryObject {
             if (distance < Math.max(getInfluenceRadius(), neighborObject.getInfluenceRadius()) && neighborMergeabiltyCheck()) {
                 //TODO: form a new system of this and neighbor
                 //printLine("A new system should be formed between " + getName() + " and " + neighbor.getName());
-                formNewSystem(neighborObject);
+                formNewSystemWithNeighbor(neighborObject);
             }
         } else if (neighbor instanceof @NotNull BarySystem neighborSystem) {
 
@@ -93,21 +93,10 @@ public class BarySimpleObject extends BaryObject {
             } else if (distance < getInfluenceRadius() && neighborMergeabiltyCheck()) {
                 //TODO: form a system of A and B
                 //printLine("A new system should be formed between " + getName() + " and " + neighbor.getName());
-                formNewSystem(neighborSystem);
+                formNewSystemWithNeighbor(neighborSystem);
             }
         } else {
             throw new UnrecognizedBaryObjectTypeException();
         }
-    }
-
-    //forms a new system from this and a neighbor
-    private void formNewSystem(@NotNull BaryObject neighbor) throws ObjectRemovedException {
-        @NotNull Color color = Color.yellow; //TODO: improve the color
-        try {
-            BarySystem.formNewSystem(this, neighbor, color);
-            @NotNull ObjectRemovedException exception = new ObjectRemovedException();
-            exception.addSuppressed(new NeighborRemovedException());
-            throw exception;
-        } catch (@NotNull DifferentParentException ignored) {} //TODO: yo, don't ignore this!
     }
 }

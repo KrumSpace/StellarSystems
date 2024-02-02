@@ -1,23 +1,22 @@
 package baryModel;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import utils.coordinates.Coordinates;
 import baryModel.exceptions.ObjectRemovedException;
 import baryModel.exceptions.TopLevelObjectException;
 import baryModel.systems.AbstractBarySystem;
 import baryModel.systems.BarySystem;
-import org.jetbrains.annotations.NotNull;
-
-import org.jetbrains.annotations.Nullable;
-import utils.PrecalculableInterface;
-import utils.coordinates.Coordinates;
 
 /**
  * Top-level bound object; a root system.
  * Needed for proper SOI calculations, and SOI for this object needs to be infinite.
  */
-public class BaryUniverse extends AbstractBarySystem implements BaryObjectContainerInterface, PrecalculableInterface.BufferedValueInterface {
+public class BaryUniverse extends AbstractBarySystem {
     private static final @NotNull Color TOP_OBJECT_COLOR = Color.white;
 
     //
@@ -47,10 +46,10 @@ public class BaryUniverse extends AbstractBarySystem implements BaryObjectContai
         precalculate(time);
         update();
         /* TODO: recalculate barycenters here, after coordinates' update
-         * go through all objects
-         * could combine this with coordinate normalization
-         * location normalization, so that the top object is always at {0, 0}
-         * normalization of angles
+         *  * go through all objects
+         *  * could combine this with coordinate normalization
+         *      * location normalization, so that the top object is always at {0, 0}
+         *      * normalization of angles
          */
     }
 
@@ -66,13 +65,13 @@ public class BaryUniverse extends AbstractBarySystem implements BaryObjectContai
 
         checkChildNeighbors();
         /* TODO: recalculate barycenters, if system changes happen
-         * if a new system is formed, the new barycenter will be created automatically at {0, 0}
-         * if an object enters a system
-         * only the target system's barycenter needs to be recalculated
-         * parent's barycenter should be conserved
-         * if a collision happens
-         * there might be mass loss etc, so barycenters need to be recalculated all the way to the top
-         * it would be easier to just check all members once, rather then checking all possibly multiple times
+         *  * if a new system is formed, the new barycenter will be created automatically at {0, 0}
+         *  * if an object enters a system
+         *      * only the target system's barycenter needs to be recalculated
+         *      * parent's barycenter should be conserved
+         *  * if a collision happens
+         *      * there might be mass loss etc, so barycenters need to be recalculated all the way to the top
+         *      * it would be easier to just check all members once, rather then checking all possibly multiple times
          */
     }
 

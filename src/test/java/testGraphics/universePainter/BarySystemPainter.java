@@ -25,7 +25,11 @@ final class BarySystemPainter extends ObjectContainerPainter<AbstractBarySystem>
                       double @NotNull [] absoluteLocation) {
         double @NotNull [] scaledLocation = scaleLocation(absoluteLocation);
         paintMembers(g, universePainter.getGenericObjectPainter(), system, absoluteLocation);
-        //TODO: paint some general system-wide data here
+        /*
+        TODO: paint some general system-wide data here, such as:
+            * member count
+            * etc
+        */
         CommonPainting.paintCenterMarker(g, getDrawableFromScaled(scaledLocation), system.getColor());
     }
 }
