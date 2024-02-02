@@ -2,6 +2,7 @@ package utils.coordinates;
 
 import org.jetbrains.annotations.NotNull;
 
+import utils.MathUtils;
 import utils.PrecalculableInterface;
 
 //
@@ -44,6 +45,12 @@ public abstract class Velocity implements ConvertibleCoordinateSystemInterface, 
         @Override
         public final void update() {
             //TODO: currently unused, nothing to update
+        }
+
+        //
+        public static VelocityCartesian newVelocityFromProjections(double vx, double vy) {
+            double @NotNull [] velocity = MathUtils.getMagnitudeAndAngleFromProjections(vx, vy);
+            return new VelocityCartesian(velocity[0], velocity[1]);
         }
     }
 

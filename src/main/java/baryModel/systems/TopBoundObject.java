@@ -6,15 +6,14 @@ import java.awt.Color;
 import org.jetbrains.annotations.NotNull;
 
 import utils.coordinates.Coordinates;
-import utils.coordinates.Location;
-import utils.coordinates.Velocity;
+import baryModel.exceptions.TopLevelObjectException;
 import baryModel.exceptions.ObjectRemovedException;
 import baryModel.BaryObject;
 import baryModel.BaryObjectContainerInterface;
 import baryModel.BaryUniverse;
 
 /**
- * Top-level bound object; will always be a system.
+ * Top-level bound object; will always be an abstract system, never a simple object.
  * Needed for proper SOI calculations, as SOI for this object needs to be infinite
  */
 public class TopBoundObject extends AbstractBarySystem {
@@ -24,9 +23,7 @@ public class TopBoundObject extends AbstractBarySystem {
     public TopBoundObject(@NotNull BaryUniverse universe) {
         super(
                 universe,
-                new Coordinates(
-                        new Location.LocationCartesian(0, 0),
-                        new Velocity.VelocityCartesian(0, 0)),
+                new Coordinates(),
                 TOP_OBJECT_COLOR);
     }
 
@@ -52,16 +49,30 @@ public class TopBoundObject extends AbstractBarySystem {
         }
     }
 
+    //not possible to exit the top-level system
+    @Override
+    public final void exitSystem() throws TopLevelObjectException {
+        throw new TopLevelObjectException();
+    }
+
+    // Check child neighbors as usual
     @Override
     public final void checkChildNeighbors() {
         super.checkChildNeighbors();
     }
 
-    //no neighbors to check
+    // No neighbors to check for a top-bound object.
     @Override
     public final void checkNeighbors() {}
 
-    //no neighbors to check
+    // No neighbors to check for a top-bound object.
     @Override
     public final void checkNeighbor(@NotNull BaryObject neighbor) {}
+
+    // There shouldn't be any neighbors to enter. Throw an exception, if any is found.
+    // Furthermore, top-bound object should always remain at top.
+    @Override
+    public final void enterNeighboringSystem(@NotNull BarySystem neighbor) throws TopLevelObjectException {
+        throw new TopLevelObjectException();
+    }
 }

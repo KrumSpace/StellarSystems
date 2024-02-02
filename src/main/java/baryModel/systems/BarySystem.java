@@ -9,12 +9,8 @@ import static consoleUtils.SimplePrinting.printLine;
 
 import utils.MathUtils;
 import utils.coordinates.Coordinates;
-import utils.coordinates.Location;
-import utils.coordinates.Velocity;
-import baryModel.exceptions.NeighborRemovedException;
-import baryModel.exceptions.ObjectRemovedException;
-import baryModel.exceptions.UnrecognizedBaryObjectTypeException;
-import baryModel.exceptions.TopLevelObjectException;
+
+import baryModel.exceptions.*;
 import baryModel.BaryObject;
 import baryModel.BaryObjectContainerInterface;
 import baryModel.simpleObjects.BarySimpleObject;
@@ -43,7 +39,7 @@ public class BarySystem extends AbstractBarySystem {
             double distance = object.getCoordinates().getLocation().getRadial()[0];
             if (distance > influenceRadius) {
                 try {
-                    object.moveLevelUp();
+                    object.exitSystem();
                     i--;
                 } catch (TopLevelObjectException ignored) {}
             }
@@ -60,7 +56,7 @@ public class BarySystem extends AbstractBarySystem {
         for (int i = 0; i < objects.size(); i++) {
             BaryObject object = objects.get(i);
             try {
-                object.moveLevelUp();
+                object.exitSystem();
                 i--;
             } catch (TopLevelObjectException ignored) {}
         }
@@ -135,6 +131,12 @@ public class BarySystem extends AbstractBarySystem {
         if (object2.getParent() != parent) {
             throw new DifferentParentException();
         } else {
+            double
+                    mass1 = object1.getMass(),
+                    mass2 = object2.getMass(),
+                    totalMass = mass1 + mass2,
+                    massRatio1 = mass1 / totalMass;
+
             //calculate locations
             double @NotNull []
                     initialLocation1 = object1.getCoordinates().getLocation().getCartesian(),
@@ -142,10 +144,6 @@ public class BarySystem extends AbstractBarySystem {
             double
                     dxTotal = initialLocation2[0] - initialLocation1[0],
                     dyTotal = initialLocation2[1] - initialLocation1[1],
-                    mass1 = object1.getMass(),
-                    mass2 = object2.getMass(),
-                    totalMass = mass1 + mass2,
-                    massRatio1 = mass1 / totalMass,
                     dx1 = dxTotal * (1 - massRatio1),
                     dy1 = dyTotal * (1 - massRatio1),
                     dx2 = dxTotal - dx1,
@@ -158,56 +156,27 @@ public class BarySystem extends AbstractBarySystem {
                     initialVelocityProjections1 = MathUtils.getProjectionsFromMagnitudeAndAngle(initialVelocity1[0], initialVelocity1[1]),
                     initialVelocityProjections2 = MathUtils.getProjectionsFromMagnitudeAndAngle(initialVelocity2[0], initialVelocity2[1]);
             double
-                    px = initialVelocityProjections1[0] * mass1 + initialVelocityProjections2[0] * mass2,
-                    py = initialVelocityProjections1[1] * mass1 + initialVelocityProjections2[1] * mass2,
-                    vxSystemFinal = px / totalMass,
-                    vySystemFinal = py / totalMass,
+                    vxSystemFinal = (initialVelocityProjections1[0] * mass1 + initialVelocityProjections2[0] * mass2) / totalMass,
+                    vySystemFinal = (initialVelocityProjections1[1] * mass1 + initialVelocityProjections2[1] * mass2) / totalMass;
+
+            //actually make the system
+            @NotNull Coordinates systemCoordinates = new Coordinates(
+                    initialLocation1[0] + dx1, initialLocation1[1] + dy1,
+                    vxSystemFinal, vySystemFinal);
+            @NotNull AbstractBarySystem newSystem = new BarySystem(parent, systemCoordinates, color);
+            parent.addObject(newSystem);
+
+            //transfer members
+            double
                     vx1final = initialVelocityProjections1[0] - vxSystemFinal,
                     vy1final = initialVelocityProjections1[1] - vySystemFinal,
                     vx2final = initialVelocityProjections2[0] - vxSystemFinal,
                     vy2final = initialVelocityProjections2[1] - vySystemFinal;
-
-            //prepare final coordinates
             @NotNull Coordinates
-                    systemCoordinates = getFinalCoordinates(
-                    initialLocation1[0] + dx1, initialLocation1[1] + dy1,
-                    vxSystemFinal, vySystemFinal),
-                    finalCoordinates1 = getFinalCoordinates(-dx1, -dy1, vx1final, vy1final),
-                    finalCoordinates2 = getFinalCoordinates(dx2, dy2, vx2final, vy2final);
-
-            //actually make the system and transfer members
-            @NotNull AbstractBarySystem newSystem = new BarySystem(parent, systemCoordinates, color);
-            transferObjectPrecalculated(object1, parent, newSystem, finalCoordinates1);
-            transferObjectPrecalculated(object2, parent, newSystem, finalCoordinates2);
-            parent.addObject(newSystem);
+                    finalCoordinates1 = new Coordinates(-dx1, -dy1, vx1final, vy1final),
+                    finalCoordinates2 = new Coordinates(dx2, dy2, vx2final, vy2final);
+            object1.transferPrecalculated(parent, newSystem, finalCoordinates1);
+            object2.transferPrecalculated(parent, newSystem, finalCoordinates2);
         }
-    }
-
-    //
-    public static final class DifferentParentException extends Exception {
-        //
-        DifferentParentException() {
-            super("Different parent exception!");
-        }
-    }
-
-    private static @NotNull Coordinates getFinalCoordinates(double x, double y, double vx, double vy) {
-        return new Coordinates(new Location.LocationCartesian(x, y), getNewVelocityFromProjections(vx, vy));
-    }
-
-    private static @NotNull Velocity getNewVelocityFromProjections(double vx, double vy) {
-        return new Velocity.VelocityCartesian(
-                Math.hypot(vx, vy),
-                MathUtils.getAngle(vx, vy));
-    }
-
-    private static void transferObjectPrecalculated(@NotNull BaryObject object,
-                                                    @NotNull BaryObjectContainerInterface oldParent,
-                                                    @NotNull BaryObjectContainerInterface newParent,
-                                                    @NotNull Coordinates newCoordinates) {
-        oldParent.removeObject(object);
-        object.setParent(newParent);
-        object.setCoordinates(newCoordinates);
-        newParent.addObject(object);
     }
 }

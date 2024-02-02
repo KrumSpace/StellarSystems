@@ -26,6 +26,7 @@ public class BaryUniverse implements BaryObjectContainerInterface, Precalculable
     @Override
     public final void addObject(@NotNull BaryObject object) {
         topObject.addObject(object);
+        object.setParent(topObject);
     }
 
     //

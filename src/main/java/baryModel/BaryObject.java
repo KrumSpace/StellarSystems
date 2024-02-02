@@ -11,7 +11,9 @@ import utils.coordinates.Coordinates;
 import utils.coordinates.CoordinateContainerInterface;
 import utils.PrecalculableInterface;
 import baryModel.exceptions.TopLevelObjectException;
+import baryModel.exceptions.DifferentParentException;
 import baryModel.systems.AbstractBarySystem;
+import baryModel.systems.BarySystem;
 import baryModel.systems.TopBoundObject;
 
 //
@@ -63,9 +65,29 @@ public abstract class BaryObject implements
     }
 
     //
+    public abstract double getMass();
+
+    //TODO: needs rework, formula too crude
+    public double getInfluenceRadius() {
+        return influenceRadiusCalculator.getInfluenceRadius();
+    }
+
+    //
     @Override
-    public void moveLevelUp() throws TopLevelObjectException {
-        if (parent instanceof TopBoundObject || parent instanceof BaryUniverse) {
+    public void precalculate(double time) {
+        coordinates.precalculate(time);
+    }
+
+    //
+    @Override
+    public void update() {
+        coordinates.update();
+    }
+
+    //
+    @Override
+    public void exitSystem() throws TopLevelObjectException {
+        if (parent instanceof TopBoundObject) {
             throw new TopLevelObjectException();
         } else {
             //find new parent
@@ -79,7 +101,7 @@ public abstract class BaryObject implements
 
                 //calculate and set new coordinates
                 if (parent instanceof AbstractBarySystem) {
-                    setNewCoordinatesWhenMovingUp((AbstractBarySystem) parent);
+                    setNewCoordinatesWhenExiting((AbstractBarySystem) parent);
                 } else {
                     throw new RuntimeException("Parent is not a system, unable to get coordinates!");
                 }
@@ -93,7 +115,7 @@ public abstract class BaryObject implements
         }
     }
 
-    private void setNewCoordinatesWhenMovingUp(@NotNull AbstractBarySystem parentSystem) {
+    private void setNewCoordinatesWhenExiting(@NotNull AbstractBarySystem parentSystem) {
         double @NotNull []
                 oldCoordinates = getCoordinates().getLocation().getCartesian(),
                 oldSystemCoordinates = parentSystem.getCoordinates().getLocation().getCartesian();
@@ -116,24 +138,20 @@ public abstract class BaryObject implements
         setCoordinates(new Coordinates(newLocation, newVelocity));
     }
 
-    //
-    public abstract double getMass();
-
-    //TODO: needs rework, formula too crude
-    public double getInfluenceRadius() {
-        return influenceRadiusCalculator.getInfluenceRadius();
+    //unfinished, TODO: finish
+    public void transfer() {
+        //remove from previous system
+        //add to new system
     }
 
-    //
-    @Override
-    public void precalculate(double time) {
-        coordinates.precalculate(time);
-    }
-
-    //
-    @Override
-    public void update() {
-        coordinates.update();
+    //transfer this object from one system to another with precalculated coordinates
+    public final void transferPrecalculated(@NotNull BaryObjectContainerInterface oldParent,
+                                            @NotNull BaryObjectContainerInterface newParent,
+                                            @NotNull Coordinates newCoordinates) {
+        oldParent.removeObject(this);
+        this.setParent(newParent);
+        this.setCoordinates(newCoordinates);
+        newParent.addObject(this);
     }
 
     //
@@ -150,6 +168,11 @@ public abstract class BaryObject implements
     public final boolean neighborMergeabiltyCheck() {
         @NotNull BaryObjectContainerInterface parent = getParent();
         return parent instanceof BaryUniverse || parent.getObjects().size() > 2;
+    }
+
+    @Override
+    public void enterNeighboringSystem(@NotNull BarySystem neighbor) throws DifferentParentException, TopLevelObjectException {
+        //TODO: finish this
     }
 
     //

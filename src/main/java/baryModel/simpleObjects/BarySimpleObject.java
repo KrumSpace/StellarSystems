@@ -11,6 +11,7 @@ import baryModel.*;
 import baryModel.exceptions.NeighborRemovedException;
 import baryModel.exceptions.ObjectRemovedException;
 import baryModel.exceptions.UnrecognizedBaryObjectTypeException;
+import baryModel.exceptions.DifferentParentException;
 import baryModel.systems.AbstractBarySystem;
 import baryModel.systems.BarySystem;
 
@@ -90,6 +91,6 @@ public class BarySimpleObject extends BaryObject {
             @NotNull ObjectRemovedException exception = new ObjectRemovedException();
             exception.addSuppressed(new NeighborRemovedException());
             throw exception;
-        } catch (BarySystem.DifferentParentException ignored) {}
+        } catch (DifferentParentException ignored) {}
     }
 }

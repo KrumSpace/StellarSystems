@@ -15,6 +15,18 @@ public final class Coordinates implements PrecalculableInterface.BufferedValueIn
         this.velocity = velocity;
     }
 
+    //cartesian from projections
+    public Coordinates(double x, double y, double vx, double vy) {
+        this(
+                new Location.LocationCartesian(x, y),
+                Velocity.VelocityCartesian.newVelocityFromProjections(vx, vy));
+    }
+
+    //blank cartesian
+    public Coordinates() {
+        this(0, 0, 0, 0);
+    }
+
     //
     public @NotNull Location getLocation() {
         return location;

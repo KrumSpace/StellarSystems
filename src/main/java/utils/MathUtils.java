@@ -31,16 +31,14 @@ public class MathUtils {
         double
                 x = cartesian[0],
                 y = cartesian[1];
-        return new double [] {
-                Math.hypot(x, y),
-                getAngle(x, y)};
+        return getMagnitudeAndAngleFromProjections(x, y);
     }
 
     //for cartesian velocity conversion from [speed, direction] to [vx, vy]
-    public static double @NotNull [] getProjectionsFromMagnitudeAndAngle(double magnitude, double angle) {
+    public static double @NotNull [] getMagnitudeAndAngleFromProjections(double x, double y) {
         return new double [] {
-                magnitude * Math.cos(angle),
-                magnitude * Math.sin(angle)};
+                Math.hypot(x, y),
+                getAngle(x, y)};
     }
 
     //2D conversion
@@ -49,5 +47,12 @@ public class MathUtils {
                 radius = polar[0],
                 angle = polar[1];
         return getProjectionsFromMagnitudeAndAngle(radius, angle);
+    }
+
+    //for cartesian velocity conversion from [speed, direction] to [vx, vy]
+    public static double @NotNull [] getProjectionsFromMagnitudeAndAngle(double magnitude, double angle) {
+        return new double [] {
+                magnitude * Math.cos(angle),
+                magnitude * Math.sin(angle)};
     }
 }

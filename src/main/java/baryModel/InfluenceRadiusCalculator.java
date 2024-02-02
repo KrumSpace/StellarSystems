@@ -8,9 +8,9 @@ import baryModel.systems.AbstractBarySystem;
 //
 final class InfluenceRadiusCalculator {
     private static final double
-            MAX_INFLUENCE_RADIUS = 2000,
+            MAX_INFLUENCE_RADIUS = 5000,
             MASS_RATIO_POWER = 0.4, // = 2 / 5
-            INFLUENCE_RADIUS_MASS_COEFFICIENT_FOR_ROOT = 5;
+            INFLUENCE_RADIUS_MASS_COEFFICIENT_FOR_ROOT = 3;
     private final @NotNull BaryObject object;
 
     //
