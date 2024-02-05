@@ -13,7 +13,7 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
 
-        <threadAbstraction.version>0.5</threadAbstraction.version>
+        <threadAbstraction.version>0.5.1</threadAbstraction.version>
     </properties>
 
     <repositories>
