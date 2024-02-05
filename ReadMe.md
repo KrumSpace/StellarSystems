@@ -15,7 +15,7 @@ _Work is under progress..._
 ## Requirements
 
 * JDK: 21
-* [ThreadAbstraction](https://github.com/KruMF/ThreadAbstraction) : 0.5
+* [ThreadAbstraction](https://github.com/KruMF/ThreadAbstraction) : 0.5.1
 
 
 ## Demo
