@@ -1,7 +1,5 @@
 package demo.graphics;
 
-import java.awt.event.KeyEvent;
-
 import org.jetbrains.annotations.NotNull;
 
 import commonGraphics.AbstractKeyListener;
@@ -12,27 +10,14 @@ public final class DemoKeyListener extends AbstractKeyListener {
     private static final boolean
             SHIFT_ZOOMED = true;
     private static final double
-            SHIFT_RATE = 10,
-            ZOOM_RATE = 0.05;
+            SHIFT_RATE = 7,
+            ZOOM_RATE = 0.03;
     private final @NotNull Observer observer;
 
     //
     public DemoKeyListener(@NotNull Observer observer) {
         super();
         this.observer = observer;
-    }
-
-    //
-    @Override
-    public void keyActionSwitch_byChar(@NotNull KeyEvent e) throws UndefinedKeyActionException {
-        switch (e.getKeyChar()) {
-            case 'a', 'A' -> shiftObserver(-SHIFT_RATE, 0); // x-, shift left
-            case 'd', 'D' -> shiftObserver(SHIFT_RATE, 0);  // x+, shift right
-            case 'w', 'W' -> shiftObserver(0, -SHIFT_RATE); // y-, shift up
-            case 's', 'S' -> shiftObserver(0, SHIFT_RATE);  // y+, shift down
-            // add more keys here
-            default -> throw new UndefinedKeyActionException();
-        }
     }
 
     //
@@ -54,7 +39,20 @@ public final class DemoKeyListener extends AbstractKeyListener {
                 }
             }
             // add more keys here
-            default -> throw new UndefinedKeyActionException(keyCode);
+            default -> throw new UndefinedKeyActionException();
+        }
+    }
+
+    //
+    @Override
+    public void keyActionSwitch_byText(@NotNull String keyText) throws UndefinedKeyActionException {
+        switch (keyText) {
+            case "A", "a" -> shiftObserver(-SHIFT_RATE, 0); // x-, shift left
+            case "D", "d" -> shiftObserver(SHIFT_RATE, 0);  // x+, shift right
+            case "W", "w" -> shiftObserver(0, -SHIFT_RATE); // y-, shift up
+            case "S", "s" -> shiftObserver(0, SHIFT_RATE);  // y+, shift down
+            // add more keys here
+            default -> throw new UndefinedKeyActionException();
         }
     }
 

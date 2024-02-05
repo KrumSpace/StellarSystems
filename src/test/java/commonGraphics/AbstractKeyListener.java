@@ -1,16 +1,28 @@
 package commonGraphics;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.ArrayList;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import org.jetbrains.annotations.NotNull;
 
 import static consoleUtils.SimplePrinting.printLine;
+import ThreadAbstraction.AbstractUpdater;
 
 //
 public abstract class AbstractKeyListener implements KeyListener {
+    private final @NotNull List<@NotNull Integer> pressedKeys;
+    @SuppressWarnings("FieldCanBeLocal")
+    private final @NotNull KeyActionUpdater keyActionUpdater;
+
     //
-    public AbstractKeyListener() {}
+    public AbstractKeyListener() {
+        pressedKeys = new ArrayList<>();
+        keyActionUpdater = new KeyActionUpdater(this);
+        keyActionUpdater.start();
+    }
 
     /**
      * Invoked when a key has been typed.
@@ -31,15 +43,7 @@ public abstract class AbstractKeyListener implements KeyListener {
      */
     @Override
     public void keyPressed(@NotNull KeyEvent e) {
-        try {
-            keyActionSwitch_byChar(e);
-        } catch (@NotNull UndefinedKeyActionException ignored) {
-            try {
-                keyActionSwitch_byCode(e.getKeyCode());
-            } catch (@NotNull UndefinedKeyActionException exception) {
-                printLine(exception.getMessage());
-            }
-        }
+        addKey(e.getKeyCode());
     }
 
     /**
@@ -50,13 +54,38 @@ public abstract class AbstractKeyListener implements KeyListener {
      * @param e the event to be processed
      */
     @Override
-    public void keyReleased(@NotNull KeyEvent e) {}
+    public void keyReleased(@NotNull KeyEvent e) {
+        removeKey(e.getKeyCode());
+    }
 
     //
-    public abstract void keyActionSwitch_byChar(@NotNull KeyEvent e) throws UndefinedKeyActionException;
+    final @NotNull List<@NotNull Integer> getKeys() {
+        return Collections.unmodifiableList(pressedKeys);
+    }
+
+    //
+    @SuppressWarnings("unused")
+    final void clearKeys() {
+        pressedKeys.clear();
+    }
+
+    private void addKey(int keyCode) {
+        if (!pressedKeys.contains(keyCode)) {
+            pressedKeys.add(keyCode);
+        }
+    }
+
+    private void removeKey(int keyCode) {
+        if (pressedKeys.contains(keyCode)) {
+            pressedKeys.remove((Integer) keyCode);
+        }
+    }
 
     //
     public abstract void keyActionSwitch_byCode(int keyCode) throws UndefinedKeyActionException;
+
+    //
+    public abstract void keyActionSwitch_byText(@NotNull String keyText) throws UndefinedKeyActionException;
 
     //
     public static final class UndefinedKeyActionException extends Exception {
@@ -68,6 +97,35 @@ public abstract class AbstractKeyListener implements KeyListener {
         //
         public UndefinedKeyActionException(int keyCode) {
             super("Key action not defined for key " + keyCode + " (" + KeyEvent.getKeyText(keyCode) + ")");
+        }
+    }
+
+    //
+    private static final class KeyActionUpdater extends AbstractUpdater {
+        private static final long UPDATE_DELAY = 20; // ms
+        private final @NotNull AbstractKeyListener listener;
+
+        //
+        KeyActionUpdater(@NotNull AbstractKeyListener listener) {
+            super(UPDATE_DELAY);
+            this.listener = listener;
+        }
+
+        @Override
+        public void update() {
+            @NotNull List<@NotNull Integer> keys = listener.getKeys();
+            for (int keyCode : keys) {
+                try {
+                    listener.keyActionSwitch_byCode(keyCode);
+                } catch (@NotNull UndefinedKeyActionException ignored) {
+                    try {
+                        listener.keyActionSwitch_byText(KeyEvent.getKeyText(keyCode));
+                    } catch (@NotNull UndefinedKeyActionException exception) {
+                        @NotNull String exceptionMessage = (new UndefinedKeyActionException(keyCode)).getMessage();
+                        printLine(exceptionMessage);
+                    }
+                }
+            }
         }
     }
 }
