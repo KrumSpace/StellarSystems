@@ -12,6 +12,12 @@ Currently, simulates barycentric systems and object collisions in cartesian and 
 _Work is under progress..._
 
 
+## Requirements
+
+* JDK: 21
+* [ThreadAbstraction](https://github.com/KruMF/ThreadAbstraction) : 0.5
+
+
 ## Demo
 
 Look for `src\test\java\demo\Main` for a standalone demo.
