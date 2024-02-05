@@ -1,0 +1,46 @@
+package baryGraphics.panels;
+
+import java.awt.Color;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import baryGraphics.Observer;
+
+//
+public class ObserverDrawPanel extends CenteredDrawPanel implements ScaledDrawInterface {
+    private final @NotNull Observer observer;
+
+    //
+    public ObserverDrawPanel(@NotNull Observer observer, @Nullable Color background) {
+        super(background);
+        this.observer = observer;
+    }
+
+    //
+    @Override
+    public final double getScale() {
+        return observer.getScale();
+    }
+
+    //
+    public final double @NotNull [] getObserverLocation() {
+        return observer.getLocation();
+    }
+
+    //
+    public final double @NotNull [] getLocationRelativeToObserver(double @NotNull [] location) {
+        double @NotNull [] observerLocation = getObserverLocation();
+        return new double [] {
+                location[0] - observerLocation[0],
+                location[1] - observerLocation[1]};
+    }
+
+    //
+    public final double @NotNull [] getDrawableFromAbsolute(double @NotNull [] absoluteLocation) {
+        double @NotNull []
+                relativeLocation = getLocationRelativeToObserver(absoluteLocation),
+                scaledLocation = scaleLocation(relativeLocation);
+        return applyDrawCenterOffset(scaledLocation);
+    }
+}

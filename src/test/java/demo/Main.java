@@ -4,17 +4,15 @@ import org.jetbrains.annotations.NotNull;
 
 import baryModel.BaryUniverse;
 import baryModel.UniverseUpdater;
-
-import testGraphics.TestWindow;
-import testGraphics.WindowUpdater;
+import commonGraphics.AbstractWindow;
+import commonGraphics.WindowUpdater;
+import demo.graphics.DemoWindow;
 
 //
 public class Main {
     //
     public static void main(String[] args) {
-        @NotNull BaryUniverse universe = getNewUniverse();
-        new UniverseUpdater(universe);
-        startGraphics(universe);
+        new GraphicalBaryTest(getNewUniverse());
     }
 
     private static @NotNull BaryUniverse getNewUniverse() {
@@ -23,7 +21,20 @@ public class Main {
         return new TestUniverse3();
     }
 
-    private static void startGraphics(@NotNull BaryUniverse universe) {
-        new WindowUpdater(new TestWindow(universe));
+    //TODO: finish this, add graceful close/exit
+    @SuppressWarnings({"FieldCanBeLocal", "unused"})
+    private static class GraphicalBaryTest {
+        private final @NotNull BaryUniverse universe;
+        private final @NotNull UniverseUpdater universeUpdater;
+        private final @NotNull AbstractWindow window;
+        private final @NotNull WindowUpdater windowUpdater;
+
+        //
+        GraphicalBaryTest(@NotNull BaryUniverse universe) {
+            this.universe = universe;
+            universeUpdater = new UniverseUpdater(universe);
+            window = new DemoWindow(universe);
+            windowUpdater = new WindowUpdater(window);
+        }
     }
 }
