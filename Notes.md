@@ -12,9 +12,9 @@
 ## Main updater cycle
 
 1. universe.precalculate()
-    * precalculates temp coordinates and velocities
+    * precalculates temp kineticParameters and velocities
 2. universe.update()
-    * updates actual coordinates from temps
+    * updates actual kineticParameters from temps
 3. universe.checkMeaninglessSystems()
     * go through all members
         * if it's a system, go deeper

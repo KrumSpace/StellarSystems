@@ -7,7 +7,8 @@ import java.awt.Color;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import utils.coordinates.Coordinates;
+import kinetics.Location;
+import kinetics.Velocity;
 import baryModel.BaryObject;
 import baryModel.BaryObjectContainerInterface;
 
@@ -20,9 +21,10 @@ public abstract class AbstractBarySystem extends BaryObject implements BaryObjec
 
     //
     public AbstractBarySystem(@Nullable BaryObjectContainerInterface parent,
-                              @NotNull Coordinates coordinates,
+                              @Nullable Location location,
+                              @Nullable Velocity velocity,
                               @NotNull Color color) {
-        super(parent, coordinates);
+        super(parent, location, velocity, null);
         this.color = color;
         name = new SystemName(null);
     }
@@ -46,9 +48,9 @@ public abstract class AbstractBarySystem extends BaryObject implements BaryObjec
     }
 
     //
-    public final void precalculateMembers(double time) {
+    public final void calculateMembers(double time) {
         for (@NotNull BaryObject object : objects) {
-            object.precalculate(time);
+            object.calculate(time);
         }
     }
 
@@ -65,14 +67,65 @@ public abstract class AbstractBarySystem extends BaryObject implements BaryObjec
         }
     }
 
-    //TODO: improve this, maybe precalculate masses on update?
+    public final void updateCenter() {
+        @NotNull Location baryCenter = getBaryCenter();
+        getLocation().copy(baryCenter);
+        updateMemberCenters(baryCenter);
+    }
+
+    private void updateMemberCenters(@NotNull Location newCenter) {
+        for (@NotNull BaryObject object : objects) {
+            object.getLocation().increaseCartesian(
+                    -(newCenter.getX()),
+                    -(newCenter.getY()),
+                    -(newCenter.getZ()));
+            if (object instanceof @NotNull AbstractBarySystem system) {
+                system.updateCenter();
+            }
+        }
+    }
+
+    //
     @Override
     public final double getMass() {
+        return getMassWithout(null);
+    }
+
+    //
+    public final double getMassWithout(@Nullable BaryObject object) {
         double mass = 0;
-        for (BaryObject object : objects) {
-            mass += object.getMass();
+        for (@NotNull BaryObject object1 : objects) {
+            if (object1 != object) {
+                mass += object1.getMass();
+            }
         }
         return mass;
+    }
+
+    //
+    public final @NotNull Location getBaryCenter() {
+        return getBaryCenterWithout(null);
+    }
+
+    //
+    public final @NotNull Location getBaryCenterWithout(@Nullable BaryObject object) {
+        double
+                totalMass = getMassWithout(object),
+                weightedX = 0,
+                weightedY = 0,
+                weightedZ = 0;
+        for (@NotNull BaryObject object1 : objects) {
+            if (object1 != object) {
+                double mass = object1.getMass();
+                weightedX += object1.getLocation().getX() * mass;
+                weightedY += object1.getLocation().getY() * mass;
+                weightedZ += object1.getLocation().getZ() * mass;
+            }
+        }
+        return new Location(
+                weightedX / totalMass,
+                weightedY / totalMass,
+                weightedZ / totalMass);
     }
 
     //

@@ -7,7 +7,7 @@ by [Krumuvecis](https://github.com/Krumuvecis)
 
 ## Abstract
 
-Currently, simulates barycentric systems and object collisions in cartesian and polar coordinates.
+Currently, simulates barycentric systems and object collisions in cartesian and polar kineticParameters.
 
 _Work is under progress..._
 

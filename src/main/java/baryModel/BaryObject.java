@@ -6,9 +6,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import utils.MathUtils;
-import utils.coordinates.Location;
-import utils.coordinates.Velocity;
-import utils.coordinates.Coordinates;
+import kinetics.Location;
+import kinetics.Velocity;
+import kinetics.Acceleration;
 import baryModel.exceptions.TopLevelObjectException;
 import baryModel.exceptions.DifferentParentException;
 import baryModel.exceptions.ObjectRemovedException;
@@ -17,18 +17,47 @@ import baryModel.systems.AbstractBarySystem;
 import baryModel.systems.BarySystem;
 
 //
-public abstract class BaryObject extends MassiveCoordinatedObject implements BaryChildInterface {
+public abstract class BaryObject extends InfluentialObject implements BaryChildInterface {
+    private static final double GRAVITATIONAL_CONSTANT = 10000; //6.67 * Math.pow(10, -13);
     private @Nullable BaryObjectContainerInterface parent;
 
     //
     public BaryObject(@Nullable BaryObjectContainerInterface parent,
-                      @NotNull Coordinates coordinates) {
-        super(coordinates);
+                      @Nullable Location location,
+                      @Nullable Velocity velocity,
+                      @Nullable Acceleration acceleration) {
+        super(location, velocity, acceleration);
         this.parent = parent;
     }
+
+    @Override
+    public void calculate(double time) {
+        getAcceleration().addComponent(getGravitationalAcceleration());
+        //add other acceleration components here, such as engines or user input
+        super.calculate(time);
+    }
+
+    private @NotNull Acceleration getGravitationalAcceleration() {
+        double parentMass = 0;
+        @NotNull Location parentLocation = new Location(0, 0, 0);
+        if (parent instanceof @NotNull AbstractBarySystem parentSystem) {
+            parentMass = parentSystem.getMassWithout(this);
+            parentLocation = parentSystem.getBaryCenterWithout(this);
+        }
+        double
+                dx = parentLocation.getX() - getLocation().getX(),
+                dy = parentLocation.getY() - getLocation().getY(),
+                dz = parentLocation.getZ() - getLocation().getZ(),
+                distanceSquared = dx * dx + dy * dy + dz * dz;
+        return new Acceleration(
+                GRAVITATIONAL_CONSTANT * parentMass / distanceSquared,
+                MathUtils.getAngle(dx, dy),
+                MathUtils.getAngle(Math.hypot(dx, dy), dz));
+    }
+
     //
     public double getInfluenceRadius() throws TopLevelObjectException {
-        return super.getInfluenceRadius((MassiveCoordinatedObject) getParent());
+        return super.getInfluenceRadius((InfluentialObject) getParent());
     }
 
     //
@@ -79,26 +108,16 @@ public abstract class BaryObject extends MassiveCoordinatedObject implements Bar
     }
 
     private void setNewCoordinatesWhenExiting(@NotNull AbstractBarySystem parentSystem) {
-        double @NotNull []
-                oldCoordinates = getCoordinates().getLocation().getCartesian(),
-                oldSystemCoordinates = parentSystem.getCoordinates().getLocation().getCartesian();
-        @NotNull Location newLocation = new Location.LocationCartesian(
-                oldCoordinates[0] + oldSystemCoordinates[0],
-                oldCoordinates[1] + oldSystemCoordinates[1]);
-
-        double @NotNull []
-                oldVelocity = getCoordinates().getVelocity().getCartesian(),
-                oldVelocityProjections = MathUtils.getProjectionsFromMagnitudeAndAngle(oldVelocity[0], oldVelocity[1]),
-                oldSystemVelocity = parentSystem.getCoordinates().getVelocity().getCartesian(),
-                oldSystemVelocityProjections = MathUtils.getProjectionsFromMagnitudeAndAngle(oldSystemVelocity[0], oldSystemVelocity[1]),
-                newVelocityProjections = new double [] {
-                        oldVelocityProjections[0] + oldSystemVelocityProjections[0],
-                        oldVelocityProjections[1] + oldSystemVelocityProjections[1]};
-        @NotNull Velocity newVelocity = new Velocity.VelocityCartesian(
-                Math.hypot(newVelocityProjections[0], newVelocityProjections[1]),
-                MathUtils.getAngle(newVelocityProjections[0], newVelocityProjections[1]));
-
-        setCoordinates(new Coordinates(newLocation, newVelocity));
+        @NotNull Location oldSystemCoordinates = parentSystem.getLocation();
+        getLocation().increaseCartesian(
+                oldSystemCoordinates.getX(),
+                oldSystemCoordinates.getY(),
+                oldSystemCoordinates.getZ());
+        @NotNull Velocity oldSystemVelocity = parentSystem.getVelocity();
+        getVelocity().increaseCartesian(
+                oldSystemVelocity.getX(),
+                oldSystemVelocity.getY(),
+                oldSystemVelocity.getZ());
     }
 
     //unfinished, TODO: finish
@@ -113,14 +132,18 @@ public abstract class BaryObject extends MassiveCoordinatedObject implements Bar
         //TODO: finish this
     }
 
-    //transfer this object from one system to another with precalculated coordinates
+    //transfer this object from one system to another with precalculated kinetic parameters
     public final void transferPrecalculated(@NotNull BaryObjectContainerInterface oldParent,
                                             @NotNull BaryObjectContainerInterface newParent,
-                                            @NotNull Coordinates newCoordinates) {
+                                            @NotNull Location newLocation,
+                                            @NotNull Velocity newVelocity,
+                                            @NotNull Acceleration newAcceleration) {
         try {
             oldParent.removeObject(this);
-            this.setParent(newParent);
-            this.setCoordinates(newCoordinates);
+            setParent(newParent);
+            getLocation().copy(newLocation);
+            getVelocity().copy(newVelocity);
+            getAcceleration().copy(newAcceleration);
             newParent.addObject(this);
         } catch (@NotNull TopLevelObjectException e) {
             throw new RuntimeException(e);
@@ -129,12 +152,14 @@ public abstract class BaryObject extends MassiveCoordinatedObject implements Bar
 
     //
     public final double getDistanceToNeighbor(@NotNull BaryObject neighbor) {
-        double @NotNull []
-                location = this.getCoordinates().getLocation().getCartesian(),
-                neighborLocation = neighbor.getCoordinates().getLocation().getCartesian();
-        return Math.hypot(
-                location[0] - neighborLocation[0],
-                location[1] - neighborLocation[1]);
+        @NotNull Location
+                location = getLocation(),
+                neighborLocation = neighbor.getLocation();
+        double
+                dx = location.getX() - neighborLocation.getX(),
+                dy = location.getY() - neighborLocation.getY(),
+                dz = location.getZ() - neighborLocation.getZ();
+        return Math.hypot(Math.hypot(dx, dy), dz);
     }
 
     //checks if parent is either the universe or its child count is greater than 2

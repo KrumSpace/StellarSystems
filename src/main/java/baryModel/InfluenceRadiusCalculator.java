@@ -5,20 +5,20 @@ import org.jetbrains.annotations.NotNull;
 //
 final class InfluenceRadiusCalculator {
     private static final double
-            MAX_INFLUENCE_RADIUS = 5000,
-            MASS_RATIO_POWER = 0.4; // = 2 / 5
-    private final @NotNull MassiveCoordinatedObject object;
+            MAX_INFLUENCE_RADIUS = 6000, //should be as big as possible; kept minimal for easily visible testing; TODO: remove or increase this
+            MASS_RATIO_POWER = 0.4; //two fifths for mass ratio power
+    private final @NotNull InfluentialObject object;
 
     //
-    InfluenceRadiusCalculator(@NotNull MassiveCoordinatedObject object) {
+    InfluenceRadiusCalculator(@NotNull InfluentialObject object) {
         this.object = object;
     }
 
     //R_influence = R * (m / M) ^ (2 / 5), check notes for more info
-    double getInfluenceRadius(@NotNull MassiveCoordinatedObject parent) {
+    double getInfluenceRadius(@NotNull InfluentialObject parent) {
         double mass = object.getMass();
         double
-                distanceToParent = object.getCoordinates().getLocation().getRadial()[0],
+                distanceToParent = object.getLocation().getRadius(),
                 parentMass = parent.getMass() - mass; //only parent, without this object
         return calculateInfluenceRadius(distanceToParent, mass, parentMass);
     }

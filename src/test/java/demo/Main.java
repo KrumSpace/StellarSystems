@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import baryModel.BaryUniverse;
 import baryModel.UniverseUpdater;
+
 import commonGraphics.AbstractWindow;
 import commonGraphics.WindowUpdater;
 import demo.graphics.DemoWindow;
@@ -16,9 +17,7 @@ public class Main {
     }
 
     private static @NotNull BaryUniverse getNewUniverse() {
-        //return new TestUniverse1();
-        //return new TestUniverse2();
-        return new TestUniverse3();
+        return new TestUniverse();
     }
 
     //TODO: finish this, add graceful close/exit

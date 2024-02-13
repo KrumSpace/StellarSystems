@@ -4,12 +4,13 @@ import java.util.List;
 import java.awt.Color;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static consoleUtils.SimplePrinting.printLine;
 
-import utils.MathUtils;
-import utils.coordinates.Coordinates;
-
+import kinetics.Location;
+import kinetics.Velocity;
+import kinetics.Acceleration;
 import baryModel.exceptions.*;
 import baryModel.BaryObject;
 import baryModel.BaryObjectContainerInterface;
@@ -19,9 +20,10 @@ import baryModel.simpleObjects.BarySimpleObject;
 public class BarySystem extends AbstractBarySystem {
     //
     public BarySystem(@NotNull BaryObjectContainerInterface parent,
-                      @NotNull Coordinates coordinates,
+                      @Nullable Location location,
+                      @Nullable Velocity velocity,
                       @NotNull Color color) {
-        super(parent, coordinates, color);
+        super(parent, location, velocity, color);
     }
 
     //
@@ -37,9 +39,9 @@ public class BarySystem extends AbstractBarySystem {
 
     //
     @Override
-    public final void precalculate(double time) {
-        super.precalculate(time);
-        precalculateMembers(time);
+    public final void calculate(double time) {
+        super.calculate(time);
+        calculateMembers(time);
     }
 
     //
@@ -54,7 +56,7 @@ public class BarySystem extends AbstractBarySystem {
             }
 
             //if body exceeds parent's influence radius, move to upper level
-            double distance = object.getCoordinates().getLocation().getRadial()[0];
+            double distance = object.getLocation().getRadius();
             if (distance > influenceRadius) {
                 try {
                     object.exitSystem();
@@ -95,8 +97,7 @@ public class BarySystem extends AbstractBarySystem {
                 //TODO: neighbor joins this system
                 printLine("Object " + neighborObject.getName() + " should enter system " + getName());
             } else if (distance < neighborObject.getInfluenceRadius() && neighborMergeabiltyCheck()) {
-                //TODO: form a new system of this and neighbor
-                //printLine("A new system should be formed between " + getName() + " and " + neighbor.getName());
+                //forms a new system of this and neighbor
                 try {
                     formNewSystem(this, neighborObject, Color.yellow); //TODO: improve the color
                     @NotNull ObjectRemovedException exception = new ObjectRemovedException();
@@ -158,52 +159,72 @@ public class BarySystem extends AbstractBarySystem {
                         mass1 = object1.getMass(),
                         mass2 = object2.getMass(),
                         totalMass = mass1 + mass2,
-                        massRatio1 = mass1 / totalMass;
+                        massRatio1 = mass1 / totalMass,
+                        massRatio2 = mass2 / totalMass;
 
                 //calculate locations
-                double @NotNull []
-                        initialLocation1 = object1.getCoordinates().getLocation().getCartesian(),
-                        initialLocation2 = object2.getCoordinates().getLocation().getCartesian();
+                @NotNull Location
+                        initialLocation1 = object1.getLocation(),
+                        initialLocation2 = object2.getLocation();
                 double
-                        dxTotal = initialLocation2[0] - initialLocation1[0],
-                        dyTotal = initialLocation2[1] - initialLocation1[1],
-                        dx1 = dxTotal * (1 - massRatio1),
-                        dy1 = dyTotal * (1 - massRatio1),
-                        dx2 = dxTotal - dx1,
-                        dy2 = dyTotal - dy1;
+                        dxTotal = initialLocation2.getX() - initialLocation1.getX(),
+                        dyTotal = initialLocation2.getY() - initialLocation1.getY(),
+                        dzTotal = initialLocation2.getZ() - initialLocation1.getZ(),
+                        dx1 = -dxTotal * massRatio2,
+                        dy1 = -dyTotal * massRatio2,
+                        dz1 = -dzTotal * massRatio2,
+                        dx2 = dxTotal * massRatio1,
+                        dy2 = dyTotal * massRatio1,
+                        dz2 = dzTotal * massRatio1;
+                @NotNull Location
+                        newSystemLocation = new Location(
+                                initialLocation1.getX() - dx1,
+                                initialLocation1.getY() - dy1,
+                                initialLocation1.getZ() - dz1),
+                        newLocation1 = new Location(dx1, dy1, dz1),
+                        newLocation2 = new Location(dx2, dy2, dz2);
 
                 //calculate velocities
-                double @NotNull []
-                        initialVelocity1 = object1.getCoordinates().getVelocity().getCartesian(),
-                        initialVelocity2 = object2.getCoordinates().getVelocity().getCartesian(),
-                        initialVelocityProjections1 = MathUtils.getProjectionsFromMagnitudeAndAngle(initialVelocity1[0], initialVelocity1[1]),
-                        initialVelocityProjections2 = MathUtils.getProjectionsFromMagnitudeAndAngle(initialVelocity2[0], initialVelocity2[1]);
-                double
-                        vxSystemFinal = (initialVelocityProjections1[0] * mass1 + initialVelocityProjections2[0] * mass2) / totalMass,
-                        vySystemFinal = (initialVelocityProjections1[1] * mass1 + initialVelocityProjections2[1] * mass2) / totalMass;
+                @NotNull Velocity newSystemVelocity = getWeightedVelocity(
+                        object1.getVelocity(), mass1,
+                        object2.getVelocity(), mass2,
+                        totalMass);
 
                 //actually make the system
-                @NotNull Coordinates systemCoordinates = new Coordinates(
-                        initialLocation1[0] + dx1, initialLocation1[1] + dy1,
-                        vxSystemFinal, vySystemFinal);
-                @NotNull AbstractBarySystem newSystem = new BarySystem(parent, systemCoordinates, color);
+                @NotNull AbstractBarySystem newSystem = new BarySystem(parent, newSystemLocation, newSystemVelocity, color);
                 parent.addObject(newSystem);
 
                 //transfer members
-                double
-                        vx1final = initialVelocityProjections1[0] - vxSystemFinal,
-                        vy1final = initialVelocityProjections1[1] - vySystemFinal,
-                        vx2final = initialVelocityProjections2[0] - vxSystemFinal,
-                        vy2final = initialVelocityProjections2[1] - vySystemFinal;
-                @NotNull Coordinates
-                        finalCoordinates1 = new Coordinates(-dx1, -dy1, vx1final, vy1final),
-                        finalCoordinates2 = new Coordinates(dx2, dy2, vx2final, vy2final);
-                object1.transferPrecalculated(parent, newSystem, finalCoordinates1);
-                object2.transferPrecalculated(parent, newSystem, finalCoordinates2);
+                transferObjectPrecalculated(object1, newSystem, newLocation1);
+                transferObjectPrecalculated(object2, newSystem, newLocation2);
             }
         } catch (TopLevelObjectException e) {
             throw new RuntimeException(e);
         }
+    }
 
+    private static @NotNull Velocity getWeightedVelocity(@NotNull Velocity velocity1, double mass1,
+                                                         @NotNull Velocity velocity2, double mass2,
+                                                         double totalMass) {
+        return Velocity.newFromProjections(
+                (velocity1.getX() * mass1 + velocity2.getX() * mass2) / totalMass,
+                (velocity1.getY() * mass1 + velocity2.getY() * mass2) / totalMass,
+                (velocity1.getZ() * mass1 + velocity2.getZ() * mass2) / totalMass);
+    }
+
+    private static void transferObjectPrecalculated(@NotNull BaryObject object,
+                                                    @NotNull AbstractBarySystem newSystem,
+                                                    @NotNull Location newLocation) throws TopLevelObjectException {
+        @NotNull Velocity
+                initialVelocity = object.getVelocity(),
+                newSystemVelocity = newSystem.getVelocity();
+        object.transferPrecalculated(
+                object.getParent(), newSystem,
+                newLocation,
+                Velocity.newFromProjections(
+                        initialVelocity.getX() - newSystemVelocity.getX(),
+                        initialVelocity.getY() - newSystemVelocity.getY(),
+                        initialVelocity.getZ() - newSystemVelocity.getZ()),
+                new Acceleration(0, 0, 0));
     }
 }

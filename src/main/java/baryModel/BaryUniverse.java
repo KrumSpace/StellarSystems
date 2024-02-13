@@ -1,14 +1,13 @@
 package baryModel;
 
-import java.awt.Color;
 import java.util.List;
+import java.awt.Color;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import utils.coordinates.Coordinates;
-import baryModel.exceptions.ObjectRemovedException;
 import baryModel.exceptions.TopLevelObjectException;
+import baryModel.exceptions.ObjectRemovedException;
 import baryModel.systems.AbstractBarySystem;
 import baryModel.systems.BarySystem;
 
@@ -21,7 +20,7 @@ public class BaryUniverse extends AbstractBarySystem {
 
     //
     public BaryUniverse() {
-        super(null, new Coordinates(), TOP_OBJECT_COLOR);
+        super(null, null, null, TOP_OBJECT_COLOR);
     }
 
     //
@@ -43,7 +42,7 @@ public class BaryUniverse extends AbstractBarySystem {
     }
 
     private void handleDynamics(double time) {
-        precalculate(time);
+        calculate(time);
         update();
         /* TODO: recalculate barycenters here, after coordinates' update
          *  * go through all objects
@@ -51,12 +50,13 @@ public class BaryUniverse extends AbstractBarySystem {
          *      * location normalization, so that the top object is always at {0, 0}
          *      * normalization of angles
          */
+        //updateCenter();
     }
 
-    //doesn't precalculate itself, only members
+    //doesn't calculate itself, only members
     @Override
-    public final void precalculate(double time) {
-        precalculateMembers(time);
+    public final void calculate(double time) {
+        calculateMembers(time);
     }
 
     private void handleStructure() {
@@ -73,6 +73,7 @@ public class BaryUniverse extends AbstractBarySystem {
          *      * there might be mass loss etc, so barycenters need to be recalculated all the way to the top
          *      * it would be easier to just check all members once, rather then checking all possibly multiple times
          */
+        //updateCenter();
     }
 
     //goes through members, but doesn't check itself

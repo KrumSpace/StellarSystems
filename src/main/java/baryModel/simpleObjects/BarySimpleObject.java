@@ -7,9 +7,12 @@ import org.jetbrains.annotations.Nullable;
 
 import static consoleUtils.SimplePrinting.printLine;
 
-import utils.coordinates.Coordinates;
+import kinetics.Location;
+import kinetics.Velocity;
+import kinetics.Acceleration;
 import baryModel.exceptions.*;
-import baryModel.*;
+import baryModel.BaryObject;
+import baryModel.BaryObjectContainerInterface;
 import baryModel.systems.BarySystem;
 
 //
@@ -18,9 +21,11 @@ public class BarySimpleObject extends BaryObject {
 
     //
     public BarySimpleObject(@NotNull BaryObjectContainerInterface parent,
-                            @NotNull Coordinates coordinates,
+                            @Nullable Location location,
+                            @Nullable Velocity velocity,
+                            @Nullable Acceleration acceleration,
                             @NotNull PhysicalBody simpleBody) {
-        super(parent, coordinates);
+        super(parent, location, velocity, acceleration);
         this.simpleBody = simpleBody;
     }
 

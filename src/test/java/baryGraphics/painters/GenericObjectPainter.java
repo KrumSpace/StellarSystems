@@ -5,9 +5,11 @@ import java.awt.Graphics;
 
 import org.jetbrains.annotations.NotNull;
 
+import kinetics.Location;
 import baryModel.exceptions.UnrecognizedBaryObjectTypeException;
 import baryModel.exceptions.TopLevelObjectException;
 import baryModel.BaryObject;
+
 import baryGraphics.panels.UniverseDrawPanel;
 import baryGraphics.panels.UniversePaintUtilities;
 
@@ -43,10 +45,10 @@ final class GenericObjectPainter implements ObjectPainterInterface<BaryObject> {
 
     private static double @NotNull [] getChildAbsoluteLocation(@NotNull BaryObject object,
                                                                double @NotNull [] parentLocation) {
-        double @NotNull [] relativeLocation = object.getCoordinates().getLocation().getCartesian();
+        @NotNull Location relativeLocation = object.getLocation();
         return new double [] {
-                parentLocation[0] + relativeLocation[0],
-                parentLocation[1] + relativeLocation[1]};
+                parentLocation[0] + relativeLocation.getX(),
+                parentLocation[1] + relativeLocation.getY()};
     }
 
     private void paintCommonBefore(@NotNull Graphics g,
@@ -70,7 +72,9 @@ final class GenericObjectPainter implements ObjectPainterInterface<BaryObject> {
         try {
             paintUtilities.paintInfluenceRadius(g, object, drawableCenter);
         } catch (@NotNull TopLevelObjectException ignored) {}
-        paintUtilities.paintCenterMarker(g, drawableCenter, object.getColor());
-        paintUtilities.paintObjectInfo(g, object, drawableCenter);
+        //paintUtilities.paintCenterMarker(g, drawableCenter, object.getColor());
+        paintUtilities.paintVelocity(g, object, drawableCenter);
+        paintUtilities.paintAcceleration(g, object, drawableCenter);
+        paintUtilities.paintObjectInfo(g, object, drawableCenter, object.getColor());
     }
 }

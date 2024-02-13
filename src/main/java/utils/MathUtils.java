@@ -1,7 +1,5 @@
 package utils;
 
-import org.jetbrains.annotations.NotNull;
-
 //math utilities
 public class MathUtils {
     //some x-y to angle calculations
@@ -24,35 +22,5 @@ public class MathUtils {
             return arcTangent + Math.PI * 2;
         }
         return arcTangent; // 1st quadrant
-    }
-
-    //2D conversion
-    public static double @NotNull [] getPolarFromCartesian(double @NotNull [] cartesian) {
-        double
-                x = cartesian[0],
-                y = cartesian[1];
-        return getMagnitudeAndAngleFromProjections(x, y);
-    }
-
-    //for cartesian velocity conversion from [speed, direction] to [vx, vy]
-    public static double @NotNull [] getMagnitudeAndAngleFromProjections(double x, double y) {
-        return new double [] {
-                Math.hypot(x, y),
-                getAngle(x, y)};
-    }
-
-    //2D conversion
-    public static double @NotNull [] getCartesianFromPolar(double @NotNull [] polar) {
-        double
-                radius = polar[0],
-                angle = polar[1];
-        return getProjectionsFromMagnitudeAndAngle(radius, angle);
-    }
-
-    //for cartesian velocity conversion from [speed, direction] to [vx, vy]
-    public static double @NotNull [] getProjectionsFromMagnitudeAndAngle(double magnitude, double angle) {
-        return new double [] {
-                magnitude * Math.cos(angle),
-                magnitude * Math.sin(angle)};
     }
 }

@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 public class MinimalPanel extends JPanel {
     private static final @NotNull Color
             TRANSPARENT_BLACK = new Color(0, 0, 0, 0),
-            BORDERS_AND_DIAGONALS = Color.red;
+            BORDERS_AND_DIAGONALS = Color.darkGray;
 
     //
     public MinimalPanel(@Nullable Color background) {

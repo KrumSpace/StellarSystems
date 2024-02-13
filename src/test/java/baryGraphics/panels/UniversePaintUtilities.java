@@ -9,8 +9,14 @@ import java.awt.Graphics;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static consoleUtils.stringTools.NumberFormatter.doubleToString;
+
+import kinetics.Location;
+import kinetics.Velocity;
+import kinetics.SimpleVector;
 import baryModel.BaryObject;
 import baryModel.exceptions.TopLevelObjectException;
+
 import baryGraphics.CommonPainting;
 
 //
@@ -21,11 +27,6 @@ public final class UniversePaintUtilities {
     //
     UniversePaintUtilities(@NotNull UniverseDrawPanel panel) {
         this.panel = panel;
-    }
-
-    //
-    public void paintCenterMarker(@NotNull Graphics g, double @NotNull [] drawCenter, @NotNull Color color) {
-        CommonPainting.drawCross(g, drawCenter, CENTER_MARKER_SIZE, color);
     }
 
     //
@@ -44,7 +45,7 @@ public final class UniversePaintUtilities {
     public void paintOrbit(@NotNull Graphics g, @NotNull BaryObject object, double @NotNull [] parentAbsoluteLocation) {
         double @NotNull [] drawCenter = panel.getDrawableFromAbsolute(parentAbsoluteLocation);
         double
-                distance = object.getCoordinates().getLocation().getRadial()[0],
+                distance = object.getLocation().getRadius(),
                 scaledDistance = panel.scaleValue(distance);
         @NotNull Color orbitColor = object.getColor();
         CommonPainting.drawCircleAtCenter(g, drawCenter, scaledDistance * 2, orbitColor, false);
@@ -58,17 +59,88 @@ public final class UniversePaintUtilities {
     }
 
     //
-    public void paintObjectInfo(@NotNull Graphics g, @NotNull BaryObject object, double @NotNull [] drawCenter) {
+    public void paintCenterMarker(@NotNull Graphics g, double @NotNull [] drawCenter, @NotNull Color color) {
+        CommonPainting.drawCross(g, drawCenter, CENTER_MARKER_SIZE, color);
+    }
+
+    //
+    public void paintVelocity(@NotNull Graphics g, @NotNull BaryObject object,
+                              double @NotNull [] drawCenter) {
+        paintVector(g, object.getVelocity(), drawCenter, 5, new Color(255, 50, 0));
+    }
+
+    //
+    public void paintAcceleration(@NotNull Graphics g, @NotNull BaryObject object,
+                                  double @NotNull [] drawCenter) {
+        paintVector(g, object.getAcceleration(), drawCenter, 50, new Color(110, 60, 255));
+    }
+
+    private void paintVector(@NotNull Graphics g, @NotNull SimpleVector vector,
+                             double @NotNull [] drawCenter, double extraScale, @NotNull Color color) {
+        double
+                axScaled = panel.scaleValue(vector.getX()) * extraScale,
+                ayScaled = panel.scaleValue(vector.getY()) * extraScale,
+                azScaled = panel.scaleValue(vector.getZ()) * extraScale; //currently unused
+        g.setColor(color);
+        g.drawLine(
+                (int) drawCenter[0], (int) drawCenter[1],
+                (int) (drawCenter[0] + axScaled), (int) (drawCenter[1] + ayScaled));
+    }
+
+    //
+    public void paintObjectInfo(@NotNull Graphics g, @NotNull BaryObject object,
+                                double @NotNull [] drawCenter, @NotNull Color color) {
         int @NotNull [] textOffset = new int [] {-20, 30};
         int lineHeight = 15;
-        paintObjectInfoLines(g, drawCenter, textOffset, lineHeight, new ArrayList<>() {{
+        g.setColor(color);
+        paintObjectInfoLines(g, drawCenter, textOffset, lineHeight, getObjectInfoLines(object));
+    }
+
+    private @NotNull List<@Nullable String> getObjectInfoLines(@NotNull BaryObject object) {
+        return new ArrayList<>() {{
             add(object.getName());
-            add("M: " + ((int) (object.getMass() * 10)) / 10.0);
+            @NotNull StringBuilder massAndSOIStringBuilder = new StringBuilder();
+            massAndSOIStringBuilder.append("M: ").append(doubleToString(object.getMass(), 0));
             try {
                 double influenceRadius = object.getInfluenceRadius();
-                add("SOI: " + ((int) (influenceRadius * 10)) / 10.0);
+                massAndSOIStringBuilder.append(", ").append("SOI: ").append(doubleToString(influenceRadius, 0));
             } catch (@NotNull TopLevelObjectException ignored) {}
-        }});
+            add(massAndSOIStringBuilder.toString());
+            @NotNull Location location = object.getLocation();
+            /*add("XYZ: " + commonDoubleArrayString(new double [] {
+                    location.getX(),
+                    location.getY(),
+                    location.getZ()}));*/
+            add("Polar: " + commonDoubleArrayString(new double [] {
+                    location.getRadius(),
+                    location.getHorizontalAngle(),
+                    location.getVerticalAngle()}));
+            @NotNull Velocity velocity = object.getVelocity();
+            /*add("Vel: " + commonDoubleArrayString(new double [] {
+                    velocity.getX(),
+                    velocity.getY(),
+                    velocity.getZ()}));*/
+            add("Vel (pol): " + commonDoubleArrayString(new double [] {
+                    velocity.getRadius(),
+                    velocity.getHorizontalAngle(),
+                    velocity.getVerticalAngle()}));
+        }};
+    }
+
+    private @NotNull String commonDoubleArrayString(double @NotNull [] array) {
+        return doubleArrayString(array, 1, ", ");
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private @NotNull String doubleArrayString(double @NotNull [] array, int decimalPlaces, @NotNull String separator) {
+        @NotNull StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < array.length; i++) {
+            if (i > 0) {
+                stringBuilder.append(separator);
+            }
+            stringBuilder.append(doubleToString(array[i], decimalPlaces));
+        }
+        return stringBuilder.toString();
     }
 
     private void paintObjectInfoLines(@NotNull Graphics g, double @NotNull [] drawCenter,

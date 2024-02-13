@@ -1,10 +1,13 @@
 package baryGraphics.painters;
 
+import java.awt.Color;
 import java.awt.Graphics;
 
 import org.jetbrains.annotations.NotNull;
 
+import kinetics.Location;
 import baryModel.systems.AbstractBarySystem;
+
 import baryGraphics.panels.UniverseDrawPanel;
 
 //
@@ -29,6 +32,13 @@ final class BarySystemPainter implements ObjectPainterInterface<AbstractBarySyst
             * etc
         */
         universePanel.getPaintUtilities().paintCenterMarker(g, drawLocation, system.getColor());
+        @NotNull Location baryCenter = system.getBaryCenter();
+        double @NotNull []
+                absoluteBaryCenterLocation = new double [] {
+                        absoluteLocation[0] + baryCenter.getX(),
+                absoluteLocation[1] + baryCenter.getY()},
+                drawableBaryCenterLocation = universePanel.getDrawableFromAbsolute(absoluteBaryCenterLocation);
+        universePanel.getPaintUtilities().paintCenterMarker(g, drawableBaryCenterLocation, new Color(120, 70, 20));
     }
 
     //
