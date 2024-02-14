@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import utils.MathUtils;
+import utils.Representable;
 import kinetics.Location;
 import kinetics.Velocity;
 import kinetics.Acceleration;
@@ -17,7 +18,7 @@ import baryModel.systems.AbstractBarySystem;
 import baryModel.systems.BarySystem;
 
 //
-public abstract class BaryObject extends InfluentialObject implements BaryChildInterface {
+public abstract class BaryObject extends InfluentialObject implements BaryChildInterface, Representable {
     private static final double GRAVITATIONAL_CONSTANT = 10000; //6.67 * Math.pow(10, -13);
     private @Nullable BaryObjectContainerInterface parent;
 
@@ -182,10 +183,4 @@ public abstract class BaryObject extends InfluentialObject implements BaryChildI
             throw exception;
         } catch (@NotNull DifferentParentException ignored) {} //TODO: yo, don't ignore this!
     }
-
-    //
-    public abstract @NotNull String getName();
-
-    //for graphical purposes
-    public abstract @NotNull Color getColor();
 }
