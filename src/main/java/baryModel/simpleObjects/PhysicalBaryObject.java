@@ -67,7 +67,7 @@ public class PhysicalBaryObject extends BaryObject {
     }
 
     //
-    public final @NotNull PhysicalBody getSimpleBody() {
+    public final @NotNull PhysicalBody getBody() {
         return simpleBody;
     }
 
@@ -78,8 +78,8 @@ public class PhysicalBaryObject extends BaryObject {
         double distance = getDistanceToNeighbor(neighbor);
         if (neighbor instanceof @NotNull PhysicalBaryObject neighborObject) {
             //simpleObject - simpleObject case
-            @NotNull PhysicalBody neighborBody = neighborObject.getSimpleBody();
-            double collisionDistance = (getSimpleBody().getRadius() + neighborBody.getRadius()) / 2;
+            @NotNull PhysicalBody neighborBody = neighborObject.getBody();
+            double collisionDistance = (getBody().getRadius() + neighborBody.getRadius()) / 2;
             if (distance < collisionDistance) {
                 //TODO: do collision depending on relative sizes
                 printLine("Collision between " + getName() + " and " + neighborObject.getName());

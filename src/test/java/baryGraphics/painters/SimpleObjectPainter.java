@@ -24,7 +24,7 @@ final class SimpleObjectPainter implements ObjectPainterInterface<PhysicalBaryOb
     public void paint(@NotNull Graphics g,
                       @NotNull PhysicalBaryObject simpleObject,
                       double @NotNull [] absoluteLocation) {
-        paintPhysicalBody(g, simpleObject.getSimpleBody(), universePanel.getDrawableFromAbsolute(absoluteLocation));
+        paintPhysicalBody(g, simpleObject.getBody(), universePanel.getDrawableFromAbsolute(absoluteLocation));
     }
 
     private void paintPhysicalBody(@NotNull Graphics g,
