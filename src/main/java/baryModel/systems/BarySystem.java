@@ -14,7 +14,7 @@ import kinetics.Acceleration;
 import baryModel.exceptions.*;
 import baryModel.BaryObject;
 import baryModel.BaryObjectContainerInterface;
-import baryModel.simpleObjects.BarySimpleObject;
+import baryModel.simpleObjects.PhysicalBaryObject;
 
 //
 public class BarySystem extends AbstractBarySystem {
@@ -91,7 +91,7 @@ public class BarySystem extends AbstractBarySystem {
     public void checkNeighbor(@NotNull BaryObject neighbor) throws
             UnrecognizedBaryObjectTypeException, ObjectRemovedException, NeighborRemovedException {
         double distance = getDistanceToNeighbor(neighbor);
-        if (neighbor instanceof @NotNull BarySimpleObject neighborObject) {
+        if (neighbor instanceof @NotNull PhysicalBaryObject neighborObject) {
             //system - simpleObject case
             if (distance < getInfluenceRadius()) {
                 //TODO: neighbor joins this system

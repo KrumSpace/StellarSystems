@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import kinetics.Location;
 import kinetics.Velocity;
 import baryModel.simpleObjects.PhysicalBody;
-import baryModel.simpleObjects.BarySimpleObject;
+import baryModel.simpleObjects.PhysicalBaryObject;
 import baryModel.BaryUniverse;
 
 //
@@ -30,7 +30,7 @@ class TestUniverse extends BaryUniverse {
     private void addNewSimpleObject(double x, double y, double z,
                                     double speed, double horizontalAngle, double verticalAngle,
                                     @NotNull PhysicalBody body) {
-        addObject(new BarySimpleObject(
+        addObject(new PhysicalBaryObject(
                 this,
                 new Location(x, y, z),
                 new Velocity(speed, horizontalAngle, verticalAngle),

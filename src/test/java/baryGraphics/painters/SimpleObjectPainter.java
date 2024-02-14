@@ -4,13 +4,14 @@ import java.awt.Graphics;
 
 import org.jetbrains.annotations.NotNull;
 
-import baryModel.simpleObjects.BarySimpleObject;
 import baryModel.simpleObjects.PhysicalBody;
+import baryModel.simpleObjects.PhysicalBaryObject;
+
 import baryGraphics.CommonPainting;
 import baryGraphics.panels.UniverseDrawPanel;
 
 //
-final class SimpleObjectPainter implements ObjectPainterInterface<BarySimpleObject> {
+final class SimpleObjectPainter implements ObjectPainterInterface<PhysicalBaryObject> {
     private final @NotNull UniverseDrawPanel universePanel;
 
     //
@@ -21,7 +22,7 @@ final class SimpleObjectPainter implements ObjectPainterInterface<BarySimpleObje
     //
     @Override
     public void paint(@NotNull Graphics g,
-                      @NotNull BarySimpleObject simpleObject,
+                      @NotNull PhysicalBaryObject simpleObject,
                       double @NotNull [] absoluteLocation) {
         paintPhysicalBody(g, simpleObject.getSimpleBody(), universePanel.getDrawableFromAbsolute(absoluteLocation));
     }

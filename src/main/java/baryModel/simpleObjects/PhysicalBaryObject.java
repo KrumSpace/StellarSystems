@@ -16,15 +16,15 @@ import baryModel.BaryObjectContainerInterface;
 import baryModel.systems.BarySystem;
 
 //
-public class BarySimpleObject extends BaryObject {
+public class PhysicalBaryObject extends BaryObject {
     private final @NotNull PhysicalBody simpleBody;
 
     //
-    public BarySimpleObject(@NotNull BaryObjectContainerInterface parent,
-                            @Nullable Location location,
-                            @Nullable Velocity velocity,
-                            @Nullable Acceleration acceleration,
-                            @NotNull PhysicalBody simpleBody) {
+    public PhysicalBaryObject(@NotNull BaryObjectContainerInterface parent,
+                              @Nullable Location location,
+                              @Nullable Velocity velocity,
+                              @Nullable Acceleration acceleration,
+                              @NotNull PhysicalBody simpleBody) {
         super(parent, location, velocity, acceleration);
         this.simpleBody = simpleBody;
     }
@@ -76,7 +76,7 @@ public class BarySimpleObject extends BaryObject {
     public final void checkNeighbor(@NotNull BaryObject neighbor) throws
             UnrecognizedBaryObjectTypeException, ObjectRemovedException, NeighborRemovedException {
         double distance = getDistanceToNeighbor(neighbor);
-        if (neighbor instanceof @NotNull BarySimpleObject neighborObject) {
+        if (neighbor instanceof @NotNull PhysicalBaryObject neighborObject) {
             //simpleObject - simpleObject case
             @NotNull PhysicalBody neighborBody = neighborObject.getSimpleBody();
             double collisionDistance = (getSimpleBody().getRadius() + neighborBody.getRadius()) / 2;

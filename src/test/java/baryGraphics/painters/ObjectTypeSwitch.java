@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import baryModel.BaryObject;
 import baryModel.exceptions.UnrecognizedBaryObjectTypeException;
-import baryModel.simpleObjects.BarySimpleObject;
+import baryModel.simpleObjects.PhysicalBaryObject;
 import baryModel.systems.AbstractBarySystem;
 
 //
@@ -17,8 +17,8 @@ final class ObjectTypeSwitch implements ObjectPainterInterface<BaryObject> {
     private static final @NotNull Map<@NotNull Class<? extends @NotNull BaryObject>, @NotNull FunctionalPainterInterface>
             PAINTER_MAP = new HashMap<>();
     static {
-        PAINTER_MAP.put(BarySimpleObject.class, (g, painters, object, location) ->
-                painters.getSimpleObjectPainter().paint(g, (BarySimpleObject) object, location));
+        PAINTER_MAP.put(PhysicalBaryObject.class, (g, painters, object, location) ->
+                painters.getSimpleObjectPainter().paint(g, (PhysicalBaryObject) object, location));
         PAINTER_MAP.put(AbstractBarySystem.class, (g, painters, object, location) ->
                 painters.getSystemPainter().paint(g, (AbstractBarySystem) object, location));
     }
