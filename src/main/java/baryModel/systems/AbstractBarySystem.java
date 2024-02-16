@@ -15,7 +15,6 @@ import baryModel.BaryObjectContainerInterface;
 
 //
 public abstract class AbstractBarySystem extends BaryObject implements BaryObjectContainerInterface {
-    static final boolean MERGE_ON_TOUCH = false;
     private final @NotNull List<@NotNull BasicBaryObject> objects = new ArrayList<>();
     private final @NotNull SystemName name;
     private final @NotNull Color color;

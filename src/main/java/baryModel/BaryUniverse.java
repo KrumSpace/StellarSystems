@@ -9,6 +9,8 @@ import org.jetbrains.annotations.Nullable;
 import baryModel.exceptions.TopLevelObjectException;
 import baryModel.exceptions.ObjectRemovedException;
 import baryModel.basicModels.BasicBaryObject;
+import baryModel.basicModels.NonInfluentialObject;
+import baryModel.simpleObjects.PhysicalBaryObject;
 import baryModel.systems.AbstractBarySystem;
 import baryModel.systems.BarySystem;
 
@@ -34,6 +36,24 @@ public class BaryUniverse extends AbstractBarySystem {
     @Override
     public final double getInfluenceRadius() throws TopLevelObjectException {
         throw new TopLevelObjectException();
+    }
+
+    //this should not get called
+    @Override
+    public final void interactWith(@NotNull NonInfluentialObject object) {
+        throw new RuntimeException(new TopLevelObjectException());
+    }
+
+    //this should not get called
+    @Override
+    public final void interactWith(@NotNull PhysicalBaryObject object) {
+        throw new RuntimeException(new TopLevelObjectException());
+    }
+
+    //this should not get called
+    @Override
+    public final void interactWith(@NotNull AbstractBarySystem object) {
+        throw new RuntimeException(new TopLevelObjectException());
     }
 
     //does a complete cycle, use this for performing calculations
@@ -107,11 +127,9 @@ public class BaryUniverse extends AbstractBarySystem {
 
     // No neighbors to check for a top-bound object.
     @Override
-    public final void checkNeighbors() {}
-
-    // No neighbors to check for a top-bound object.
-    @Override
-    public final void checkNeighbor(@NotNull BasicBaryObject neighbor) {}
+    public final void checkNeighbors() throws TopLevelObjectException {
+        throw new TopLevelObjectException();
+    }
 
     // There shouldn't be any neighbors to enter. Throw an exception, if any is found.
     // Furthermore, top-bound object should always remain at top.

@@ -102,8 +102,6 @@ public abstract class BaryObject extends InfluentialObject {
         }
     }
 
-
-
     //checks if parent is either the universe or its child count is greater than 2
     public final boolean neighborMergeabiltyCheck() {
         try {

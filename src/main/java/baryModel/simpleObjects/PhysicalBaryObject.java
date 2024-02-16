@@ -11,23 +11,23 @@ import kinetics.Location;
 import kinetics.Velocity;
 import kinetics.Acceleration;
 import baryModel.exceptions.*;
-import baryModel.basicModels.BasicBaryObject;
+import baryModel.basicModels.NonInfluentialObject;
 import baryModel.BaryObject;
 import baryModel.BaryObjectContainerInterface;
-import baryModel.systems.BarySystem;
+import baryModel.systems.AbstractBarySystem;
 
 //
 public class PhysicalBaryObject extends BaryObject {
-    private final @NotNull PhysicalBody simpleBody;
+    private final @NotNull PhysicalBody physicalBody;
 
     //
     public PhysicalBaryObject(@NotNull BaryObjectContainerInterface parent,
                               @Nullable Location location,
                               @Nullable Velocity velocity,
                               @Nullable Acceleration acceleration,
-                              @NotNull PhysicalBody simpleBody) {
+                              @NotNull PhysicalBody physicalBody) {
         super(parent, location, velocity, acceleration);
-        this.simpleBody = simpleBody;
+        this.physicalBody = physicalBody;
     }
 
     //
@@ -41,7 +41,7 @@ public class PhysicalBaryObject extends BaryObject {
     //
     @Override
     public final double getMass() {
-        return simpleBody.getMass();
+        return physicalBody.getMass();
     }
 
     //
@@ -58,51 +58,62 @@ public class PhysicalBaryObject extends BaryObject {
     //
     @Override
     public final @NotNull String getName() {
-        return simpleBody.getName();
+        return physicalBody.getName();
     }
 
     //for graphical purposes
     @Override
     public final @NotNull Color getColor() {
-        return simpleBody.getColor();
+        return physicalBody.getColor();
     }
 
     //
     public final @NotNull PhysicalBody getBody() {
-        return simpleBody;
+        return physicalBody;
     }
 
-    //
+    //PhysicalObject-NonInfluential interaction
     @Override
-    public final void checkNeighbor(@NotNull BasicBaryObject neighbor) throws
-            UnrecognizedBaryObjectTypeException, ObjectRemovedException, NeighborRemovedException {
-        double distance = getDistanceTo(neighbor.getLocation()).getRadius();
-        if (neighbor instanceof @NotNull PhysicalBaryObject neighborObject) {
-            //simpleObject - simpleObject case
-            @NotNull PhysicalBody neighborBody = neighborObject.getBody();
-            double collisionDistance = (getBody().getRadius() + neighborBody.getRadius()) / 2;
-            if (distance < collisionDistance) {
-                //TODO: do collision depending on relative sizes
-                printLine("Collision between " + getName() + " and " + neighborObject.getName());
-            }
-            if (distance < Math.max(getInfluenceRadius(), neighborObject.getInfluenceRadius()) && neighborMergeabiltyCheck()) {
-                //TODO: form a new system of this and neighbor
-                //printLine("A new system should be formed between " + getName() + " and " + neighbor.getName());
-                formNewSystemWithNeighbor(neighborObject);
-            }
-        } else if (neighbor instanceof @NotNull BarySystem neighborSystem) {
+    public final void interactWith(@NotNull NonInfluentialObject object)
+            throws ObjectRemovedException, NeighborRemovedException {
+        //TODO: define Physical-NonInfluential interaction here
+    }
 
-            //simpleObject - system case
-            if (distance < neighborSystem.getInfluenceRadius()) {
-                //TODO: this enters neighbor system
-                printLine("Object " + getName() + " should enter system " + neighborSystem.getName());
-            } else if (distance < getInfluenceRadius() && neighborMergeabiltyCheck()) {
-                //TODO: form a system of A and B
-                //printLine("A new system should be formed between " + getName() + " and " + neighbor.getName());
-                formNewSystemWithNeighbor(neighborSystem);
-            }
-        } else {
-            throw new UnrecognizedBaryObjectTypeException();
+    //PhysicalObject-PhysicalObject interaction
+    @Override
+    public final void interactWith(@NotNull PhysicalBaryObject object)
+            throws ObjectRemovedException, NeighborRemovedException {
+        double distance = getDistanceTo(object.getLocation()).getRadius();
+        @NotNull PhysicalBody neighborBody = object.getBody();
+        double collisionDistance = (getBody().getRadius() + neighborBody.getRadius()) / 2;
+        if (distance < collisionDistance) {
+            //TODO: do collision depending on relative sizes
+            printLine("Collision between " + getName() + " and " + object.getName());
+        }
+        if (distance < Math.max(getInfluenceRadius(), object.getInfluenceRadius()) && neighborMergeabiltyCheck()) {
+            //TODO: form a new system of this and neighbor
+            //printLine("A new system should be formed between " + getName() + " and " + neighbor.getName());
+            formNewSystemWithNeighbor(object);
+        }
+    }
+
+    //PhysicalObject-System interaction
+    @Override
+    public final void interactWith(@NotNull AbstractBarySystem object)
+            throws ObjectRemovedException, NeighborRemovedException {
+        double distance = getDistanceTo(object.getLocation()).getRadius(), neighborInfluenceRadius = 0;
+        try {
+            neighborInfluenceRadius = object.getInfluenceRadius();
+        } catch (@NotNull TopLevelObjectException e) {
+            throw new RuntimeException(e);
+        }
+        if (distance < neighborInfluenceRadius) {
+            //TODO: this enters neighbor system
+            printLine("Object " + getName() + " should enter system " + object.getName());
+        } else if (distance < getInfluenceRadius() && neighborMergeabiltyCheck()) {
+            //TODO: form a system of A and B
+            //printLine("A new system should be formed between " + getName() + " and " + neighbor.getName());
+            formNewSystemWithNeighbor(object);
         }
     }
 }

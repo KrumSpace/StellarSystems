@@ -2,11 +2,11 @@ package kinetics;
 
 import java.util.Objects;
 
-import coordinates.CartesianCoordinates;
-import coordinates.ConvertibleCoordinates;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import coordinates.CartesianCoordinates;
+import coordinates.ConvertibleCoordinates;
 import precalculability.TimedCalculable;
 import precalculability.Updatable;
 
@@ -56,7 +56,7 @@ public class KineticParameters implements TimedCalculable, Updatable {
         //TODO: update rotation here
     }
 
-    //null means {0, 0, 0}
+    //for calculating distances and directions to target; null means {0, 0, 0}
     public final @NotNull ConvertibleCoordinates getDistanceTo(@Nullable ConvertibleCoordinates target) {
         double
                 dx = -location.getX(),

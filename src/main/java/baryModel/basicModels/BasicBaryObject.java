@@ -11,13 +11,15 @@ import kinetics.Velocity;
 import kinetics.Acceleration;
 import kinetics.MassiveKineticObject;
 import baryModel.exceptions.TopLevelObjectException;
+import baryModel.exceptions.ObjectRemovedException;
 import baryModel.BaryChildInterface;
+import baryModel.InteractiveObjectInterface;
 import baryModel.BaryObjectContainerInterface;
 import baryModel.systems.AbstractBarySystem;
 
 //
 public abstract class BasicBaryObject extends MassiveKineticObject
-        implements BaryChildInterface, Representable {
+        implements BaryChildInterface, InteractiveObjectInterface, Representable {
     private static final double GRAVITATIONAL_CONSTANT = 10000; //6.67 * Math.pow(10, -13);
     private @Nullable BaryObjectContainerInterface parent;
 
@@ -52,10 +54,10 @@ public abstract class BasicBaryObject extends MassiveKineticObject
         super.calculate(time);
     }
 
+    //override this to add more acceleration components, such as engines or user input
     @SuppressWarnings("unused")
     public void addAccelerationComponents(double time) {
         getAcceleration().addComponent(getGravitationalAcceleration());
-        //override to add other acceleration components here, such as engines or user input
     }
 
     private @NotNull Acceleration getGravitationalAcceleration() {
@@ -75,5 +77,11 @@ public abstract class BasicBaryObject extends MassiveKineticObject
         } else {
             return new Acceleration(0, 0, 0);
         }
+    }
+
+    //
+    @Override
+    public void checkNeighbors() throws TopLevelObjectException, ObjectRemovedException {
+        checkNeighbors(getParent().getObjects());
     }
 }
