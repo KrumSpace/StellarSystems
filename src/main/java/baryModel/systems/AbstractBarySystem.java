@@ -37,13 +37,13 @@ public abstract class AbstractBarySystem extends BaryObject implements BaryObjec
 
     //
     @Override
-    public final void addObject(@NotNull BaryObject object) {
+    public final void addObject(@NotNull BasicBaryObject object) {
         objects.add(object);
     }
 
     //
     @Override
-    public final void removeObject(@NotNull BaryObject object) {
+    public final void removeObject(@NotNull BasicBaryObject object) {
         objects.remove(object);
     }
 
@@ -67,6 +67,7 @@ public abstract class AbstractBarySystem extends BaryObject implements BaryObjec
         }
     }
 
+    //
     public final void updateCenter() {
         @NotNull Location baryCenter = getBaryCenter();
         updateMemberCenters(baryCenter);

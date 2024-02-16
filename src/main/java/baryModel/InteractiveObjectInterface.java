@@ -42,7 +42,7 @@ public interface InteractiveObjectInterface {
 
     //
     default void checkNeighbors(@NotNull List<@NotNull BasicBaryObject> neighbors)
-            throws TopLevelObjectException, ObjectRemovedException {
+            throws ObjectRemovedException {
         for (int i = 0; i < neighbors.size(); i++) {
             @NotNull BasicBaryObject neighbor = neighbors.get(i);
             if (neighbor != this) {

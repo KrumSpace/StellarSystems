@@ -17,10 +17,10 @@ public interface BaryObjectContainerInterface {
     @NotNull List<@NotNull BasicBaryObject> getObjects();
 
     //
-    void addObject(@NotNull BaryObject object);
+    void addObject(@NotNull BasicBaryObject object);
 
     //
-    void removeObject(@NotNull BaryObject object);
+    void removeObject(@NotNull BasicBaryObject object);
 
     //
     default double getMassWithout(@Nullable BasicBaryObject object) {

@@ -56,13 +56,8 @@ public class BaryUniverse extends AbstractBarySystem {
         throw new RuntimeException(new TopLevelObjectException());
     }
 
-    //does a complete cycle, use this for performing calculations
-    public final void iterateDynamicsAndStructure(double time) {
-        handleDynamics(time);
-        handleStructure();
-    }
-
-    private void handleDynamics(double time) {
+    //handles the dynamics for a single cycle
+    final void handleDynamics(double time) {
         calculate(time);
         update();
         /* TODO: recalculate barycenters here, after coordinates' update
@@ -80,7 +75,8 @@ public class BaryUniverse extends AbstractBarySystem {
         calculateMembers(time);
     }
 
-    private void handleStructure() {
+    //handles the dynamics for a single cycle
+    final void handleStructure() {
         checkMeaninglessSystems();
         //barycenter recalculation shouldn't be necessary here, as they should be conserved
 
@@ -134,7 +130,7 @@ public class BaryUniverse extends AbstractBarySystem {
     // There shouldn't be any neighbors to enter. Throw an exception, if any is found.
     // Furthermore, top-bound object should always remain at top.
     @Override
-    public final void enterNeighboringSystem(@NotNull BarySystem neighbor) throws TopLevelObjectException {
-        throw new TopLevelObjectException();
+    public final void enterNeighboringSystem(@NotNull BarySystem neighbor) {
+        throw new RuntimeException(new TopLevelObjectException());
     }
 }

@@ -16,6 +16,7 @@ import baryModel.BaryChildInterface;
 import baryModel.InteractiveObjectInterface;
 import baryModel.BaryObjectContainerInterface;
 import baryModel.systems.AbstractBarySystem;
+import baryModel.BaryUniverse;
 
 //
 public abstract class BasicBaryObject extends MassiveKineticObject
@@ -83,5 +84,50 @@ public abstract class BasicBaryObject extends MassiveKineticObject
     @Override
     public void checkNeighbors() throws TopLevelObjectException, ObjectRemovedException {
         checkNeighbors(getParent().getObjects());
+    }
+
+    //
+    @Override
+    public void exitSystem() throws TopLevelObjectException {
+        @Nullable BaryObjectContainerInterface parent = getParent();
+        if (parent instanceof BaryUniverse) {
+            throw new TopLevelObjectException();
+        } else {
+            //find new parent
+            if (!(parent instanceof BaryChildInterface)) {
+                throw new RuntimeException("Parent is not a child, therefore does not not have a parent. Unable to move an object up!");
+            } else {
+                @NotNull BaryObjectContainerInterface grandparent = ((BaryChildInterface) parent).getParent();
+
+                //remove from old list
+                parent.removeObject(this);
+
+                //calculate and set new coordinates
+                if (parent instanceof AbstractBarySystem) {
+                    setNewCoordinatesWhenExiting((AbstractBarySystem) parent);
+                } else {
+                    throw new RuntimeException("Parent is not a system, unable to get coordinates!");
+                }
+
+                //set new parent
+                setParent(grandparent);
+
+                //add to new list
+                grandparent.addObject(this);
+            }
+        }
+    }
+
+    private void setNewCoordinatesWhenExiting(@NotNull AbstractBarySystem parentSystem) {
+        @NotNull Location oldSystemCoordinates = parentSystem.getLocation();
+        getLocation().increaseCartesian(
+                oldSystemCoordinates.getX(),
+                oldSystemCoordinates.getY(),
+                oldSystemCoordinates.getZ());
+        @NotNull Velocity oldSystemVelocity = parentSystem.getVelocity();
+        getVelocity().increaseCartesian(
+                oldSystemVelocity.getX(),
+                oldSystemVelocity.getY(),
+                oldSystemVelocity.getZ());
     }
 }

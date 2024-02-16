@@ -18,5 +18,5 @@ public interface BaryChildInterface {
 
     //enters neighboring system, has to be of the same parent!
     //TODO: finish this
-    void enterNeighboringSystem(@NotNull BarySystem neighbor) throws TopLevelObjectException, DifferentParentException;
+    void enterNeighboringSystem(@NotNull BarySystem neighbor) throws DifferentParentException;
 }

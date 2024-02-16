@@ -13,12 +13,10 @@ import baryModel.exceptions.DifferentParentException;
 import baryModel.exceptions.ObjectRemovedException;
 import baryModel.exceptions.NeighborRemovedException;
 import baryModel.basicModels.InfluentialObject;
-import baryModel.systems.AbstractBarySystem;
 import baryModel.systems.BarySystem;
 
 //
 public abstract class BaryObject extends InfluentialObject {
-
     //
     public BaryObject(@Nullable BaryObjectContainerInterface parent,
                       @Nullable Location location,
@@ -29,58 +27,7 @@ public abstract class BaryObject extends InfluentialObject {
 
     //
     @Override
-    public void exitSystem() throws TopLevelObjectException {
-        @Nullable BaryObjectContainerInterface parent = getParent();
-        if (parent instanceof BaryUniverse) {
-            throw new TopLevelObjectException();
-        } else {
-            //find new parent
-            if (!(parent instanceof BaryChildInterface)) {
-                throw new RuntimeException("Parent is not a child, therefore does not not have a parent. Unable to move an object up!");
-            } else {
-                @NotNull BaryObjectContainerInterface grandparent = ((BaryChildInterface) parent).getParent();
-
-                //remove from old list
-                parent.removeObject(this);
-
-                //calculate and set new coordinates
-                if (parent instanceof AbstractBarySystem) {
-                    setNewCoordinatesWhenExiting((AbstractBarySystem) parent);
-                } else {
-                    throw new RuntimeException("Parent is not a system, unable to get coordinates!");
-                }
-
-                //set new parent
-                setParent(grandparent);
-
-                //add to new list
-                grandparent.addObject(this);
-            }
-        }
-    }
-
-    private void setNewCoordinatesWhenExiting(@NotNull AbstractBarySystem parentSystem) {
-        @NotNull Location oldSystemCoordinates = parentSystem.getLocation();
-        getLocation().increaseCartesian(
-                oldSystemCoordinates.getX(),
-                oldSystemCoordinates.getY(),
-                oldSystemCoordinates.getZ());
-        @NotNull Velocity oldSystemVelocity = parentSystem.getVelocity();
-        getVelocity().increaseCartesian(
-                oldSystemVelocity.getX(),
-                oldSystemVelocity.getY(),
-                oldSystemVelocity.getZ());
-    }
-
-    //unfinished, TODO: finish
-    public void transfer() {
-        //remove from previous system
-        //add to new system
-    }
-
-    //
-    @Override
-    public void enterNeighboringSystem(@NotNull BarySystem neighbor) throws DifferentParentException, TopLevelObjectException {
+    public void enterNeighboringSystem(@NotNull BarySystem neighbor) throws DifferentParentException {
         //TODO: finish this
     }
 
