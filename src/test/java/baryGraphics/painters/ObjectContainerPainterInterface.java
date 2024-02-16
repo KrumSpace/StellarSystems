@@ -1,6 +1,7 @@
 package baryGraphics.painters;
 
 import java.util.Collections;
+import java.util.List;
 import java.awt.Graphics;
 
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +18,8 @@ interface ObjectContainerPainterInterface {
     default void paintMembers(@NotNull Graphics g,
                               @NotNull BaryObjectContainerInterface container,
                               double @NotNull [] absoluteLocation) {
-        for (@NotNull BasicBaryObject object : Collections.unmodifiableList(container.getObjects())) {
+        @NotNull List<@NotNull BasicBaryObject> unmodifiableList = Collections.unmodifiableList(container.getObjects());
+        for (@NotNull BasicBaryObject object : unmodifiableList) {
             getGenericObjectPainter().paint(g, object, absoluteLocation);
         }
     }

@@ -6,10 +6,13 @@ import java.awt.Color;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import kinetics.Location;
+import kinetics.Velocity;
 import baryModel.exceptions.TopLevelObjectException;
 import baryModel.exceptions.ObjectRemovedException;
 import baryModel.basicModels.BasicBaryObject;
 import baryModel.basicModels.NonInfluentialObject;
+import baryModel.basicModels.InfluentialObject;
 import baryModel.simpleObjects.PhysicalBaryObject;
 import baryModel.systems.AbstractBarySystem;
 import baryModel.systems.BarySystem;
@@ -119,6 +122,40 @@ public class BaryUniverse extends AbstractBarySystem {
     @Override
     public final void checkChildNeighbors() {
         super.checkChildNeighbors();
+    }
+
+    @Override
+    public final void updateCenter() {
+        @NotNull Location baryCenter = getBaryCenter();
+        updateMemberCenters(baryCenter);
+        resetUniverseMomentum();
+    }
+
+    private void resetUniverseMomentum() {
+        double
+                pxTotal = 0,
+                pyTotal = 0,
+                pzTotal = 0;
+        for (@NotNull BasicBaryObject child : getObjects()) {
+            if (child instanceof @NotNull InfluentialObject influentialChild) {
+                @NotNull Velocity childVelocity = influentialChild.getVelocity();
+                double childMass = influentialChild.getMass();
+                pxTotal += childMass * childVelocity.getX();
+                pyTotal += childMass * childVelocity.getY();
+                pzTotal += childMass * childVelocity.getZ();
+            }
+        }
+        double
+                totalMass = getMass(),
+                vx = pxTotal / totalMass,
+                vy = pyTotal / totalMass,
+                vz = pzTotal / totalMass;
+        for (@NotNull BasicBaryObject child : getObjects()) {
+            child.getVelocity().increaseCartesian(
+                    -vx,
+                    -vy,
+                    -vz);
+        }
     }
 
     // No neighbors to check for a top-bound object.

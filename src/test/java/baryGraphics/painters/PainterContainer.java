@@ -40,10 +40,10 @@ public final class PainterContainer {
     //
     public void paintUniverse(@NotNull Graphics g, @NotNull BaryUniverse universe) {
         @NotNull Location location = universe.getLocation();
-        double @NotNull [] locationArray = new double[3];/*new double [] {
-                location.getX(),
-                location.getY(),
-                location.getZ()};*/
+        double @NotNull [] locationArray = new double [] {
+                -location.getX(),
+                -location.getY(),
+                -location.getZ()};
         genericObjectPainter.paint(g, universe, locationArray);
     }
 }

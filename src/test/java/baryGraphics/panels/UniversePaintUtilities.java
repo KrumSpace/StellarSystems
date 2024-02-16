@@ -97,6 +97,7 @@ public final class UniversePaintUtilities {
         paintObjectInfoLines(g, drawCenter, textOffset, lineHeight, getObjectInfoLines(object));
     }
 
+    @SuppressWarnings("CommentedOutCode")
     private @NotNull List<@Nullable String> getObjectInfoLines(@NotNull BasicBaryObject object) {
         return new ArrayList<>() {{
             add(object.getName());
