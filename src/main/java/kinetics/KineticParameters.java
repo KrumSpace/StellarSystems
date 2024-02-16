@@ -2,6 +2,8 @@ package kinetics;
 
 import java.util.Objects;
 
+import coordinates.CartesianCoordinates;
+import coordinates.ConvertibleCoordinates;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,5 +54,19 @@ public class KineticParameters implements TimedCalculable, Updatable {
     public void update() {
         location.update(); //updates locations from temp
         //TODO: update rotation here
+    }
+
+    //null means {0, 0, 0}
+    public final @NotNull ConvertibleCoordinates getDistanceTo(@Nullable ConvertibleCoordinates target) {
+        double
+                dx = -location.getX(),
+                dy = -location.getY(),
+                dz = -location.getZ();
+        if (target != null) {
+            dx += target.getX();
+            dy += target.getY();
+            dz += target.getZ();
+        }
+        return new CartesianCoordinates(dx, dy, dz);
     }
 }

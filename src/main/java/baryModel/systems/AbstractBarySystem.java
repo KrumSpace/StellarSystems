@@ -9,13 +9,14 @@ import org.jetbrains.annotations.Nullable;
 
 import kinetics.Location;
 import kinetics.Velocity;
+import baryModel.basicModels.BasicBaryObject;
 import baryModel.BaryObject;
 import baryModel.BaryObjectContainerInterface;
 
 //
 public abstract class AbstractBarySystem extends BaryObject implements BaryObjectContainerInterface {
     static final boolean MERGE_ON_TOUCH = false;
-    private final @NotNull List<@NotNull BaryObject> objects = new ArrayList<>();
+    private final @NotNull List<@NotNull BasicBaryObject> objects = new ArrayList<>();
     private final @NotNull SystemName name;
     private final @NotNull Color color;
 
@@ -31,7 +32,7 @@ public abstract class AbstractBarySystem extends BaryObject implements BaryObjec
 
     //
     @Override
-    public final @NotNull List<@NotNull BaryObject> getObjects() {
+    public final @NotNull List<@NotNull BasicBaryObject> getObjects() {
         return objects;
     }
 
@@ -49,7 +50,7 @@ public abstract class AbstractBarySystem extends BaryObject implements BaryObjec
 
     //
     public final void calculateMembers(double time) {
-        for (@NotNull BaryObject object : objects) {
+        for (@NotNull BasicBaryObject object : objects) {
             object.calculate(time);
         }
     }
@@ -62,7 +63,7 @@ public abstract class AbstractBarySystem extends BaryObject implements BaryObjec
     }
 
     private void updateMembers() {
-        for (@NotNull BaryObject object : objects) {
+        for (@NotNull BasicBaryObject object : objects) {
             object.update();
         }
     }
@@ -74,7 +75,7 @@ public abstract class AbstractBarySystem extends BaryObject implements BaryObjec
     }
 
     private void updateMemberCenters(@NotNull Location newCenter) {
-        for (@NotNull BaryObject object : objects) {
+        for (@NotNull BasicBaryObject object : objects) {
             if (object instanceof @NotNull AbstractBarySystem system) {
                 system.updateCenter();
             }

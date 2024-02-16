@@ -8,13 +8,14 @@ import org.jetbrains.annotations.NotNull;
 import kinetics.Location;
 import baryModel.exceptions.UnrecognizedBaryObjectTypeException;
 import baryModel.exceptions.TopLevelObjectException;
-import baryModel.BaryObject;
+import baryModel.basicModels.BasicBaryObject;
+import baryModel.basicModels.InfluentialObject;
 
 import baryGraphics.panels.UniverseDrawPanel;
 import baryGraphics.panels.UniversePaintUtilities;
 
 //
-final class GenericObjectPainter implements ObjectPainterInterface<BaryObject> {
+final class GenericObjectPainter implements ObjectPainterInterface<BasicBaryObject> {
     private static final boolean
             PAINT_SYSTEM_CONNECTIONS = true,
             PAINT_ORBITS = false;
@@ -30,7 +31,7 @@ final class GenericObjectPainter implements ObjectPainterInterface<BaryObject> {
     //absolute location parameter from super here is the absolute location of the parent
     @Override
     public void paint(@NotNull Graphics g,
-                      @NotNull BaryObject object,
+                      @NotNull BasicBaryObject object,
                       double @NotNull [] parentLocation) {
         double @NotNull [] absoluteLocation = getChildAbsoluteLocation(object, parentLocation);
         paintCommonBefore(g, object, absoluteLocation, parentLocation);
@@ -43,7 +44,7 @@ final class GenericObjectPainter implements ObjectPainterInterface<BaryObject> {
         paintCommonAfter(g, object, absoluteLocation);
     }
 
-    private static double @NotNull [] getChildAbsoluteLocation(@NotNull BaryObject object,
+    private static double @NotNull [] getChildAbsoluteLocation(@NotNull BasicBaryObject object,
                                                                double @NotNull [] parentLocation) {
         @NotNull Location relativeLocation = object.getLocation();
         return new double [] {
@@ -52,7 +53,7 @@ final class GenericObjectPainter implements ObjectPainterInterface<BaryObject> {
     }
 
     private void paintCommonBefore(@NotNull Graphics g,
-                                   @NotNull BaryObject object,
+                                   @NotNull BasicBaryObject object,
                                    double @NotNull [] absoluteLocation,
                                    double @NotNull [] parentAbsoluteLocation) {
         @NotNull Color color = object.getColor();
@@ -65,13 +66,15 @@ final class GenericObjectPainter implements ObjectPainterInterface<BaryObject> {
     }
 
     private void paintCommonAfter(@NotNull Graphics g,
-                                  @NotNull BaryObject object,
+                                  @NotNull BasicBaryObject object,
                                   double @NotNull [] absoluteLocation) {
         double @NotNull [] drawableCenter = universePanel.getDrawableFromAbsolute(absoluteLocation);
         @NotNull UniversePaintUtilities paintUtilities = universePanel.getPaintUtilities();
-        try {
-            paintUtilities.paintInfluenceRadius(g, object, drawableCenter);
-        } catch (@NotNull TopLevelObjectException ignored) {}
+        if (object instanceof @NotNull InfluentialObject influentialObject) {
+            try {
+                paintUtilities.paintInfluenceRadius(g, influentialObject, drawableCenter);
+            } catch (@NotNull TopLevelObjectException ignored) {}
+        }
         //paintUtilities.paintCenterMarker(g, drawableCenter, object.getColor());
         paintUtilities.paintVelocity(g, object, drawableCenter);
         paintUtilities.paintAcceleration(g, object, drawableCenter);

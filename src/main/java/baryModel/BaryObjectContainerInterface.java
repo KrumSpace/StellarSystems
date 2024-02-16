@@ -8,11 +8,13 @@ import org.jetbrains.annotations.Nullable;
 import kinetics.Location;
 import baryModel.exceptions.TopLevelObjectException;
 import baryModel.exceptions.ObjectRemovedException;
+import baryModel.basicModels.BasicBaryObject;
+import baryModel.basicModels.InfluentialObject;
 
 //
 public interface BaryObjectContainerInterface {
     //
-    @NotNull List<@NotNull BaryObject> getObjects();
+    @NotNull List<@NotNull BasicBaryObject> getObjects();
 
     //
     void addObject(@NotNull BaryObject object);
@@ -21,10 +23,11 @@ public interface BaryObjectContainerInterface {
     void removeObject(@NotNull BaryObject object);
 
     //
-    default double getMassWithout(@Nullable BaryObject object) {
+    default double getMassWithout(@Nullable BasicBaryObject object) {
         double mass = 0;
-        for (@NotNull BaryObject object1 : getObjects()) {
-            if (object1 != object) {
+        for (@NotNull BasicBaryObject object1 : getObjects()) {
+            boolean isInfluential = object1 instanceof InfluentialObject;
+            if (object1 != object && isInfluential) {
                 mass += object1.getMass();
             }
         }
@@ -37,14 +40,15 @@ public interface BaryObjectContainerInterface {
     }
 
     //
-    default @NotNull Location getBaryCenterWithout(@Nullable BaryObject object) {
+    default @NotNull Location getBaryCenterWithout(@Nullable BasicBaryObject object) {
         double
                 totalMass = getMassWithout(object),
                 weightedX = 0,
                 weightedY = 0,
                 weightedZ = 0;
-        for (@NotNull BaryObject object1 : getObjects()) {
-            if (object1 != object) {
+        for (@NotNull BasicBaryObject object1 : getObjects()) {
+            boolean isInfluential = object1 instanceof InfluentialObject;
+            if (object1 != object && isInfluential) {
                 double mass = object1.getMass();
                 weightedX += object1.getLocation().getX() * mass;
                 weightedY += object1.getLocation().getY() * mass;
@@ -62,11 +66,12 @@ public interface BaryObjectContainerInterface {
 
     //checks all child relations
     default void checkChildNeighbors() {
-        @NotNull List<@NotNull BaryObject> objects = getObjects();
+        @NotNull List<@NotNull BasicBaryObject> objects = getObjects();
         for (int i = 0; i < objects.size(); i++) {
-            @NotNull BaryObject object = objects.get(i);
-            if (object instanceof BaryObjectContainerInterface) { // goes deeper, if there are more children
-                ((BaryObjectContainerInterface) object).checkChildNeighbors();
+            @NotNull BasicBaryObject object = objects.get(i);
+            if (object instanceof @NotNull BaryObjectContainerInterface containerObject) {
+                // goes deeper, if there are more children
+                containerObject.checkChildNeighbors();
             }
             try {
                 object.checkNeighbors();

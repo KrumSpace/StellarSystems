@@ -7,18 +7,18 @@ import java.awt.Graphics;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import baryModel.BaryObject;
 import baryModel.exceptions.UnrecognizedBaryObjectTypeException;
+import baryModel.basicModels.BasicBaryObject;
 import baryModel.simpleObjects.PhysicalBaryObject;
 import baryModel.systems.AbstractBarySystem;
 
 //
-final class ObjectTypeSwitch implements ObjectPainterInterface<BaryObject> {
-    private static final @NotNull Map<@NotNull Class<? extends @NotNull BaryObject>, @NotNull FunctionalPainterInterface>
+final class ObjectTypeSwitch implements ObjectPainterInterface<BasicBaryObject> {
+    private static final @NotNull Map<@NotNull Class<? extends @NotNull BasicBaryObject>, @NotNull FunctionalPainterInterface>
             PAINTER_MAP = new HashMap<>();
     static {
         PAINTER_MAP.put(PhysicalBaryObject.class, (g, painters, object, location) ->
-                painters.getSimpleObjectPainter().paint(g, (PhysicalBaryObject) object, location));
+                painters.getPhysicalObjectPainter().paint(g, (PhysicalBaryObject) object, location));
         PAINTER_MAP.put(AbstractBarySystem.class, (g, painters, object, location) ->
                 painters.getSystemPainter().paint(g, (AbstractBarySystem) object, location));
     }
@@ -32,9 +32,9 @@ final class ObjectTypeSwitch implements ObjectPainterInterface<BaryObject> {
     //
     @Override
     public void paint(@NotNull Graphics g,
-                      @NotNull BaryObject object,
+                      @NotNull BasicBaryObject object,
                       double @NotNull [] absoluteLocation) throws UnrecognizedBaryObjectTypeException {
-        @NotNull Class<? extends @NotNull BaryObject> type = object.getClass();
+        @NotNull Class<? extends @NotNull BasicBaryObject> type = object.getClass();
         @Nullable FunctionalPainterInterface painter = getPainterForClass(type);
         if (painter == null) {
             throw new UnrecognizedBaryObjectTypeException();
@@ -44,13 +44,13 @@ final class ObjectTypeSwitch implements ObjectPainterInterface<BaryObject> {
     }
 
     @SuppressWarnings("unchecked")
-    private @Nullable FunctionalPainterInterface getPainterForClass(@NotNull Class<? extends @NotNull BaryObject> type) {
+    private @Nullable FunctionalPainterInterface getPainterForClass(@NotNull Class<? extends @NotNull BasicBaryObject> type) {
         while (type != null) {
             @Nullable FunctionalPainterInterface painter = PAINTER_MAP.get(type);
             if (painter != null) {
                 return painter;
             }
-            type = (Class<? extends BaryObject>) type.getSuperclass(); // Move up the class hierarchy
+            type = (Class<? extends BasicBaryObject>) type.getSuperclass(); // Move up the class hierarchy
         }
         return null; // No matching painter found
     }
@@ -58,6 +58,6 @@ final class ObjectTypeSwitch implements ObjectPainterInterface<BaryObject> {
     @FunctionalInterface
     private interface FunctionalPainterInterface {
         void accept(@NotNull Graphics g, @NotNull PainterContainer painters,
-                    @NotNull BaryObject obj, double @NotNull [] absoluteLocation);
+                    @NotNull BasicBaryObject obj, double @NotNull [] absoluteLocation);
     }
 }

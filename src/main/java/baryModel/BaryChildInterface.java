@@ -5,6 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 import baryModel.exceptions.*;
+import baryModel.basicModels.BasicBaryObject;
 import baryModel.systems.BarySystem;
 
 //
@@ -20,9 +21,9 @@ public interface BaryChildInterface {
 
     //
     default void checkNeighbors() throws TopLevelObjectException, ObjectRemovedException {
-        @NotNull List<@NotNull BaryObject> neighbors = getParent().getObjects();
+        @NotNull List<@NotNull BasicBaryObject> neighbors = getParent().getObjects();
         for (int i = 0; i < neighbors.size(); i++) {
-            @NotNull BaryObject neighbor = neighbors.get(i);
+            @NotNull BasicBaryObject neighbor = neighbors.get(i);
             if (neighbor != this) {
                 try {
                     checkNeighbor(neighbor);
@@ -36,7 +37,7 @@ public interface BaryChildInterface {
     }
 
     //
-    void checkNeighbor(@NotNull BaryObject neighbor) throws
+    void checkNeighbor(@NotNull BasicBaryObject neighbor) throws
             TopLevelObjectException, UnrecognizedBaryObjectTypeException,
             ObjectRemovedException, NeighborRemovedException;
 

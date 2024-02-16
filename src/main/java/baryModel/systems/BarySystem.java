@@ -12,6 +12,7 @@ import kinetics.Location;
 import kinetics.Velocity;
 import kinetics.Acceleration;
 import baryModel.exceptions.*;
+import baryModel.basicModels.BasicBaryObject;
 import baryModel.BaryObject;
 import baryModel.BaryObjectContainerInterface;
 import baryModel.simpleObjects.PhysicalBaryObject;
@@ -48,9 +49,9 @@ public class BarySystem extends AbstractBarySystem {
     @Override
     public void checkMeaninglessSystems() throws ObjectRemovedException {
         double influenceRadius = getInfluenceRadius();
-        @NotNull List<@NotNull BaryObject> objects = getObjects();
+        @NotNull List<@NotNull BasicBaryObject> objects = getObjects();
         for (int i = 0; i < objects.size(); i++) { //checks all members
-            BaryObject object = objects.get(i);
+            @NotNull BasicBaryObject object = objects.get(i);
             if (object instanceof AbstractBarySystem) { //check one level deeper, if it's a system
                 ((AbstractBarySystem) object).checkMeaninglessSystems();
             }
@@ -76,9 +77,9 @@ public class BarySystem extends AbstractBarySystem {
     }
 
     private void moveAllMembersUp() {
-        @NotNull List<@NotNull BaryObject> objects = getObjects();
+        @NotNull List<@NotNull BasicBaryObject> objects = getObjects();
         for (int i = 0; i < objects.size(); i++) {
-            BaryObject object = objects.get(i);
+            @NotNull BasicBaryObject object = objects.get(i);
             try {
                 object.exitSystem();
                 i--;
@@ -88,9 +89,9 @@ public class BarySystem extends AbstractBarySystem {
 
     //
     @Override
-    public void checkNeighbor(@NotNull BaryObject neighbor) throws
+    public void checkNeighbor(@NotNull BasicBaryObject neighbor) throws
             UnrecognizedBaryObjectTypeException, ObjectRemovedException, NeighborRemovedException {
-        double distance = getDistanceToNeighbor(neighbor);
+        double distance = getDistanceTo(neighbor.getLocation()).getRadius();
         if (neighbor instanceof @NotNull PhysicalBaryObject neighborObject) {
             //system - simpleObject case
             if (distance < getInfluenceRadius()) {

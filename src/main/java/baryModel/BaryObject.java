@@ -5,8 +5,6 @@ import java.awt.Color;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import utils.MathUtils;
-import utils.Representable;
 import kinetics.Location;
 import kinetics.Velocity;
 import kinetics.Acceleration;
@@ -19,68 +17,20 @@ import baryModel.systems.AbstractBarySystem;
 import baryModel.systems.BarySystem;
 
 //
-public abstract class BaryObject extends InfluentialObject implements BaryChildInterface, Representable {
-    private static final double GRAVITATIONAL_CONSTANT = 10000; //6.67 * Math.pow(10, -13);
-    private @Nullable BaryObjectContainerInterface parent;
+public abstract class BaryObject extends InfluentialObject {
 
     //
     public BaryObject(@Nullable BaryObjectContainerInterface parent,
                       @Nullable Location location,
                       @Nullable Velocity velocity,
                       @Nullable Acceleration acceleration) {
-        super(location, velocity, acceleration);
-        this.parent = parent;
-    }
-
-    @Override
-    public void calculate(double time) {
-        getAcceleration().addComponent(getGravitationalAcceleration());
-        //add other acceleration components here, such as engines or user input
-        super.calculate(time);
-    }
-
-    private @NotNull Acceleration getGravitationalAcceleration() {
-        double parentMass = 0;
-        @NotNull Location parentLocation = new Location(0, 0, 0);
-        if (parent instanceof @NotNull AbstractBarySystem parentSystem) {
-            parentMass = parentSystem.getMassWithout(this);
-            parentLocation = parentSystem.getBaryCenterWithout(this);
-        }
-        double
-                dx = parentLocation.getX() - getLocation().getX(),
-                dy = parentLocation.getY() - getLocation().getY(),
-                dz = parentLocation.getZ() - getLocation().getZ(),
-                distanceSquared = dx * dx + dy * dy + dz * dz;
-        return new Acceleration(
-                GRAVITATIONAL_CONSTANT * parentMass / distanceSquared,
-                MathUtils.getAngle(dx, dy),
-                MathUtils.getAngle(Math.hypot(dx, dy), dz));
-    }
-
-    //
-    public double getInfluenceRadius() throws TopLevelObjectException {
-        return super.getInfluenceRadius((InfluentialObject) getParent());
-    }
-
-    //
-    @Override
-    public final @NotNull BaryObjectContainerInterface getParent() throws TopLevelObjectException {
-        if (parent == null) {
-            throw new TopLevelObjectException();
-        } else {
-            return parent;
-        }
-    }
-
-    //setting parent to null is possible, but not recommended
-    @Override
-    public void setParent(@Nullable BaryObjectContainerInterface parent) throws TopLevelObjectException {
-        this.parent = parent;
+        super(parent, location, velocity, acceleration);
     }
 
     //
     @Override
     public void exitSystem() throws TopLevelObjectException {
+        @Nullable BaryObjectContainerInterface parent = getParent();
         if (parent instanceof BaryUniverse) {
             throw new TopLevelObjectException();
         } else {
@@ -152,17 +102,7 @@ public abstract class BaryObject extends InfluentialObject implements BaryChildI
         }
     }
 
-    //
-    public final double getDistanceToNeighbor(@NotNull BaryObject neighbor) {
-        @NotNull Location
-                location = getLocation(),
-                neighborLocation = neighbor.getLocation();
-        double
-                dx = location.getX() - neighborLocation.getX(),
-                dy = location.getY() - neighborLocation.getY(),
-                dz = location.getZ() - neighborLocation.getZ();
-        return Math.hypot(Math.hypot(dx, dy), dz);
-    }
+
 
     //checks if parent is either the universe or its child count is greater than 2
     public final boolean neighborMergeabiltyCheck() {

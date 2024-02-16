@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import baryModel.exceptions.TopLevelObjectException;
 import baryModel.exceptions.ObjectRemovedException;
+import baryModel.basicModels.BasicBaryObject;
 import baryModel.systems.AbstractBarySystem;
 import baryModel.systems.BarySystem;
 
@@ -79,10 +80,10 @@ public class BaryUniverse extends AbstractBarySystem {
     //goes through members, but doesn't check itself
     @Override
     public final void checkMeaninglessSystems() {
-        @NotNull List<@NotNull BaryObject> objects = getObjects();
+        @NotNull List<@NotNull BasicBaryObject> objects = getObjects();
         for (int i = 0; i < objects.size(); i++) {
-            @NotNull BaryObject object = objects.get(i);
-            if (object instanceof BaryObjectContainerInterface container) {
+            @NotNull BasicBaryObject object = objects.get(i);
+            if (object instanceof @NotNull BaryObjectContainerInterface container) {
                 try {
                     container.checkMeaninglessSystems();
                 } catch (ObjectRemovedException ignored) {
@@ -110,7 +111,7 @@ public class BaryUniverse extends AbstractBarySystem {
 
     // No neighbors to check for a top-bound object.
     @Override
-    public final void checkNeighbor(@NotNull BaryObject neighbor) {}
+    public final void checkNeighbor(@NotNull BasicBaryObject neighbor) {}
 
     // There shouldn't be any neighbors to enter. Throw an exception, if any is found.
     // Furthermore, top-bound object should always remain at top.

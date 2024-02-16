@@ -14,8 +14,9 @@ import static consoleUtils.stringTools.NumberFormatter.doubleToString;
 import kinetics.Location;
 import kinetics.Velocity;
 import kinetics.SimpleVector;
-import baryModel.BaryObject;
 import baryModel.exceptions.TopLevelObjectException;
+import baryModel.basicModels.BasicBaryObject;
+import baryModel.basicModels.InfluentialObject;
 
 import baryGraphics.CommonPainting;
 
@@ -42,7 +43,7 @@ public final class UniversePaintUtilities {
     }
 
     //
-    public void paintOrbit(@NotNull Graphics g, @NotNull BaryObject object, double @NotNull [] parentAbsoluteLocation) {
+    public void paintOrbit(@NotNull Graphics g, @NotNull BasicBaryObject object, double @NotNull [] parentAbsoluteLocation) {
         double @NotNull [] drawCenter = panel.getDrawableFromAbsolute(parentAbsoluteLocation);
         double
                 distance = object.getLocation().getRadius(),
@@ -52,7 +53,7 @@ public final class UniversePaintUtilities {
     }
 
     //
-    public void paintInfluenceRadius(@NotNull Graphics g, @NotNull BaryObject object,
+    public void paintInfluenceRadius(@NotNull Graphics g, @NotNull InfluentialObject object,
                                      double @NotNull [] drawableCenter) throws TopLevelObjectException {
         double scaledInfluenceRadius = panel.scaleValue(object.getInfluenceRadius());
         CommonPainting.drawCircleAtCenter(g, drawableCenter, scaledInfluenceRadius * 2, object.getColor(), false);
@@ -64,13 +65,13 @@ public final class UniversePaintUtilities {
     }
 
     //
-    public void paintVelocity(@NotNull Graphics g, @NotNull BaryObject object,
+    public void paintVelocity(@NotNull Graphics g, @NotNull BasicBaryObject object,
                               double @NotNull [] drawCenter) {
         paintVector(g, object.getVelocity(), drawCenter, 5, new Color(255, 50, 0));
     }
 
     //
-    public void paintAcceleration(@NotNull Graphics g, @NotNull BaryObject object,
+    public void paintAcceleration(@NotNull Graphics g, @NotNull BasicBaryObject object,
                                   double @NotNull [] drawCenter) {
         paintVector(g, object.getAcceleration(), drawCenter, 50, new Color(110, 60, 255));
     }
@@ -88,7 +89,7 @@ public final class UniversePaintUtilities {
     }
 
     //
-    public void paintObjectInfo(@NotNull Graphics g, @NotNull BaryObject object,
+    public void paintObjectInfo(@NotNull Graphics g, @NotNull BasicBaryObject object,
                                 double @NotNull [] drawCenter, @NotNull Color color) {
         int @NotNull [] textOffset = new int [] {-20, 30};
         int lineHeight = 15;
@@ -96,15 +97,17 @@ public final class UniversePaintUtilities {
         paintObjectInfoLines(g, drawCenter, textOffset, lineHeight, getObjectInfoLines(object));
     }
 
-    private @NotNull List<@Nullable String> getObjectInfoLines(@NotNull BaryObject object) {
+    private @NotNull List<@Nullable String> getObjectInfoLines(@NotNull BasicBaryObject object) {
         return new ArrayList<>() {{
             add(object.getName());
             @NotNull StringBuilder massAndSOIStringBuilder = new StringBuilder();
             massAndSOIStringBuilder.append("M: ").append(doubleToString(object.getMass(), 0));
-            try {
-                double influenceRadius = object.getInfluenceRadius();
-                massAndSOIStringBuilder.append(", ").append("SOI: ").append(doubleToString(influenceRadius, 0));
-            } catch (@NotNull TopLevelObjectException ignored) {}
+            if (object instanceof @NotNull InfluentialObject influentialObject) {
+                try {
+                    double influenceRadius = influentialObject.getInfluenceRadius();
+                    massAndSOIStringBuilder.append(", ").append("SOI: ").append(doubleToString(influenceRadius, 0));
+                } catch (@NotNull TopLevelObjectException ignored) {}
+            }
             add(massAndSOIStringBuilder.toString());
             @NotNull Location location = object.getLocation();
             /*add("XYZ: " + commonDoubleArrayString(new double [] {

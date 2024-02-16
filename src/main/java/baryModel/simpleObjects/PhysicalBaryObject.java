@@ -11,6 +11,7 @@ import kinetics.Location;
 import kinetics.Velocity;
 import kinetics.Acceleration;
 import baryModel.exceptions.*;
+import baryModel.basicModels.BasicBaryObject;
 import baryModel.BaryObject;
 import baryModel.BaryObjectContainerInterface;
 import baryModel.systems.BarySystem;
@@ -73,9 +74,9 @@ public class PhysicalBaryObject extends BaryObject {
 
     //
     @Override
-    public final void checkNeighbor(@NotNull BaryObject neighbor) throws
+    public final void checkNeighbor(@NotNull BasicBaryObject neighbor) throws
             UnrecognizedBaryObjectTypeException, ObjectRemovedException, NeighborRemovedException {
-        double distance = getDistanceToNeighbor(neighbor);
+        double distance = getDistanceTo(neighbor.getLocation()).getRadius();
         if (neighbor instanceof @NotNull PhysicalBaryObject neighborObject) {
             //simpleObject - simpleObject case
             @NotNull PhysicalBody neighborBody = neighborObject.getBody();

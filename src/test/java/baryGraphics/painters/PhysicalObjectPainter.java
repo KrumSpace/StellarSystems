@@ -11,20 +11,20 @@ import baryGraphics.CommonPainting;
 import baryGraphics.panels.UniverseDrawPanel;
 
 //
-final class SimpleObjectPainter implements ObjectPainterInterface<PhysicalBaryObject> {
+final class PhysicalObjectPainter implements ObjectPainterInterface<PhysicalBaryObject> {
     private final @NotNull UniverseDrawPanel universePanel;
 
     //
-    SimpleObjectPainter(@NotNull UniverseDrawPanel universePanel) {
+    PhysicalObjectPainter(@NotNull UniverseDrawPanel universePanel) {
         this.universePanel = universePanel;
     }
 
     //
     @Override
     public void paint(@NotNull Graphics g,
-                      @NotNull PhysicalBaryObject simpleObject,
+                      @NotNull PhysicalBaryObject physicalObject,
                       double @NotNull [] absoluteLocation) {
-        paintPhysicalBody(g, simpleObject.getBody(), universePanel.getDrawableFromAbsolute(absoluteLocation));
+        paintPhysicalBody(g, physicalObject.getBody(), universePanel.getDrawableFromAbsolute(absoluteLocation));
     }
 
     private void paintPhysicalBody(@NotNull Graphics g,

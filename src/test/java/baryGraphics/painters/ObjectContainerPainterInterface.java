@@ -5,7 +5,7 @@ import java.awt.Graphics;
 
 import org.jetbrains.annotations.NotNull;
 
-import baryModel.BaryObject;
+import baryModel.basicModels.BasicBaryObject;
 import baryModel.BaryObjectContainerInterface;
 
 //
@@ -17,7 +17,7 @@ interface ObjectContainerPainterInterface {
     default void paintMembers(@NotNull Graphics g,
                               @NotNull BaryObjectContainerInterface container,
                               double @NotNull [] absoluteLocation) {
-        for (@NotNull BaryObject object : Collections.unmodifiableList(container.getObjects())) {
+        for (@NotNull BasicBaryObject object : Collections.unmodifiableList(container.getObjects())) {
             getGenericObjectPainter().paint(g, object, absoluteLocation);
         }
     }
