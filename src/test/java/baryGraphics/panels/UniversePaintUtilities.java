@@ -67,13 +67,13 @@ public final class UniversePaintUtilities {
     //
     public void paintVelocity(@NotNull Graphics g, @NotNull BasicBaryObject object,
                               double @NotNull [] drawCenter) {
-        paintVector(g, object.getVelocity(), drawCenter, 5, new Color(255, 50, 0));
+        paintVector(g, object.getVelocity(), drawCenter, 4, new Color(255, 50, 0));
     }
 
     //
     public void paintAcceleration(@NotNull Graphics g, @NotNull BasicBaryObject object,
                                   double @NotNull [] drawCenter) {
-        paintVector(g, object.getAcceleration(), drawCenter, 50, new Color(110, 60, 255));
+        paintVector(g, object.getAcceleration(), drawCenter, 100, Color.cyan);
     }
 
     private void paintVector(@NotNull Graphics g, @NotNull SimpleVector vector,

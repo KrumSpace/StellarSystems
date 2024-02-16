@@ -21,7 +21,7 @@ import baryModel.BaryUniverse;
 //
 public abstract class BasicBaryObject extends MassiveKineticObject
         implements BaryChildInterface, InteractiveObjectInterface, Representable {
-    private static final double GRAVITATIONAL_CONSTANT = 10000; //6.67 * Math.pow(10, -13);
+    private static final double GRAVITATIONAL_CONSTANT = 2000; //6.67 * Math.pow(10, -13);
     private @Nullable BaryObjectContainerInterface parent;
 
     //
@@ -91,20 +91,18 @@ public abstract class BasicBaryObject extends MassiveKineticObject
     public void exitSystem() throws TopLevelObjectException {
         @Nullable BaryObjectContainerInterface parent = getParent();
         if (parent instanceof BaryUniverse) {
-            throw new TopLevelObjectException();
+            throw new TopLevelObjectException(); //unable to exit top-level system
         } else {
             //find new parent
-            if (!(parent instanceof BaryChildInterface)) {
-                throw new RuntimeException("Parent is not a child, therefore does not not have a parent. Unable to move an object up!");
-            } else {
-                @NotNull BaryObjectContainerInterface grandparent = ((BaryChildInterface) parent).getParent();
+            if (parent instanceof @NotNull BaryChildInterface parentAsChild) {
+                @NotNull BaryObjectContainerInterface grandparent = parentAsChild.getParent();
 
                 //remove from old list
                 parent.removeObject(this);
 
                 //calculate and set new coordinates
-                if (parent instanceof AbstractBarySystem) {
-                    setNewCoordinatesWhenExiting((AbstractBarySystem) parent);
+                if (parent instanceof @NotNull AbstractBarySystem parentSystem) {
+                    setNewCoordinatesWhenExiting(parentSystem);
                 } else {
                     throw new RuntimeException("Parent is not a system, unable to get coordinates!");
                 }
@@ -114,20 +112,26 @@ public abstract class BasicBaryObject extends MassiveKineticObject
 
                 //add to new list
                 grandparent.addObject(this);
+            } else {
+                throw new RuntimeException("Parent is not a child, therefore does not not have a parent. Unable to move an object up!");
             }
         }
     }
 
     private void setNewCoordinatesWhenExiting(@NotNull AbstractBarySystem parentSystem) {
-        @NotNull Location oldSystemCoordinates = parentSystem.getLocation();
-        getLocation().increaseCartesian(
-                oldSystemCoordinates.getX(),
-                oldSystemCoordinates.getY(),
-                oldSystemCoordinates.getZ());
+        @NotNull Location actualLocation = getLocation(),
+                oldLocation = new Location(0, 0, 0) {{copy(actualLocation);}},
+                parentActualLocation = parentSystem.getLocation(),
+                parentOldLocation = new Location(0, 0, 0) {{copy(parentActualLocation);}};
+        actualLocation.increaseCartesian(
+                parentOldLocation.getX(),
+                parentOldLocation.getY(),
+                parentOldLocation.getZ());
         @NotNull Velocity oldSystemVelocity = parentSystem.getVelocity();
         getVelocity().increaseCartesian(
                 oldSystemVelocity.getX(),
                 oldSystemVelocity.getY(),
                 oldSystemVelocity.getZ());
+        parentSystem.updateCenter();
     }
 }

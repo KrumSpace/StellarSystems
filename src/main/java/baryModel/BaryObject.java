@@ -61,7 +61,7 @@ public abstract class BaryObject extends InfluentialObject {
 
     //forms a new system from this and a neighbor
     public void formNewSystemWithNeighbor(@NotNull BaryObject neighbor) throws ObjectRemovedException {
-        @NotNull Color color = Color.yellow; //TODO: improve the color
+        @NotNull Color color = new Color(20, 40, 150); //TODO: improve the color
         try {
             BarySystem.formNewSystem(this, neighbor, color);
             @NotNull ObjectRemovedException exception = new ObjectRemovedException();

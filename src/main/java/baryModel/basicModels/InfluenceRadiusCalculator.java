@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 //
 final class InfluenceRadiusCalculator {
     private static final double
-            MAX_INFLUENCE_RADIUS = 8000, //should be as big as possible; kept minimal for easily visible testing; TODO: remove or increase this
+            MAX_INFLUENCE_RADIUS = 6000, //should be as big as possible; kept minimal for easily visible testing; TODO: remove or increase this
             MASS_RATIO_POWER = 0.4; //two fifths for mass ratio power
     private final @NotNull InfluentialObject object;
 

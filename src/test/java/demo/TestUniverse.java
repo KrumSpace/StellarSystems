@@ -19,15 +19,15 @@ class TestUniverse extends BaryUniverse {
                 0, 100, 0,
                 100, 0, 0,
                 new PhysicalBody("object-0", 100000, 100, new Color(140, 120, 80)));*/
-        addCommonObjects(2, 9000, new double [] {-4000, -2500, 0}, false);
+        addCommonObjects(2, 7000, new double [] {-3000, -2000, 0}, false);
         addNewSimpleObject(
                 7000, -5000, 0,
-                400, Math.PI, 0,
-                new PhysicalBody("object-1", 10000, 100, Color.CYAN));
+                400, Math.toRadians(190), 0,
+                new PhysicalBody("object-1", 10000, 100, new Color(100, 100, 250)));
         addNewSimpleObject(
-                7000, 2000, 0,
-                100, Math.PI, 0,
-                new PhysicalBody("object-2", 7000, 100, Color.MAGENTA));
+                7000, 4000, 0,
+                250, Math.toRadians(220), 0,
+                new PhysicalBody("object-2", 7000, 100, new Color(130, 70, 220)));
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -73,7 +73,7 @@ class TestUniverse extends BaryUniverse {
         @NotNull String name = "object" + nameSuffix;
         addNewSimpleObject(
                 x, y, z,
-                10, 0, 0,
-                new PhysicalBody(name, 4000, 100, Color.green));
+                50, Math.toRadians(120), 0,
+                new PhysicalBody(name, 2000, 100, new Color(60, 180, 20)));
     }
 }
