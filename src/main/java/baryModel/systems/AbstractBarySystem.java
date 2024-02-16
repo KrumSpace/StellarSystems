@@ -69,19 +69,19 @@ public abstract class AbstractBarySystem extends BaryObject implements BaryObjec
 
     public final void updateCenter() {
         @NotNull Location baryCenter = getBaryCenter();
-        getLocation().copy(baryCenter);
         updateMemberCenters(baryCenter);
+        getLocation().copy(baryCenter);
     }
 
     private void updateMemberCenters(@NotNull Location newCenter) {
         for (@NotNull BaryObject object : objects) {
+            if (object instanceof @NotNull AbstractBarySystem system) {
+                system.updateCenter();
+            }
             object.getLocation().increaseCartesian(
                     -(newCenter.getX()),
                     -(newCenter.getY()),
                     -(newCenter.getZ()));
-            if (object instanceof @NotNull AbstractBarySystem system) {
-                system.updateCenter();
-            }
         }
     }
 
@@ -89,43 +89,6 @@ public abstract class AbstractBarySystem extends BaryObject implements BaryObjec
     @Override
     public final double getMass() {
         return getMassWithout(null);
-    }
-
-    //
-    public final double getMassWithout(@Nullable BaryObject object) {
-        double mass = 0;
-        for (@NotNull BaryObject object1 : objects) {
-            if (object1 != object) {
-                mass += object1.getMass();
-            }
-        }
-        return mass;
-    }
-
-    //
-    public final @NotNull Location getBaryCenter() {
-        return getBaryCenterWithout(null);
-    }
-
-    //
-    public final @NotNull Location getBaryCenterWithout(@Nullable BaryObject object) {
-        double
-                totalMass = getMassWithout(object),
-                weightedX = 0,
-                weightedY = 0,
-                weightedZ = 0;
-        for (@NotNull BaryObject object1 : objects) {
-            if (object1 != object) {
-                double mass = object1.getMass();
-                weightedX += object1.getLocation().getX() * mass;
-                weightedY += object1.getLocation().getY() * mass;
-                weightedZ += object1.getLocation().getZ() * mass;
-            }
-        }
-        return new Location(
-                weightedX / totalMass,
-                weightedY / totalMass,
-                weightedZ / totalMass);
     }
 
     //

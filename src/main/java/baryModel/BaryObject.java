@@ -14,6 +14,7 @@ import baryModel.exceptions.TopLevelObjectException;
 import baryModel.exceptions.DifferentParentException;
 import baryModel.exceptions.ObjectRemovedException;
 import baryModel.exceptions.NeighborRemovedException;
+import baryModel.basicModels.InfluentialObject;
 import baryModel.systems.AbstractBarySystem;
 import baryModel.systems.BarySystem;
 

@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 //
 public abstract class AbstractWindow extends JFrame {
     private static final @NotNull Dimension DEFAULT_WINDOW_SIZE = new Dimension(1200, 850);
-    private static final @NotNull Point DEFAULT_WINDOW_LOCATION = new Point(150, 50);
+    private static final @NotNull Point DEFAULT_WINDOW_LOCATION = new Point(50, 50);
     private static final int DEFAULT_CLOSE_OPERATION = WindowConstants.EXIT_ON_CLOSE;
     private static final @NotNull String DEFAULT_WINDOW_TITLE = "An unnamed window";
 

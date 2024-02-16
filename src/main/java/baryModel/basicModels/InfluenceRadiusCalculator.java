@@ -1,4 +1,4 @@
-package baryModel;
+package baryModel.basicModels;
 
 import org.jetbrains.annotations.NotNull;
 

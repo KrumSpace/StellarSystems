@@ -17,7 +17,7 @@ import demo.graphics.panels.RightSidePanel;
 //A graphical window for testing purposes.
 public final class DemoWindow extends AbstractWindow {
     private static final @NotNull Dimension WINDOW_SIZE = new Dimension(1200, 850);
-    private static final @NotNull Point WINDOW_LOCATION = new Point(150, 50);
+    private static final @NotNull Point WINDOW_LOCATION = new Point(50, 50);
     private static final @NotNull String WINDOW_TITLE = "Bary window!";
     private final @NotNull BaryUniverse universe;
     private final @NotNull Observer observer;
