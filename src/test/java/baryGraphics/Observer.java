@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 //
 public class Observer {
     private static final double @NotNull [] DEFAULT_LOCATION = new double [] {0, 0};
-    private static final double DEFAULT_SCALE = 20;
+    private static final double DEFAULT_SCALE = 25;
     private final double @NotNull [] location; //actual location
     private double scale;
 

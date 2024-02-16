@@ -15,7 +15,11 @@ class TestUniverse extends BaryUniverse {
     //
     TestUniverse() {
         super();
-        addCommonObjects(2, 6000, new double [] {-1500, -1000, 0}, false);
+        /*addNewSimpleObject(
+                0, 100, 0,
+                100, 0, 0,
+                new PhysicalBody("object-0", 100000, 100, new Color(140, 120, 80)));*/
+        addCommonObjects(2, 9000, new double [] {-4000, -2500, 0}, false);
         addNewSimpleObject(
                 7000, -5000, 0,
                 400, Math.PI, 0,
