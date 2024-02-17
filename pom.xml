@@ -6,7 +6,7 @@
 
     <groupId>com.github.KrumSpace</groupId>
     <artifactId>StellarSystems</artifactId>
-    <version>0.13</version>
+    <version>0.14</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
