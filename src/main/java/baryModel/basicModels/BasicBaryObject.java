@@ -97,12 +97,18 @@ public abstract class BasicBaryObject extends MassiveKineticObject
             if (parent instanceof @NotNull BaryChildInterface parentAsChild) {
                 @NotNull BaryObjectContainerInterface grandparent = parentAsChild.getParent();
 
-                //remove from old list
-                parent.removeObject(this);
-
                 //calculate and set new coordinates
                 if (parent instanceof @NotNull AbstractBarySystem parentSystem) {
-                    setNewCoordinatesWhenExiting(parentSystem);
+                    //sets new location and velocity
+                    getLocation().increaseCartesian(parentSystem.getLocation());
+                    getVelocity().increaseCartesian(parentSystem.getVelocity());
+
+                    //remove from old list
+                    parent.removeObject(this);
+
+                    //recalculates barycenter of the old system, speed doesn't change
+                    parentSystem.updateBaryCenter(true, false);
+
                 } else {
                     throw new RuntimeException("Parent is not a system, unable to get coordinates!");
                 }
@@ -116,26 +122,5 @@ public abstract class BasicBaryObject extends MassiveKineticObject
                 throw new RuntimeException("Parent is not a child, therefore does not not have a parent. Unable to move an object up!");
             }
         }
-    }
-
-    private void setNewCoordinatesWhenExiting(@NotNull AbstractBarySystem parentSystem) {
-        @NotNull Location actualLocation = getLocation(),
-                oldLocation = new Location(0, 0, 0) {{copy(actualLocation);}},
-                parentActualLocation = parentSystem.getLocation(),
-                parentOldLocation = new Location(0, 0, 0) {{copy(parentActualLocation);}};
-        actualLocation.increaseCartesian(
-                parentOldLocation.getX(),
-                parentOldLocation.getY(),
-                parentOldLocation.getZ());
-
-        //sets new velocity
-        @NotNull Velocity oldSystemVelocity = parentSystem.getVelocity();
-        getVelocity().increaseCartesian(
-                oldSystemVelocity.getX(),
-                oldSystemVelocity.getY(),
-                oldSystemVelocity.getZ());
-
-        //recalculates barycenter of the old system, speed doesn't change
-        parentSystem.updateBaryCenter(true, false);
     }
 }

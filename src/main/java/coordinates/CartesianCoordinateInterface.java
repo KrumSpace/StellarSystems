@@ -1,5 +1,7 @@
 package coordinates;
 
+import org.jetbrains.annotations.NotNull;
+
 //
 interface CartesianCoordinateInterface {
     //
@@ -47,5 +49,13 @@ interface CartesianCoordinateInterface {
         increaseX(dx);
         increaseY(dy);
         increaseZ(dz);
+    }
+
+    //
+    default void increaseCartesian(@NotNull CartesianCoordinateInterface deltaCoordinates) {
+        increaseCartesian(
+                deltaCoordinates.getX(),
+                deltaCoordinates.getY(),
+                deltaCoordinates.getZ());
     }
 }

@@ -71,10 +71,7 @@ public abstract class AbstractBarySystem extends BaryObject implements BaryObjec
     public void updateBaryCenter(boolean updateThis, boolean updateAll) {
         @NotNull Location baryCenter = getBaryCenter();
         if (updateThis) {
-            getLocation().increaseCartesian(
-                    baryCenter.getX(),
-                    baryCenter.getY(),
-                    baryCenter.getZ());
+            getLocation().increaseCartesian(baryCenter);
         }
         updateBaryCentersForChildren(baryCenter, updateAll);
     }

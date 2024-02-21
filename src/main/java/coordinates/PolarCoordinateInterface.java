@@ -1,5 +1,7 @@
 package coordinates;
 
+import org.jetbrains.annotations.NotNull;
+
 //
 interface PolarCoordinateInterface {
     //
@@ -47,5 +49,14 @@ interface PolarCoordinateInterface {
         increaseRadius(dRadius);
         increaseHorizontalAngle(dHorizontalAngle);
         increaseVerticalAngle(dVerticalAngle);
+    }
+
+    //
+    @SuppressWarnings("unused")
+    default void increasePolar(@NotNull PolarCoordinateInterface deltaCoordinates) {
+        increasePolar(
+                deltaCoordinates.getRadius(),
+                deltaCoordinates.getHorizontalAngle(),
+                deltaCoordinates.getVerticalAngle());
     }
 }
