@@ -15,13 +15,13 @@ import baryModel.exceptions.ObjectRemovedException;
 import baryModel.BaryChildInterface;
 import baryModel.InteractiveObjectInterface;
 import baryModel.BaryObjectContainerInterface;
+import baryModel.UniverseConstants;
 import baryModel.systems.AbstractBarySystem;
 import baryModel.BaryUniverse;
 
 //
 public abstract class BasicBaryObject extends MassiveKineticObject
         implements BaryChildInterface, InteractiveObjectInterface, Representable {
-    private static final double GRAVITATIONAL_CONSTANT = 2000; //6.67 * Math.pow(10, -13);
     private @Nullable BaryObjectContainerInterface parent;
 
     //
@@ -72,7 +72,7 @@ public abstract class BasicBaryObject extends MassiveKineticObject
                     dz = relativeParentLocation.getZ(),
                     distanceSquared = Math.pow(relativeParentLocation.getRadius(), 2);
             return new Acceleration(
-                    GRAVITATIONAL_CONSTANT * parentMass / distanceSquared,
+                    UniverseConstants.GRAVITATIONAL_CONSTANT * parentMass / distanceSquared,
                     MathUtils.getAngle(dx, dy),
                     MathUtils.getAngle(Math.hypot(dx, dy), dz));
         } else {
@@ -86,7 +86,7 @@ public abstract class BasicBaryObject extends MassiveKineticObject
         checkNeighbors(getParent().getObjects());
     }
 
-    //
+    //exits current system
     @Override
     public void exitSystem() throws TopLevelObjectException {
         @Nullable BaryObjectContainerInterface parent = getParent();
@@ -127,11 +127,15 @@ public abstract class BasicBaryObject extends MassiveKineticObject
                 parentOldLocation.getX(),
                 parentOldLocation.getY(),
                 parentOldLocation.getZ());
+
+        //sets new velocity
         @NotNull Velocity oldSystemVelocity = parentSystem.getVelocity();
         getVelocity().increaseCartesian(
                 oldSystemVelocity.getX(),
                 oldSystemVelocity.getY(),
                 oldSystemVelocity.getZ());
-        parentSystem.updateCenter();
+
+        //recalculates barycenter of the old system, speed doesn't change
+        parentSystem.updateBaryCenter(true, false);
     }
 }

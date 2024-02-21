@@ -2,15 +2,14 @@ package baryModel;
 
 import java.awt.Color;
 
-import baryModel.basicModels.BasicBaryObject;
-import baryModel.basicModels.InfluentialObject;
-import kinetics.Location;
-import kinetics.Velocity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import kinetics.Velocity;
 import baryModel.exceptions.TopLevelObjectException;
+import baryModel.basicModels.BasicBaryObject;
 import baryModel.basicModels.NonInfluentialObject;
+import baryModel.basicModels.InfluentialObject;
 import baryModel.simpleObjects.PhysicalBaryObject;
 import baryModel.systems.AbstractBarySystem;
 
@@ -42,10 +41,8 @@ public abstract class TopLevelObject extends AbstractBarySystem {
         throw new TopLevelObjectException();
     }
 
-    @Override
-    public final void updateCenter() {
-        @NotNull Location baryCenter = getBaryCenter();
-        updateMemberCenters(baryCenter);
+    public final void updateBaryCenter() {
+        updateBaryCenter(false, true);
         resetMomentum();
     }
 

@@ -26,7 +26,7 @@ public class BaryUniverse extends TopLevelObject {
         /* TODO: recalculate barycenters here, after coordinates' update
          *  * go through all objects
          */
-        updateCenter();
+        updateBaryCenter();
         /*
          * TODO: normalize angles here
          *  * go through all objects
@@ -54,7 +54,7 @@ public class BaryUniverse extends TopLevelObject {
          *      * there might be mass loss etc, so barycenters need to be recalculated all the way to the top
          *      * it would be easier to just check all members once, rather then checking all possibly multiple times
          */
-        updateCenter();
+        updateBaryCenter();
         //TODO: could normalize angles again here
     }
 
