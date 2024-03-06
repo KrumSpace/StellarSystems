@@ -41,6 +41,7 @@ public final class LeftSidePanel extends FixedVerticalPanel implements TextPanel
                 lastLine = initialLineNumber;
         lastLine = drawUniverseInfo(g, TEXT_LOCATION, lastLine);
         lastLine = drawObserverInfo(g, TEXT_LOCATION, lastLine);
+        lastLine = drawWindowInfo(g, TEXT_LOCATION, lastLine);
         // paint more stuff here
     }
 
@@ -67,6 +68,16 @@ public final class LeftSidePanel extends FixedVerticalPanel implements TextPanel
         @NotNull String roundedScale = doubleToString(observer.getScale(), 3);
         lines.add("Scale: " + roundedScale);
         // add more observer info lines here
+        lines.add(null);
+        lines.add(null);
+        return drawInfoLines(g, location, TEXT_COLOR, lines, startingLineNumber);
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private int drawWindowInfo(@NotNull Graphics g, int @NotNull [] location, int startingLineNumber) {
+        @NotNull List<@Nullable String> lines = new ArrayList<>();
+        lines.add("Window info");
+        lines.add("Window info coming soon...");
         lines.add(null);
         lines.add(null);
         return drawInfoLines(g, location, TEXT_COLOR, lines, startingLineNumber);

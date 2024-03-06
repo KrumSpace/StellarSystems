@@ -23,7 +23,9 @@ public abstract class AbstractWindow extends JFrame {
         setVisible(true);
     }
 
-    private void setWindowConfig(@Nullable Dimension desiredSize, @Nullable Point desiredLocation, @Nullable String desiredTitle) {
+    private void setWindowConfig(@Nullable Dimension desiredSize,
+                                 @Nullable Point desiredLocation,
+                                 @Nullable String desiredTitle) {
         setSize(Objects.requireNonNullElse(desiredSize, DEFAULT_WINDOW_SIZE));
         setLocation(Objects.requireNonNullElse(desiredLocation, DEFAULT_WINDOW_LOCATION));
         setDefaultCloseOperation(DEFAULT_CLOSE_OPERATION);

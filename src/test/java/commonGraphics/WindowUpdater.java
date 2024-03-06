@@ -8,14 +8,13 @@ import ThreadAbstraction.AbstractUpdater;
 
 //
 public class WindowUpdater extends AbstractUpdater {
-    private static final int DEFAULT_FRAME_RATE = 60;
+    private static final long DEFAULT_FRAME_RATE = 60;
     private final @NotNull AbstractWindow window;
 
     //with custom frame rate
-    public WindowUpdater(@NotNull AbstractWindow window, int frameRate) {
+    public WindowUpdater(@NotNull AbstractWindow window, long frameRate) {
         super(new DelayOptions(DelayType.FPS, frameRate));
         this.window = window;
-        this.start();
     }
 
     //with default frame rate
