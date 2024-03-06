@@ -1,19 +1,18 @@
 package planetTest.graphics.panels.leftSidePanel;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.LayoutManager;
 import java.awt.BorderLayout;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import commonGraphics.panels.FixedVerticalPanel;
+import commonGraphics.panels.sidePanels.AbstractSidePanel;
 import commonGraphics.UpdatingWindow;
 import planetTest.planetModel.PlanetContainer;
 
 //
-public final class LeftSidePanel extends FixedVerticalPanel implements SectionContainer {
+public final class LeftSidePanel extends AbstractSidePanel {
     private static final int PANEL_WIDTH = 200;
     private static final @Nullable Color DIAGONAL_COLOR = null;
     private final @NotNull UpdatingWindow window;
@@ -43,8 +42,4 @@ public final class LeftSidePanel extends FixedVerticalPanel implements SectionCo
         add(new TopSection(planetContainer, sectionBorderColor, sectionDiagonalColor));
         revalidate();
     }
-
-    //
-    @Override
-    public void mainPaint(@NotNull Graphics g) {}
 }

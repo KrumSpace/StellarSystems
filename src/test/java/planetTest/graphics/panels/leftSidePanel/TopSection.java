@@ -10,15 +10,17 @@ import org.jetbrains.annotations.Nullable;
 
 import static commonGraphics.ColorUtils.TRANSPARENT_BLACK;
 import commonGraphics.panels.MinimalPanel;
+import commonGraphics.panels.sidePanels.SectionContainerInterface;
 import planetTest.planetModel.PlanetContainer;
 
 //
-public final class TopSection extends MinimalPanel implements SectionContainer {
+final class TopSection extends MinimalPanel implements SectionContainerInterface {
     private final @NotNull PlanetContainer planetContainer;
     private final @Nullable Color borderColor, diagonalColor;
 
     //
-    public TopSection(@NotNull PlanetContainer planetContainer, @Nullable Color borderColor, @Nullable Color diagonalColor) {
+    TopSection(@NotNull PlanetContainer planetContainer,
+               @Nullable Color borderColor, @Nullable Color diagonalColor) {
         super(
                 TRANSPARENT_BLACK,
                 borderColor, false,

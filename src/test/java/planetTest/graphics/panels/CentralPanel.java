@@ -12,7 +12,7 @@ import planetTest.planetModel.Planet;
 import planetTest.planetModel.PlanetContainer;
 
 //
-public final class CenterPanel extends CenteredDrawPanel implements ScaledDrawInterface {
+public final class CentralPanel extends CenteredDrawPanel implements ScaledDrawInterface {
     private static final double DEFAULT_SCALE = 2.0;
     private static final @NotNull Color
             BACKGROUND = Color.black,
@@ -21,8 +21,8 @@ public final class CenterPanel extends CenteredDrawPanel implements ScaledDrawIn
     private final @NotNull PlanetContainer planetContainer;
 
     //
-    public CenterPanel(@NotNull PlanetContainer planetContainer,
-                       @Nullable Color borderColor, @Nullable Color diagonalColor) {
+    public CentralPanel(@NotNull PlanetContainer planetContainer,
+                        @Nullable Color borderColor, @Nullable Color diagonalColor) {
         super(
                 BACKGROUND,
                 borderColor, true,

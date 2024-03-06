@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static commonGraphics.StringUtils.drawNumberedString;
+import commonGraphics.panels.sidePanels.AbstractSectionPanel;
 import commonGraphics.UpdatingWindow;
 
 //

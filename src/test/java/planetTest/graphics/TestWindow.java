@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import static commonGraphics.ColorUtils.getGray;
 import commonGraphics.UpdatingWindow;
 import planetTest.graphics.panels.leftSidePanel.LeftSidePanel;
-import planetTest.graphics.panels.CenterPanel;
+import planetTest.graphics.panels.CentralPanel;
 import planetTest.planetModel.PlanetContainer;
 
 //A graphical window for planetary testing purposes.
@@ -43,7 +43,7 @@ public final class TestWindow extends UpdatingWindow {
         add(new LeftSidePanel(
                 this, planetContainer,
                 MAIN_PANEL_BACKGROUND_COLOR, MAIN_PANEL_BORDER_COLOR));
-        add(new CenterPanel(
+        add(new CentralPanel(
                 planetContainer,
                 MAIN_PANEL_BORDER_COLOR, MAIN_PANEL_BORDER_COLOR));
         // Add more panels here, if needed.

@@ -1,4 +1,4 @@
-package planetTest.graphics.panels.leftSidePanel;
+package commonGraphics.panels.sidePanels;
 
 import java.awt.Color;
 
@@ -8,9 +8,9 @@ import static commonGraphics.ColorUtils.TRANSPARENT_BLACK;
 import commonGraphics.panels.FixedHorizontalPanel;
 
 //
-abstract class AbstractSectionPanel extends FixedHorizontalPanel {
+public abstract class AbstractSectionPanel extends FixedHorizontalPanel {
     //
-    AbstractSectionPanel(int height,
+    public AbstractSectionPanel(int height,
                                 @Nullable Color borderColor, boolean drawBorders,
                                 @Nullable Color diagonalColor, boolean drawDiagonals) {
         super(
