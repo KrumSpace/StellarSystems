@@ -9,7 +9,6 @@ import commonGraphics.panels.FixedHorizontalPanel;
 
 //
 public abstract class AbstractSectionPanel extends FixedHorizontalPanel {
-
     //
     public AbstractSectionPanel(int height,
                                 @Nullable Color borderColor, boolean drawBorders,

@@ -10,19 +10,22 @@ import org.jetbrains.annotations.Nullable;
 
 import static commonGraphics.ColorUtils.TRANSPARENT_BLACK;
 import commonGraphics.panels.MinimalPanel;
+import planetTest.planetModel.PlanetContainer;
 
 //
 public final class TopSection extends MinimalPanel implements SectionContainer {
+    private final @NotNull PlanetContainer planetContainer;
     private final @Nullable Color borderColor, diagonalColor;
 
     //
-    public TopSection(@Nullable Color borderColor, @Nullable Color diagonalColor) {
+    public TopSection(@NotNull PlanetContainer planetContainer, @Nullable Color borderColor, @Nullable Color diagonalColor) {
         super(
                 TRANSPARENT_BLACK,
                 borderColor, false,
                 diagonalColor, false);
         this.borderColor = borderColor;
         this.diagonalColor = diagonalColor;
+        this.planetContainer = planetContainer;
         addSections();
     }
 
@@ -32,7 +35,7 @@ public final class TopSection extends MinimalPanel implements SectionContainer {
         LayoutManager layout = new BoxLayout(this, BoxLayout.Y_AXIS);
         setLayout(layout);
         add(new FirstSectionPanel(borderColor, diagonalColor));
-        add(new SecondSectionPanel(borderColor, diagonalColor));
+        add(new SecondSectionPanel(planetContainer, borderColor, diagonalColor));
         add(new ThirdSectionPanel(borderColor, diagonalColor));
         // Add more sections here, if needed.
         revalidate();

@@ -6,20 +6,25 @@ import java.awt.Graphics;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import commonGraphics.StringUtils;
+import static commonGraphics.StringUtils.drawNumberedString;
+import planetTest.planetModel.Planet;
+import planetTest.planetModel.PlanetContainer;
 
 //
 public final class SecondSectionPanel extends AbstractSectionPanel {
     private static final int PANEL_HEIGHT = 100;
     private static final int @NotNull [] TEXT_LOCATION = new int [] {10, 10};
     private static final @NotNull Color TEXT_COLOR = Color.white;
+    private final @NotNull PlanetContainer planetContainer;
 
     //
-    public SecondSectionPanel(@Nullable Color borderColor, @Nullable Color diagonalColor) {
+    public SecondSectionPanel(@NotNull PlanetContainer planetContainer,
+                              @Nullable Color borderColor, @Nullable Color diagonalColor) {
         super(
                 PANEL_HEIGHT,
                 borderColor, true,
                 diagonalColor, false);
+        this.planetContainer = planetContainer;
     }
 
     //
@@ -27,23 +32,22 @@ public final class SecondSectionPanel extends AbstractSectionPanel {
     public void mainPaint(@NotNull Graphics g) {
         g.setColor(TEXT_COLOR);
         drawInfoLine(g, "Planet info", 1);
-        /*@Nullable Planet planet = planetContainer.getPlanet();
+        @Nullable Planet planet = planetContainer.getPlanet();
         if (planet == null) {
             drawInfoLine(g, "Null planet", 2);
         } else {
             drawPlanetInfo(g, planet);
-        }*/
+        }
         // Paint more stuff here, if needed.
     }
 
-    /*private void drawPlanetInfo(@NotNull Graphics g, @NotNull Planet planet) {
+    private void drawPlanetInfo(@NotNull Graphics g, @NotNull Planet planet) {
         drawInfoLine(g, "Mass: " + planet.getMass(), 2);
         drawInfoLine(g, "Radius: " + planet.getRadius(), 3);
         // Add more info lines here, if needed.
-    }*/
+    }
 
-    @SuppressWarnings("SameParameterValue")
     private void drawInfoLine(@NotNull Graphics g, @Nullable String line, int lineNumber) {
-        StringUtils.drawNumberedString(g, line, TEXT_LOCATION, lineNumber);
+        drawNumberedString(g, line, TEXT_LOCATION, lineNumber);
     }
 }
