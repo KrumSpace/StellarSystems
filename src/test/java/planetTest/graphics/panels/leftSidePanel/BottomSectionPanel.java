@@ -7,27 +7,31 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static commonGraphics.StringUtils.drawNumberedString;
+import commonGraphics.UpdatingWindow;
 
 //
-public final class BottomSectionPanel extends AbstractSectionPanel {
-    private static final int PANEL_HEIGHT = 100;
+final class BottomSectionPanel extends AbstractSectionPanel {
+    private static final int PANEL_HEIGHT = 55;
     private static final int @NotNull [] TEXT_LOCATION = new int [] {10, 10};
     private static final @NotNull Color TEXT_COLOR = Color.white;
+    private final @NotNull UpdatingWindow window;
 
     //
-    public BottomSectionPanel(@Nullable Color borderColor, @Nullable Color diagonalColor) {
+    BottomSectionPanel(@NotNull UpdatingWindow window,
+                       @Nullable Color borderColor, @Nullable Color diagonalColor) {
         super(
                 PANEL_HEIGHT,
                 borderColor, true,
-                diagonalColor, true);
+                diagonalColor, false);
+        this.window = window;
     }
 
     //
     @Override
     public void mainPaint(@NotNull Graphics g) {
         g.setColor(TEXT_COLOR);
-        drawInfoLine(g, "Bottom section", 1);
-        drawInfoLine(g, "Window info etc", 2);
+        drawInfoLine(g, "Window info, etc", 1);
+        drawInfoLine(g, "Preferred FPS: " + window.getPreferredFrameRate(), 2);
         // Paint more stuff here, if needed.
     }
 

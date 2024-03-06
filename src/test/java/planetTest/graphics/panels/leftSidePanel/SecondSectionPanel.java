@@ -11,14 +11,14 @@ import planetTest.planetModel.Planet;
 import planetTest.planetModel.PlanetContainer;
 
 //
-public final class SecondSectionPanel extends AbstractSectionPanel {
+final class SecondSectionPanel extends AbstractSectionPanel {
     private static final int PANEL_HEIGHT = 100;
     private static final int @NotNull [] TEXT_LOCATION = new int [] {10, 10};
     private static final @NotNull Color TEXT_COLOR = Color.white;
     private final @NotNull PlanetContainer planetContainer;
 
     //
-    public SecondSectionPanel(@NotNull PlanetContainer planetContainer,
+    SecondSectionPanel(@NotNull PlanetContainer planetContainer,
                               @Nullable Color borderColor, @Nullable Color diagonalColor) {
         super(
                 PANEL_HEIGHT,

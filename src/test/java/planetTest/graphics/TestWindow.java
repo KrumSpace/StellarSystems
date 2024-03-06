@@ -40,8 +40,12 @@ public final class TestWindow extends UpdatingWindow {
     public void addPanels() {
         LayoutManager layout = new BoxLayout(getContentPane(), BoxLayout.X_AXIS);
         getContentPane().setLayout(layout);
-        add(new LeftSidePanel(planetContainer, MAIN_PANEL_BACKGROUND_COLOR, MAIN_PANEL_BORDER_COLOR));
-        add(new CenterPanel(planetContainer, MAIN_PANEL_BORDER_COLOR, MAIN_PANEL_BORDER_COLOR));
+        add(new LeftSidePanel(
+                this, planetContainer,
+                MAIN_PANEL_BACKGROUND_COLOR, MAIN_PANEL_BORDER_COLOR));
+        add(new CenterPanel(
+                planetContainer,
+                MAIN_PANEL_BORDER_COLOR, MAIN_PANEL_BORDER_COLOR));
         // Add more panels here, if needed.
     }
 }

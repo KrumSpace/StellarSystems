@@ -9,13 +9,13 @@ import org.jetbrains.annotations.Nullable;
 import static commonGraphics.StringUtils.drawNumberedString;
 
 //
-public final class FirstSectionPanel extends AbstractSectionPanel {
+final class FirstSectionPanel extends AbstractSectionPanel {
     private static final int PANEL_HEIGHT = 100;
     private static final int @NotNull [] TEXT_LOCATION = new int [] {10, 10};
     private static final @NotNull Color TEXT_COLOR = Color.white;
 
     //
-    public FirstSectionPanel(@Nullable Color borderColor, @Nullable Color diagonalColor) {
+    FirstSectionPanel(@Nullable Color borderColor, @Nullable Color diagonalColor) {
         super(
                 PANEL_HEIGHT,
                 borderColor, true,
