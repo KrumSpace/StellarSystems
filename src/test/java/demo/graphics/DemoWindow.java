@@ -53,6 +53,6 @@ public final class DemoWindow extends UpdatingWindow {
         add(new RightSidePanel(
                 universe, observer,
                 MAIN_PANEL_BACKGROUND_COLOR, MAIN_PANEL_BORDER_COLOR));
-        //add more panels here
+        // Add more panels here, if needed.
     }
 }

@@ -35,6 +35,6 @@ public final class TestWindow extends UpdatingWindow {
         LayoutManager layout = new BoxLayout(getContentPane(), BoxLayout.X_AXIS);
         getContentPane().setLayout(layout);
         add(new Panel());
-        //add more panels here
+        // Add more panels here, if needed.
     }
 }

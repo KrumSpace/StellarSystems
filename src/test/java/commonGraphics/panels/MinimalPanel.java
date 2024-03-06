@@ -65,7 +65,7 @@ public abstract class MinimalPanel extends JPanel {
 
     private void drawPanelBorders(@NotNull Graphics g, int width, int height) {
         g.setColor(borderColor);
-        g.drawRect(0, 0, width, height);
+        g.drawRect(0, 0, width - 1, height - 1);
     }
 
     private void drawPanelDiagonals(@NotNull Graphics g, int width, int height) {
