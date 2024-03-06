@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import static consoleUtils.stringTools.NumberFormatter.doubleToString;
 
 import baryModel.BaryUniverse;
+
 import commonGraphics.panels.FixedVerticalPanel;
 import baryGraphics.Observer;
 

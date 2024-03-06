@@ -11,7 +11,9 @@ import org.jetbrains.annotations.Nullable;
 import static consoleUtils.stringTools.NumberFormatter.doubleToString;
 
 import baryModel.BaryUniverse;
+
 import commonGraphics.panels.FixedVerticalPanel;
+import commonGraphics.UpdatingWindow;
 import baryGraphics.Observer;
 
 //
@@ -21,9 +23,11 @@ public final class LeftSidePanel extends FixedVerticalPanel implements TextPanel
     private static final int @NotNull [] TEXT_LOCATION = new int [] {10, 10};
     private final @NotNull BaryUniverse universe;
     private final @NotNull Observer observer;
+    private final @NotNull UpdatingWindow window;
 
     //
     public LeftSidePanel(@NotNull BaryUniverse universe, @NotNull Observer observer,
+                         @NotNull UpdatingWindow window,
                          @Nullable Color background, @Nullable Color borderColor) {
         super(
                 PANEL_WIDTH, background,
@@ -31,6 +35,7 @@ public final class LeftSidePanel extends FixedVerticalPanel implements TextPanel
                 null, false);
         this.universe = universe;
         this.observer = observer;
+        this.window = window;
     }
 
     //
@@ -78,7 +83,7 @@ public final class LeftSidePanel extends FixedVerticalPanel implements TextPanel
     private int drawWindowInfo(@NotNull Graphics g, int @NotNull [] location, int startingLineNumber) {
         @NotNull List<@Nullable String> lines = new ArrayList<>();
         lines.add("Window info");
-        lines.add("Window info coming soon...");
+        lines.add("Preferred FPS: " + window.getPreferredFrameRate());
         lines.add(null);
         lines.add(null);
         return drawInfoLines(g, location, TEXT_COLOR, lines, startingLineNumber);

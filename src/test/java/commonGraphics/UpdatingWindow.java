@@ -33,8 +33,8 @@ public abstract class UpdatingWindow extends AbstractWindow {
     }
 
     //
-    public void getPreferredFrameRate() {
-        getDelayOptions().getPreferredFPS();
+    public long getPreferredFrameRate() {
+        return getDelayOptions().getPreferredFPS();
     }
 
     //

@@ -44,9 +44,15 @@ public final class DemoWindow extends UpdatingWindow {
     public void addPanels() {
         LayoutManager layout = new BoxLayout(getContentPane(), BoxLayout.X_AXIS);
         getContentPane().setLayout(layout);
-        add(new LeftSidePanel(universe, observer, MAIN_PANEL_BACKGROUND_COLOR, MAIN_PANEL_BORDER_COLOR));
-        add(new CentralPanel(universe, observer, MAIN_PANEL_BORDER_COLOR, CENTRAL_PANEL_DIAGONAL_COLOR));
-        add(new RightSidePanel(universe, observer, MAIN_PANEL_BACKGROUND_COLOR, MAIN_PANEL_BORDER_COLOR));
+        add(new LeftSidePanel(
+                universe, observer, this,
+                MAIN_PANEL_BACKGROUND_COLOR, MAIN_PANEL_BORDER_COLOR));
+        add(new CentralPanel(
+                universe, observer,
+                MAIN_PANEL_BORDER_COLOR, CENTRAL_PANEL_DIAGONAL_COLOR));
+        add(new RightSidePanel(
+                universe, observer,
+                MAIN_PANEL_BACKGROUND_COLOR, MAIN_PANEL_BORDER_COLOR));
         //add more panels here
     }
 }
