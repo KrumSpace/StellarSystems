@@ -13,7 +13,7 @@ import commonGraphics.UpdatingWindow;
 
 //A graphical window for testing purposes.
 public final class TestWindow extends UpdatingWindow {
-    private static final @NotNull Dimension WINDOW_SIZE = new Dimension(1200, 850);
+    private static final @NotNull Dimension WINDOW_SIZE = new Dimension(400, 300);
     private static final @NotNull Point WINDOW_LOCATION = new Point(50, 50);
     private static final @NotNull String WINDOW_TITLE = "Test 2";
     private final @NotNull BaryUniverse universe;
@@ -34,7 +34,7 @@ public final class TestWindow extends UpdatingWindow {
     public void addPanels() {
         LayoutManager layout = new BoxLayout(getContentPane(), BoxLayout.X_AXIS);
         getContentPane().setLayout(layout);
-        //add();
+        add(new Panel());
         //add more panels here
     }
 }

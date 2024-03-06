@@ -44,9 +44,8 @@ public class UniverseDrawPanel extends ObserverDrawPanel {
 
     //
     @Override
-    protected void paintComponent(@NotNull Graphics g) {
-        super.paintComponent(g);
+    public void mainPaint(@NotNull Graphics g) {
         painters.paintUniverse(g, universe);
-        //paint more stuff here, if needed
+        // paint more stuff here, if needed
     }
 }

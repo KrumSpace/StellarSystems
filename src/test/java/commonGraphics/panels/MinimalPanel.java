@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 //a minimal panel with most common features
-public class MinimalPanel extends JPanel {
+public abstract class MinimalPanel extends JPanel {
     private static final @NotNull Color
             TRANSPARENT_BLACK = new Color(0, 0, 0, 0),
             DEFAULT_BORDERS_AND_DIAGONALS_COLOR = Color.red;
@@ -46,6 +46,15 @@ public class MinimalPanel extends JPanel {
     @Override
     protected void paintComponent(@NotNull Graphics g) {
         super.paintComponent(g);
+        mainPaint(g);
+        finalPaint(g);
+    }
+
+    //first and main stage of the painting
+    public abstract void mainPaint(@NotNull Graphics g);
+
+    //happens after mainPaint
+    public void finalPaint(@NotNull Graphics g) {
         @NotNull Dimension panelSize = getSize();
         int
                 width = (int) panelSize.getWidth(),

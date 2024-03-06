@@ -36,14 +36,13 @@ public final class RightSidePanel extends FixedVerticalPanel implements TextPane
     //
     @SuppressWarnings("UnusedAssignment")
     @Override
-    protected void paintComponent(@NotNull Graphics g) {
-        super.paintComponent(g);
+    public void mainPaint(@NotNull Graphics g) {
         int
                 initialLineNumber = 1,
                 lastLine = initialLineNumber;
         lastLine = drawUniverseInfo(g, TEXT_LOCATION, lastLine);
         lastLine = drawObserverInfo(g, TEXT_LOCATION, lastLine);
-        // paint more stuff here
+        // paint more stuff here, if needed
     }
 
     @SuppressWarnings("SameParameterValue")

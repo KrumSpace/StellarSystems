@@ -5,7 +5,7 @@ import java.awt.Color;
 import org.jetbrains.annotations.Nullable;
 
 //a vertical panel with fixed width
-public class FixedVerticalPanel extends FixedSizePanel {
+public abstract class FixedVerticalPanel extends FixedSizePanel {
     //
     public FixedVerticalPanel(int width,
                               @Nullable Color background,

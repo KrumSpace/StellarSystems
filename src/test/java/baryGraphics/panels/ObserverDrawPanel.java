@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import baryGraphics.Observer;
 
 //
-public class ObserverDrawPanel extends CenteredDrawPanel implements ScaledDrawInterface {
+public abstract class ObserverDrawPanel extends CenteredDrawPanel implements ScaledDrawInterface {
     private final @NotNull Observer observer;
 
     //

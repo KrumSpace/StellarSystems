@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 //a horizontal panel with fixed height
 @SuppressWarnings("unused")
-public class FixedHorizontalPanel extends FixedSizePanel {
+public abstract class FixedHorizontalPanel extends FixedSizePanel {
     //
     public FixedHorizontalPanel(int height,
                                 @Nullable Color background,
