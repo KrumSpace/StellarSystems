@@ -30,4 +30,6 @@ Run configuration: `.run\Demo.run.xml`
 
 A general all-in-one test available called `Demo`.
 
+Currently working on `src\test\java\test2`
+
 _more tests coming soon..._
