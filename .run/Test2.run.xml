@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Test2" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="test2.Test2" />
+    <module name="StellarSystems" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
