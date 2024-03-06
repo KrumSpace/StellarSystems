@@ -21,4 +21,13 @@ _Work is under progress..._
 
 ## Demo
 
-Look for `src\test\java\demo\Main` for a standalone demo.
+Look for `src\test\java\demo\Demo` for a standalone demo.
+
+Run configuration: `.run\Demo.run.xml`
+
+
+## Tests
+
+A general all-in-one test available called `Demo`.
+
+_more tests coming soon..._
