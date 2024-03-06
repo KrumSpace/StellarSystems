@@ -5,7 +5,6 @@ import java.awt.Color;
 import org.jetbrains.annotations.Nullable;
 
 //a horizontal panel with fixed height
-@SuppressWarnings("unused")
 public abstract class FixedHorizontalPanel extends FixedSizePanel {
     //
     public FixedHorizontalPanel(int height,

@@ -9,8 +9,10 @@ import javax.swing.BoxLayout;
 import org.jetbrains.annotations.NotNull;
 
 import baryModel.BaryUniverse;
-import baryGraphics.Observer;
+
+import static commonGraphics.ColorUtils.getGray;
 import commonGraphics.UpdatingWindow;
+import baryGraphics.Observer;
 import demo.graphics.panels.LeftSidePanel;
 import demo.graphics.panels.CentralPanel;
 import demo.graphics.panels.RightSidePanel;
@@ -22,8 +24,8 @@ public final class DemoWindow extends UpdatingWindow {
     private static final @NotNull String WINDOW_TITLE = "Bary window!";
     private static final long FRAME_RATE = 60;
     private static final @NotNull Color
-            MAIN_PANEL_BACKGROUND_COLOR = Color.darkGray,
-            MAIN_PANEL_BORDER_COLOR = Color.darkGray,
+            MAIN_PANEL_BACKGROUND_COLOR = getGray(50, 255),
+            MAIN_PANEL_BORDER_COLOR = getGray(80, 255),
             CENTRAL_PANEL_DIAGONAL_COLOR = MAIN_PANEL_BORDER_COLOR;
     private final @NotNull BaryUniverse universe;
     private final @NotNull Observer observer;
@@ -37,6 +39,11 @@ public final class DemoWindow extends UpdatingWindow {
         addKeyListener(new DemoKeyListener(observer));
         revalidate();
         startUpdating();
+        Color testColor = Color.gray;
+        System.out.println(testColor.getRed()
+                + " " + testColor.getGreen()
+                + " " + testColor.getBlue()
+                + " " + testColor.getAlpha());
     }
 
     //

@@ -8,11 +8,11 @@ import javax.swing.BoxLayout;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static commonGraphics.ColorUtils.TRANSPARENT_BLACK;
 import commonGraphics.panels.MinimalPanel;
 
 //
 public final class TopSection extends MinimalPanel implements SectionContainer {
-    private static final @NotNull Color TRANSPARENT_BLACK = new Color(0, 0, 0, 0);
     private final @Nullable Color borderColor, diagonalColor;
 
     //

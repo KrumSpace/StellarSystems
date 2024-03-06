@@ -9,11 +9,11 @@ import javax.swing.JPanel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static commonGraphics.ColorUtils.TRANSPARENT_BLACK;
+
 //a minimal panel with most common features
 public abstract class MinimalPanel extends JPanel {
-    private static final @NotNull Color
-            TRANSPARENT_BLACK = new Color(0, 0, 0, 0),
-            DEFAULT_BORDERS_AND_DIAGONALS_COLOR = Color.red;
+    private static final @NotNull Color DEFAULT_BORDERS_AND_DIAGONALS_COLOR = Color.red;
     private final @NotNull Color borderColor, diagonalColor;
     private boolean drawBorders, drawDiagonals;
 

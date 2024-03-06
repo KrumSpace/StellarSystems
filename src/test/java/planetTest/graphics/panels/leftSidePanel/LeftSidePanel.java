@@ -8,15 +8,14 @@ import java.awt.BorderLayout;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import commonGraphics.StringUtils;
 import commonGraphics.panels.FixedVerticalPanel;
 import planetTest.planetModel.Planet;
 import planetTest.planetModel.PlanetContainer;
 
 //
 public final class LeftSidePanel extends FixedVerticalPanel implements SectionContainer {
-    private static final int
-            PANEL_WIDTH = 200,
-            TEXT_HEIGHT = 15;
+    private static final int PANEL_WIDTH = 200;
     private static final int @NotNull [] TEXT_LOCATION = new int [] {10, 10};
     private static final @NotNull Color TEXT_COLOR = Color.white;
     private static final @Nullable Color DIAGONAL_COLOR = null;
@@ -67,8 +66,6 @@ public final class LeftSidePanel extends FixedVerticalPanel implements SectionCo
     }
 
     private void drawInfoLine(@NotNull Graphics g, @Nullable String line, int lineNumber) {
-        if (line != null) {
-            g.drawString(line, TEXT_LOCATION[0], TEXT_LOCATION[1] + TEXT_HEIGHT * lineNumber);
-        }
+        StringUtils.drawNumberedString(g, line, TEXT_LOCATION, lineNumber);
     }
 }

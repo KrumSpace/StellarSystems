@@ -1,13 +1,13 @@
 package planetTest;
 
+import java.awt.Color;
+
 import org.jetbrains.annotations.NotNull;
 
 import graphicalTestAbstraction.GraphicalTest;
-import planetTest.graphics.TestWindow;
 import planetTest.planetModel.Planet;
 import planetTest.planetModel.PlanetContainer;
-
-import java.awt.*;
+import planetTest.graphics.TestWindow;
 
 //Testing testing
 public class PlanetTest extends GraphicalTest {

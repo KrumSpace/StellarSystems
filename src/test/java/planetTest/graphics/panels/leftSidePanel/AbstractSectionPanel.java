@@ -2,14 +2,13 @@ package planetTest.graphics.panels.leftSidePanel;
 
 import java.awt.Color;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static commonGraphics.ColorUtils.TRANSPARENT_BLACK;
 import commonGraphics.panels.FixedHorizontalPanel;
 
 //
 public abstract class AbstractSectionPanel extends FixedHorizontalPanel {
-    private static final @NotNull Color TRANSPARENT_BLACK = new Color(0, 0, 0, 0);
 
     //
     public AbstractSectionPanel(int height,

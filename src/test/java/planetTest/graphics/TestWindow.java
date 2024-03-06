@@ -8,6 +8,7 @@ import javax.swing.BoxLayout;
 
 import org.jetbrains.annotations.NotNull;
 
+import static commonGraphics.ColorUtils.getGray;
 import commonGraphics.UpdatingWindow;
 import planetTest.graphics.panels.leftSidePanel.LeftSidePanel;
 import planetTest.graphics.panels.CenterPanel;
@@ -18,18 +19,9 @@ public final class TestWindow extends UpdatingWindow {
     private static final @NotNull Dimension WINDOW_SIZE = new Dimension(700, 500);
     private static final @NotNull Point WINDOW_LOCATION = new Point(50, 50);
     private static final @NotNull String WINDOW_TITLE = "Planet test";
-    private static final int
-            MAIN_PANEL_BACKGROUND_BRIGHTNESS = 50,
-            MAIN_PANEL_BORDER_BRIGHTNESS = 70;
     private static final @NotNull Color
-            MAIN_PANEL_BACKGROUND_COLOR = new Color(
-                    MAIN_PANEL_BACKGROUND_BRIGHTNESS,
-                    MAIN_PANEL_BACKGROUND_BRIGHTNESS,
-                    MAIN_PANEL_BACKGROUND_BRIGHTNESS),
-            MAIN_PANEL_BORDER_COLOR = new Color(
-                    MAIN_PANEL_BORDER_BRIGHTNESS,
-                    MAIN_PANEL_BORDER_BRIGHTNESS,
-                    MAIN_PANEL_BORDER_BRIGHTNESS);
+            MAIN_PANEL_BACKGROUND_COLOR = getGray(50, 255),
+            MAIN_PANEL_BORDER_COLOR = getGray(80, 255);
     private final @NotNull PlanetContainer planetContainer;
 
     //

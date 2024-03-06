@@ -6,9 +6,13 @@ import java.awt.Graphics;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import commonGraphics.StringUtils;
+
 //
 public final class ThirdSectionPanel extends AbstractSectionPanel {
     private static final int PANEL_HEIGHT = 100;
+    private static final int @NotNull [] TEXT_LOCATION = new int [] {10, 10};
+    private static final @NotNull Color TEXT_COLOR = Color.white;
 
     //
     public ThirdSectionPanel(@Nullable Color borderColor, @Nullable Color diagonalColor) {
@@ -21,6 +25,25 @@ public final class ThirdSectionPanel extends AbstractSectionPanel {
     //
     @Override
     public void mainPaint(@NotNull Graphics g) {
-        //TODO: paint stuff here.
+        g.setColor(TEXT_COLOR);
+        drawInfoLine(g, "Planet info", 1);
+        /*@Nullable Planet planet = planetContainer.getPlanet();
+        if (planet == null) {
+            drawInfoLine(g, "Null planet", 2);
+        } else {
+            drawPlanetInfo(g, planet);
+        }*/
+        // Paint more stuff here, if needed.
+    }
+
+    /*private void drawPlanetInfo(@NotNull Graphics g, @NotNull Planet planet) {
+        drawInfoLine(g, "Mass: " + planet.getMass(), 2);
+        drawInfoLine(g, "Radius: " + planet.getRadius(), 3);
+        // Add more info lines here, if needed.
+    }*/
+
+    @SuppressWarnings("SameParameterValue")
+    private void drawInfoLine(@NotNull Graphics g, @Nullable String line, int lineNumber) {
+        StringUtils.drawNumberedString(g, line, TEXT_LOCATION, lineNumber);
     }
 }
