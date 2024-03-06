@@ -7,19 +7,18 @@ import baryModel.UniverseUpdater;
 
 import commonGraphics.AbstractWindow;
 
-//TODO: finish this, add graceful close/exit
+//TODO: add graceful close/exit
 @SuppressWarnings({"FieldCanBeLocal", "unused"})
-public class GraphicalBaryTest {
+public class GraphicalBaryTest extends GraphicalTest {
     private final @NotNull BaryUniverse universe;
     private final @NotNull UniverseUpdater universeUpdater;
-    private final @NotNull AbstractWindow window;
 
     //
     public GraphicalBaryTest(@NotNull BaryUniverse universe,
                              @NotNull AbstractWindow window) {
+        super(window);
         this.universe = universe;
         universeUpdater = new UniverseUpdater(universe);
-        this.window = window;
     }
 
     //
@@ -30,10 +29,5 @@ public class GraphicalBaryTest {
     //
     public final @NotNull UniverseUpdater getUniverseUpdater() {
         return universeUpdater;
-    }
-
-    //
-    public final @NotNull AbstractWindow getWindow() {
-        return window;
     }
 }
