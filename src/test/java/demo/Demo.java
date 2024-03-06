@@ -10,7 +10,7 @@ import commonGraphics.WindowUpdater;
 import demo.graphics.DemoWindow;
 
 //
-public class Main {
+public class Demo {
     //
     public static void main(String[] args) {
         new GraphicalBaryTest(getNewUniverse());
