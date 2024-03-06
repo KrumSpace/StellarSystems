@@ -39,11 +39,6 @@ public final class DemoWindow extends UpdatingWindow {
         addKeyListener(new DemoKeyListener(observer));
         revalidate();
         startUpdating();
-        Color testColor = Color.gray;
-        System.out.println(testColor.getRed()
-                + " " + testColor.getGreen()
-                + " " + testColor.getBlue()
-                + " " + testColor.getAlpha());
     }
 
     //
