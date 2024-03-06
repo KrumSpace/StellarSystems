@@ -2,6 +2,7 @@ package demo.graphics;
 
 import java.awt.Point;
 import java.awt.Dimension;
+import java.awt.Color;
 import java.awt.LayoutManager;
 import javax.swing.BoxLayout;
 
@@ -20,6 +21,10 @@ public final class DemoWindow extends UpdatingWindow {
     private static final @NotNull Point WINDOW_LOCATION = new Point(50, 50);
     private static final @NotNull String WINDOW_TITLE = "Bary window!";
     private static final long FRAME_RATE = 60;
+    private static final @NotNull Color
+            MAIN_PANEL_BACKGROUND_COLOR = Color.darkGray,
+            MAIN_PANEL_BORDER_COLOR = Color.darkGray,
+            CENTRAL_PANEL_DIAGONAL_COLOR = MAIN_PANEL_BORDER_COLOR;
     private final @NotNull BaryUniverse universe;
     private final @NotNull Observer observer;
 
@@ -39,9 +44,9 @@ public final class DemoWindow extends UpdatingWindow {
     public void addPanels() {
         LayoutManager layout = new BoxLayout(getContentPane(), BoxLayout.X_AXIS);
         getContentPane().setLayout(layout);
-        add(new LeftSidePanel(universe, observer));
-        add(new CentralPanel(universe, observer));
-        add(new RightSidePanel(universe, observer));
+        add(new LeftSidePanel(universe, observer, MAIN_PANEL_BACKGROUND_COLOR, MAIN_PANEL_BORDER_COLOR));
+        add(new CentralPanel(universe, observer, MAIN_PANEL_BORDER_COLOR, CENTRAL_PANEL_DIAGONAL_COLOR));
+        add(new RightSidePanel(universe, observer, MAIN_PANEL_BACKGROUND_COLOR, MAIN_PANEL_BORDER_COLOR));
         //add more panels here
     }
 }

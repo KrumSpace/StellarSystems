@@ -12,8 +12,11 @@ public class ObserverDrawPanel extends CenteredDrawPanel implements ScaledDrawIn
     private final @NotNull Observer observer;
 
     //
-    public ObserverDrawPanel(@NotNull Observer observer, @Nullable Color background) {
-        super(background);
+    public ObserverDrawPanel(@NotNull Observer observer,
+                             @Nullable Color background,
+                             @Nullable Color borderColor, boolean drawBorders,
+                             @Nullable Color diagonalColor, boolean drawDiagonals) {
+        super(background, borderColor, drawBorders, diagonalColor, drawDiagonals);
         this.observer = observer;
     }
 

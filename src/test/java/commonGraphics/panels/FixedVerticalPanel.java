@@ -7,7 +7,12 @@ import org.jetbrains.annotations.Nullable;
 //a vertical panel with fixed width
 public class FixedVerticalPanel extends FixedSizePanel {
     //
-    public FixedVerticalPanel(@Nullable Color background, int width) {
-        super(background, new int [] {width, Integer.MAX_VALUE});
+    public FixedVerticalPanel(int width,
+                              @Nullable Color background,
+                              @Nullable Color borderColor, boolean drawBorders,
+                              @Nullable Color diagonalColor, boolean drawDiagonals) {
+        super(
+                new int [] {width, Integer.MAX_VALUE},
+                background, borderColor, drawBorders, diagonalColor, drawDiagonals);
     }
 }

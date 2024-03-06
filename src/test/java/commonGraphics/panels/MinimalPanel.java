@@ -13,44 +13,54 @@ import org.jetbrains.annotations.Nullable;
 public class MinimalPanel extends JPanel {
     private static final @NotNull Color
             TRANSPARENT_BLACK = new Color(0, 0, 0, 0),
-            BORDERS_AND_DIAGONALS = Color.darkGray;
+            DEFAULT_BORDERS_AND_DIAGONALS_COLOR = Color.red;
+    private final @NotNull Color borderColor, diagonalColor;
+    private boolean drawBorders, drawDiagonals;
 
     //
-    public MinimalPanel(@Nullable Color background) {
+    public MinimalPanel(@Nullable Color background,
+                        @Nullable Color borderColor, boolean drawBorders,
+                        @Nullable Color diagonalColor, boolean drawDiagonals) {
         super();
         setBackground(Objects.requireNonNullElse(background, TRANSPARENT_BLACK));
+        this.borderColor = Objects.requireNonNullElse(borderColor, DEFAULT_BORDERS_AND_DIAGONALS_COLOR);
+        this.drawBorders = drawBorders;
+        this.diagonalColor = Objects.requireNonNullElse(diagonalColor, DEFAULT_BORDERS_AND_DIAGONALS_COLOR);
+        this.drawDiagonals = drawDiagonals;
         setVisible(true);
     }
 
-    /**
-     * Call this to draw a rectangle around this panel.
-     * Intended to visibly test panel sizes.
-     *
-     * @param g Graphics to use.
-     */
+    //
     @SuppressWarnings("unused")
-    public final void drawPanelBorders(@NotNull Graphics g) {
+    public final void setDrawBorders(boolean drawBorders) {
+        this.drawBorders = drawBorders;
+    }
+
+    //
+    @SuppressWarnings("unused")
+    public final void setDrawDiagonals(boolean drawDiagonals) {
+        this.drawDiagonals = drawDiagonals;
+    }
+
+    //
+    @Override
+    protected void paintComponent(@NotNull Graphics g) {
+        super.paintComponent(g);
         @NotNull Dimension panelSize = getSize();
         int
                 width = (int) panelSize.getWidth(),
                 height = (int) panelSize.getHeight();
-        g.setColor(BORDERS_AND_DIAGONALS);
+        if (drawBorders) drawPanelBorders(g, width, height);
+        if (drawDiagonals) drawPanelDiagonals(g, width, height);
+    }
+
+    private void drawPanelBorders(@NotNull Graphics g, int width, int height) {
+        g.setColor(borderColor);
         g.drawRect(0, 0, width, height);
     }
 
-    /**
-     * Call this to draw the diagonals of this panel.
-     * Intended to visibly test panel sizes and centering.
-     *
-     * @param g Graphics to use.
-     */
-    @SuppressWarnings("unused")
-    public final void drawPanelDiagonals(@NotNull Graphics g) {
-        @NotNull Dimension panelSize = getSize();
-        int
-                width = (int) panelSize.getWidth(),
-                height = (int) panelSize.getHeight();
-        g.setColor(BORDERS_AND_DIAGONALS);
+    private void drawPanelDiagonals(@NotNull Graphics g, int width, int height) {
+        g.setColor(diagonalColor);
         g.drawLine(0, 0, width, height);
         g.drawLine(0, height, width, 0);
     }

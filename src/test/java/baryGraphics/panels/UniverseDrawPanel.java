@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import baryModel.BaryUniverse;
 import baryGraphics.Observer;
@@ -17,8 +18,10 @@ public class UniverseDrawPanel extends ObserverDrawPanel {
     private final @NotNull PainterContainer painters;
 
     //
-    public UniverseDrawPanel(@NotNull BaryUniverse universe, @NotNull Observer observer) {
-        super(observer, BACKGROUND_COLOR);
+    public UniverseDrawPanel(@NotNull BaryUniverse universe, @NotNull Observer observer,
+                             @Nullable Color borderColor, boolean drawBorders,
+                             @Nullable Color diagonalColor, boolean drawDiagonals) {
+        super(observer, BACKGROUND_COLOR, borderColor, drawBorders, diagonalColor, drawDiagonals);
         this.universe = universe;
         paintUtilities = new UniversePaintUtilities(this);
         painters = new PainterContainer(this);
@@ -43,7 +46,6 @@ public class UniverseDrawPanel extends ObserverDrawPanel {
     @Override
     protected void paintComponent(@NotNull Graphics g) {
         super.paintComponent(g);
-        drawPanelDiagonals(g);
         painters.paintUniverse(g, universe);
         //paint more stuff here, if needed
     }

@@ -16,17 +16,19 @@ import baryGraphics.Observer;
 
 //copy-pasted from left side panel
 public final class RightSidePanel extends FixedVerticalPanel implements TextPanelInterface {
-    private static final @NotNull Color
-            BACKGROUND_COLOR = Color.darkGray,
-            TEXT_COLOR = Color.white;
+    private static final @NotNull Color TEXT_COLOR = Color.white;
     private static final int PANEL_WIDTH = 200;
     private static final int @NotNull [] TEXT_LOCATION = new int [] {10, 10};
     private final @NotNull BaryUniverse universe;
     private final @NotNull Observer observer;
 
     //
-    public RightSidePanel(@NotNull BaryUniverse universe, @NotNull Observer observer) {
-        super(BACKGROUND_COLOR, PANEL_WIDTH);
+    public RightSidePanel(@NotNull BaryUniverse universe, @NotNull Observer observer,
+                          @Nullable Color background, @Nullable Color borderColor) {
+        super(
+                PANEL_WIDTH, background,
+                borderColor, true,
+                null, true);
         this.universe = universe;
         this.observer = observer;
     }
