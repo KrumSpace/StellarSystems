@@ -1,4 +1,4 @@
-package planetTest.graphics.panels.leftSidePanel;
+package commonGraphics.panels.sidePanels.commonLeftSidePanel;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -11,19 +11,20 @@ import commonGraphics.panels.sidePanels.AbstractSectionPanel;
 import commonGraphics.UpdatingWindow;
 
 //
-final class BottomSectionPanel extends AbstractSectionPanel {
+public class CommonBottomSection extends AbstractSectionPanel {
     private static final int PANEL_HEIGHT = 55;
-    private static final int @NotNull [] TEXT_LOCATION = new int [] {10, 10};
+    private static final int @NotNull [] TEXT_LOCATION = new int[]{10, 10};
     private static final @NotNull Color TEXT_COLOR = Color.white;
     private final @NotNull UpdatingWindow window;
 
     //
-    BottomSectionPanel(@NotNull UpdatingWindow window,
-                       @Nullable Color borderColor, @Nullable Color diagonalColor) {
+    CommonBottomSection(@NotNull UpdatingWindow window,
+                        @Nullable Color borderColor, boolean drawBorders,
+                        @Nullable Color diagonalColor, boolean drawDiagonals) {
         super(
                 PANEL_HEIGHT,
-                borderColor, true,
-                diagonalColor, false);
+                borderColor, drawBorders,
+                diagonalColor, drawDiagonals);
         this.window = window;
     }
 
