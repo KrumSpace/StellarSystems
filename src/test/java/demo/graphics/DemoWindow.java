@@ -13,7 +13,7 @@ import baryModel.BaryUniverse;
 import static commonGraphics.ColorUtils.getGray;
 import commonGraphics.UpdatingWindow;
 import baryGraphics.Observer;
-import demo.graphics.panels.LeftSidePanel;
+import demo.graphics.panels.leftSidePanel.LeftSidePanel;
 import demo.graphics.panels.CentralPanel;
 import demo.graphics.panels.RightSidePanel;
 
@@ -25,7 +25,7 @@ public final class DemoWindow extends UpdatingWindow {
     private static final long FRAME_RATE = 60;
     private static final @NotNull Color
             MAIN_PANEL_BACKGROUND_COLOR = getGray(50, 255),
-            MAIN_PANEL_BORDER_COLOR = getGray(80, 255),
+            MAIN_PANEL_BORDER_COLOR = getGray(40, 255),
             CENTRAL_PANEL_DIAGONAL_COLOR = MAIN_PANEL_BORDER_COLOR;
     private final @NotNull BaryUniverse universe;
     private final @NotNull Observer observer;

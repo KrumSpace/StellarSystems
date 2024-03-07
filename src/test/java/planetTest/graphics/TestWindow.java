@@ -21,7 +21,7 @@ public final class TestWindow extends UpdatingWindow {
     private static final @NotNull String WINDOW_TITLE = "Planet test";
     private static final @NotNull Color
             MAIN_PANEL_BACKGROUND_COLOR = getGray(50, 255),
-            MAIN_PANEL_BORDER_COLOR = getGray(80, 255);
+            MAIN_PANEL_BORDER_COLOR = getGray(40, 255);
     private final @NotNull PlanetContainer planetContainer;
 
     //
