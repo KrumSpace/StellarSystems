@@ -15,7 +15,7 @@ import commonGraphics.UpdatingWindow;
 import baryGraphics.Observer;
 import demo.graphics.panels.leftSidePanel.LeftSidePanel;
 import demo.graphics.panels.CentralPanel;
-import demo.graphics.panels.RightSidePanel;
+import demo.graphics.panels.rightSidePanel.RightSidePanel;
 
 //A graphical window for demo.
 public final class DemoWindow extends UpdatingWindow {
