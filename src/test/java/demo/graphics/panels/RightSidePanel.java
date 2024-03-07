@@ -12,14 +12,15 @@ import static consoleUtils.stringTools.NumberFormatter.doubleToString;
 
 import baryModel.BaryUniverse;
 
-import commonGraphics.panels.FixedVerticalPanel;
+import commonGraphics.panels.sidePanels.AbstractSidePanel;
 import baryGraphics.Observer;
 
 //copy-pasted from left side panel
-public final class RightSidePanel extends FixedVerticalPanel implements TextPanelInterface {
+public final class RightSidePanel extends AbstractSidePanel implements TextPanelInterface {
     private static final @NotNull Color TEXT_COLOR = Color.white;
     private static final int PANEL_WIDTH = 200;
     private static final int @NotNull [] TEXT_LOCATION = new int [] {10, 10};
+    @SuppressWarnings({"unused", "FieldCanBeLocal"})
     private final @NotNull BaryUniverse universe;
     private final @NotNull Observer observer;
 
@@ -73,4 +74,8 @@ public final class RightSidePanel extends FixedVerticalPanel implements TextPane
         lines.add(null);
         return drawInfoLines(g, location, TEXT_COLOR, lines, startingLineNumber);
     }
+
+    //
+    @Override
+    public void addSections() {}
 }
