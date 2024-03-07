@@ -44,15 +44,15 @@ final class TopSection extends MinimalPanel implements SectionContainerInterface
     public void addSections() {
         LayoutManager layout = new BoxLayout(this, BoxLayout.Y_AXIS);
         setLayout(layout);
-        add(new FirstSectionPanel(
+        add(new UniverseInfoSection(
                 universe,
                 borderColor, drawSectionBorders,
                 diagonalColor, drawSectionDiagonals));
-        add(new SecondSectionPanel(
+        add(new ObserverInfoSection(
                 observer,
                 borderColor, drawSectionBorders,
                 diagonalColor, drawSectionDiagonals));
-        add(new ThirdSectionPanel(
+        add(new BlankSampleSection(
                 borderColor, drawSectionBorders,
                 diagonalColor, drawSectionDiagonals));
         // Add more sections here, if needed.
