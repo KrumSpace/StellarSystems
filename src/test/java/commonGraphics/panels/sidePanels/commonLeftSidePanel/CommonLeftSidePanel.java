@@ -7,7 +7,6 @@ import java.awt.BorderLayout;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import commonGraphics.panels.MinimalPanel;
 import commonGraphics.panels.sidePanels.AbstractSidePanel;
 import commonGraphics.UpdatingWindow;
 
@@ -59,7 +58,7 @@ public abstract class CommonLeftSidePanel extends AbstractSidePanel {
     }
 
     //
-    public abstract @Nullable MinimalPanel getNewTopSection();
+    public abstract @Nullable CommonTopSection getNewTopSection();
 
     //gets desired color
     public @Nullable Color getSectionBorderColor() {

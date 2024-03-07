@@ -5,8 +5,8 @@ import java.awt.Color;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import commonGraphics.panels.sidePanels.commonLeftSidePanel.CommonTopSection;
 import commonGraphics.panels.sidePanels.commonLeftSidePanel.CommonLeftSidePanel;
-import commonGraphics.panels.MinimalPanel;
 import commonGraphics.UpdatingWindow;
 import planetTest.planetModel.PlanetContainer;
 
@@ -28,7 +28,7 @@ public final class LeftSidePanel extends CommonLeftSidePanel {
 
     //
     @Override
-    public @NotNull MinimalPanel getNewTopSection() {
+    public @NotNull CommonTopSection getNewTopSection() {
         return new TopSection(planetContainer, getSectionBorderColor(), getSectionDiagonalColor());
     }
 }
