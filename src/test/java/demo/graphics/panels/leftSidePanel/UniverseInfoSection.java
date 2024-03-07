@@ -3,10 +3,12 @@ package demo.graphics.panels.leftSidePanel;
 import java.awt.Color;
 import java.awt.Graphics;
 
-import baryModel.BaryUniverse;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import baryModel.BaryUniverse;
+
+import static commonGraphics.ColorUtils.getGray;
 import static commonGraphics.StringUtils.drawNumberedString;
 import commonGraphics.panels.sidePanels.AbstractSectionPanel;
 
@@ -14,7 +16,9 @@ import commonGraphics.panels.sidePanels.AbstractSectionPanel;
 final class UniverseInfoSection extends AbstractSectionPanel {
     private static final int PANEL_HEIGHT = 100;
     private static final int @NotNull [] TEXT_LOCATION = new int [] {10, 10};
-    private static final @NotNull Color TEXT_COLOR = Color.white;
+    private static final @NotNull Color
+            HEADING_COLOR = Color.white,
+            TEXT_COLOR = getGray(170, 255);
     @SuppressWarnings({"unused", "FieldCanBeLocal"})
     private final @NotNull BaryUniverse universe;
 
@@ -32,8 +36,9 @@ final class UniverseInfoSection extends AbstractSectionPanel {
     //
     @Override
     public void mainPaint(@NotNull Graphics g) {
-        g.setColor(TEXT_COLOR);
+        g.setColor(HEADING_COLOR);
         drawInfoLine(g, "Universe info", 1);
+        g.setColor(TEXT_COLOR);
         drawInfoLine(g, "Universe info coming soon...", 2);
         // Paint more stuff here, if needed.
     }

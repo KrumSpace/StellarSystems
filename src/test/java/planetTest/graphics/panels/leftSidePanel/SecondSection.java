@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static commonGraphics.ColorUtils.getGray;
 import static commonGraphics.StringUtils.drawNumberedString;
 import commonGraphics.panels.sidePanels.AbstractSectionPanel;
 import planetTest.planetModel.Planet;
@@ -15,7 +16,9 @@ import planetTest.planetModel.PlanetContainer;
 final class SecondSection extends AbstractSectionPanel {
     private static final int PANEL_HEIGHT = 100;
     private static final int @NotNull [] TEXT_LOCATION = new int [] {10, 10};
-    private static final @NotNull Color TEXT_COLOR = Color.white;
+    private static final @NotNull Color
+            HEADING_COLOR = Color.white,
+            TEXT_COLOR = getGray(170, 255);
     private final @NotNull PlanetContainer planetContainer;
 
     //
@@ -31,8 +34,9 @@ final class SecondSection extends AbstractSectionPanel {
     //
     @Override
     public void mainPaint(@NotNull Graphics g) {
-        g.setColor(TEXT_COLOR);
+        g.setColor(HEADING_COLOR);
         drawInfoLine(g, "Planet info", 1);
+        g.setColor(TEXT_COLOR);
         @Nullable Planet planet = planetContainer.getPlanet();
         if (planet == null) {
             drawInfoLine(g, "Null planet", 2);
