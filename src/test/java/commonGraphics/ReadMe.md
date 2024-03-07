@@ -108,3 +108,10 @@ _Check code for more info..._
 Extends `FixedSizePanel`
 
 _Check code for more info..._
+
+
+### sidePanels
+
+Commonly used side panels
+
+_Check code for more info..._
