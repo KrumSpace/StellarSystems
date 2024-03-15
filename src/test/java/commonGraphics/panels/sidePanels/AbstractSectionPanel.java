@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import static commonGraphics.ColorUtils.TRANSPARENT_BLACK;
 import commonGraphics.panels.FixedHorizontalPanel;
 
-//
+//a horizontal section for a vertical side-panel
 public abstract class AbstractSectionPanel extends FixedHorizontalPanel {
     //
     public AbstractSectionPanel(int height,

@@ -1,4 +1,4 @@
-package planetTest.graphics;
+package playerTest.graphics;
 
 import java.awt.Color;
 import java.awt.LayoutManager;
@@ -8,21 +8,19 @@ import org.jetbrains.annotations.NotNull;
 
 import static commonGraphics.ColorUtils.getGray;
 import commonGraphics.UpdatingWindow;
-import planetTest.graphics.panels.leftSidePanel.LeftSidePanel;
-import planetTest.graphics.panels.CentralPanel;
-import planetTest.planetModel.PlanetContainer;
+import playerTest.graphics.panels.leftSidePanel.LeftSidePanel;
+import playerTest.graphics.panels.CentralPanel;
+import playerTest.graphics.panels.rightSidePanel.RightSidePanel;
 
-//A graphical window for planetary testing purposes.
+//
 public final class TestWindow extends UpdatingWindow {
     private static final @NotNull Color
             MAIN_PANEL_BACKGROUND_COLOR = getGray(50, 255),
             MAIN_PANEL_BORDER_COLOR = getGray(40, 255);
-    private final @NotNull PlanetContainer planetContainer;
 
     //
-    public TestWindow(@NotNull PlanetContainer planetContainer) {
-        super(new TestWindowSettings()); //default frame rate
-        this.planetContainer = planetContainer;
+    public TestWindow() {
+        super(new TestWindowSettings());
         //observer = new Observer();
         addPanels();
         //addKeyListener();
@@ -35,12 +33,9 @@ public final class TestWindow extends UpdatingWindow {
     public void addPanels() {
         LayoutManager layout = new BoxLayout(getContentPane(), BoxLayout.X_AXIS);
         getContentPane().setLayout(layout);
-        add(new LeftSidePanel(
-                this, planetContainer,
-                MAIN_PANEL_BACKGROUND_COLOR, MAIN_PANEL_BORDER_COLOR));
-        add(new CentralPanel(
-                planetContainer,
-                MAIN_PANEL_BORDER_COLOR, MAIN_PANEL_BORDER_COLOR));
+        add(new LeftSidePanel(this, MAIN_PANEL_BACKGROUND_COLOR, MAIN_PANEL_BORDER_COLOR));
+        add(new CentralPanel(MAIN_PANEL_BORDER_COLOR, MAIN_PANEL_BORDER_COLOR));
+        add(new RightSidePanel(MAIN_PANEL_BACKGROUND_COLOR, MAIN_PANEL_BORDER_COLOR));
         // Add more panels here, if needed.
     }
 }

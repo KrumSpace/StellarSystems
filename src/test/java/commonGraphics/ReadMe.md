@@ -115,3 +115,10 @@ _Check code for more info..._
 Commonly used side panels
 
 _Check code for more info..._
+
+
+## graphicalPanels
+
+Simple graphical panels.
+
+_Check code for more info..._

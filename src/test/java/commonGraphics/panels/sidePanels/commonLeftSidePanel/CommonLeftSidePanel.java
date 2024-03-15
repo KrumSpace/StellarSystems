@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import commonGraphics.panels.sidePanels.AbstractSidePanel;
 import commonGraphics.UpdatingWindow;
 
-//
+//a common left side-panel
 public abstract class CommonLeftSidePanel extends AbstractSidePanel {
     private static final int DEFAULT_PANEL_WIDTH = 200;
     private static final @Nullable Color DIAGONAL_COLOR = null;

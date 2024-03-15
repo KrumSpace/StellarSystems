@@ -1,4 +1,4 @@
-package baryGraphics.panels;
+package commonGraphics.panels.graphicalPanels;
 
 import org.jetbrains.annotations.NotNull;
 

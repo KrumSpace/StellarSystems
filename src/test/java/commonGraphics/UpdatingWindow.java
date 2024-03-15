@@ -1,8 +1,5 @@
 package commonGraphics;
 
-import java.awt.Point;
-import java.awt.Dimension;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,15 +12,14 @@ public abstract class UpdatingWindow extends AbstractWindow {
     private final @NotNull WindowUpdater windowUpdater;
 
     //with default frame rate
-    public UpdatingWindow(@Nullable Dimension size, @Nullable Point location, @Nullable String title) {
-        super(size, location, title);
+    public UpdatingWindow(@Nullable WindowSettings windowSettings) {
+        super(windowSettings);
         windowUpdater = new WindowUpdater(this);
     }
 
     //with custom frame rate
-    public UpdatingWindow(@Nullable Dimension size, @Nullable Point location, @Nullable String title,
-                          long frameRate) {
-        super(size, location, title);
+    public UpdatingWindow(@Nullable WindowSettings windowSettings, long frameRate) {
+        super(windowSettings);
         windowUpdater = new WindowUpdater(this, frameRate);
     }
 

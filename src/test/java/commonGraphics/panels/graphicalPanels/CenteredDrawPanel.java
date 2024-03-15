@@ -1,4 +1,4 @@
-package baryGraphics.panels;
+package commonGraphics.panels.graphicalPanels;
 
 import java.awt.Color;
 

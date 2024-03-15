@@ -5,6 +5,8 @@ import java.awt.Color;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import commonGraphics.panels.graphicalPanels.CenteredDrawPanel;
+import commonGraphics.panels.graphicalPanels.ScaledDrawInterface;
 import baryGraphics.Observer;
 
 //

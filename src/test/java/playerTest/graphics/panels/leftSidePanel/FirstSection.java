@@ -1,4 +1,4 @@
-package planetTest.graphics.panels.leftSidePanel;
+package playerTest.graphics.panels.leftSidePanel;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -10,8 +10,8 @@ import static commonGraphics.ColorUtils.getGray;
 import static commonGraphics.StringUtils.drawNumberedString;
 import commonGraphics.panels.sidePanels.AbstractSectionPanel;
 
-//a blank section for future use
-final class ThirdSection extends AbstractSectionPanel {
+//
+final class FirstSection extends AbstractSectionPanel {
     private static final int PANEL_HEIGHT = 100;
     private static final int @NotNull [] TEXT_LOCATION = new int [] {10, 10};
     private static final @NotNull Color
@@ -19,7 +19,7 @@ final class ThirdSection extends AbstractSectionPanel {
             TEXT_COLOR = getGray(170, 255);
 
     //
-    ThirdSection(@Nullable Color borderColor, @Nullable Color diagonalColor) {
+    FirstSection(@Nullable Color borderColor, @Nullable Color diagonalColor) {
         super(
                 PANEL_HEIGHT,
                 borderColor, true,
@@ -30,12 +30,14 @@ final class ThirdSection extends AbstractSectionPanel {
     @Override
     public void mainPaint(@NotNull Graphics g) {
         g.setColor(HEADING_COLOR);
-        drawInfoLine(g, "Blank section", 1);
+        drawInfoLine(g, "First section", 1);
+        //TODO: improve this
         g.setColor(TEXT_COLOR);
-        drawInfoLine(g, "For future use", 2);
+        drawInfoLine(g, "Coming soon...", 2);
         // Paint more stuff here, if needed.
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void drawInfoLine(@NotNull Graphics g, @Nullable String line, int lineNumber) {
         drawNumberedString(g, line, TEXT_LOCATION, lineNumber);
     }

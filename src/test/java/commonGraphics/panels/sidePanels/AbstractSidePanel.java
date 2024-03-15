@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import commonGraphics.panels.FixedVerticalPanel;
 
-//
+//an abstract vertically-fixed side-panel, intended to be used in the main panel
 public abstract class AbstractSidePanel extends FixedVerticalPanel implements SectionContainerInterface {
     //
     public AbstractSidePanel(int width, @Nullable Color background,

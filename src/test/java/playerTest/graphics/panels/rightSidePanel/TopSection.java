@@ -1,4 +1,4 @@
-package planetTest.graphics.panels.leftSidePanel;
+package playerTest.graphics.panels.rightSidePanel;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -10,29 +10,27 @@ import static commonGraphics.ColorUtils.getGray;
 import static commonGraphics.StringUtils.drawNumberedString;
 import commonGraphics.panels.sidePanels.AbstractSectionPanel;
 
-//a blank section for future use
-final class ThirdSection extends AbstractSectionPanel {
-    private static final int PANEL_HEIGHT = 100;
+//
+final class TopSection extends AbstractSectionPanel {
     private static final int @NotNull [] TEXT_LOCATION = new int [] {10, 10};
     private static final @NotNull Color
             HEADING_COLOR = Color.white,
             TEXT_COLOR = getGray(170, 255);
 
     //
-    ThirdSection(@Nullable Color borderColor, @Nullable Color diagonalColor) {
-        super(
-                PANEL_HEIGHT,
-                borderColor, true,
-                diagonalColor, false);
+    TopSection(int height,
+               @Nullable Color borderColor, boolean drawBorders,
+               @Nullable Color diagonalColor, boolean drawDiagonals) {
+        super(height, borderColor, drawBorders, diagonalColor, drawDiagonals);
     }
 
     //
     @Override
     public void mainPaint(@NotNull Graphics g) {
         g.setColor(HEADING_COLOR);
-        drawInfoLine(g, "Blank section", 1);
+        drawInfoLine(g, "Top section", 1);
         g.setColor(TEXT_COLOR);
-        drawInfoLine(g, "For future use", 2);
+        drawInfoLine(g, "Coming soon...", 2);
         // Paint more stuff here, if needed.
     }
 
